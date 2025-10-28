@@ -1,0 +1,66 @@
+---
+title: "Assignment 1"
+format: html
+editor: visual
+---
+
+## 
+
+```{r}
+library(modelr)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(vtable)
+library(flextable)
+library(scales)
+library(tinytex)
+library(readxl)
+```
+
+```{r}
+Sys.setlocale("LC_ALL", "Norwegian")
+```
+
+```{r}
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(janitor)
+
+# Les inn DEMO som character
+demo <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+# Les inn GDP som character
+gdp <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+
+```
+
+```{r}
+# DEMO
+demo_long <- demo %>%
+  pivot_longer(
+    cols = starts_with("x"),
+    names_to = "year",
+    values_to = "population"
+  ) %>%
+  mutate(
+    year = as.integer(sub("x", "", year)),
+    population = as.numeric(population)  # konverter til tall
+  )
+
+# GDP
+gdp_long <- gdp %>%
+  pivot_longer(
+    cols = starts_with("x"),
+    names_to = "year",
+    values_to = "gdp"
+  ) %>%
+  mutate(
+    year = as.integer(sub("x", "", year)),
+    gdp = as.numeric(gdp)
+  )
+```
