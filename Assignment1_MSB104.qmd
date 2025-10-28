@@ -64,3 +64,11 @@ gdp_long <- gdp %>%
     gdp = as.numeric(gdp)
   )
 ```
+
+```{r}
+combined <- demo_long %>%
+  inner_join(gdp_long, by = c("region", "year")) %>%
+  mutate(
+    gdp_per_capita = (gdp / population )* 1000000
+  )
+```
