@@ -26,7 +26,7 @@ Sys.setlocale("LC_ALL", "Norwegian")
 library(readxl)
 library(dplyr)
 library(tidyr)
-library(janitor)
+
 
 # Les inn DEMO som character
 demo <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
@@ -40,35 +40,35 @@ gdp <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
 ```
 
 ```{r}
-# DEMO
+# ---- Gjør begge "long" ----
 demo_long <- demo %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "year",
+    names_to = "time",
     values_to = "population"
   ) %>%
   mutate(
-    year = as.integer(sub("x", "", year)),
-    population = as.numeric(population)  # konverter til tall
+    time = as.integer(str_remove(time, "^x")),
+    population = as.numeric(population)
   )
 
-# GDP
 gdp_long <- gdp %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "year",
+    names_to = "time",
     values_to = "gdp"
   ) %>%
   mutate(
-    year = as.integer(sub("x", "", year)),
+    time = as.integer(str_remove(time, "^x")),
     gdp = as.numeric(gdp)
   )
+
 ```
 
 ```{r}
+# Beregne GDP per innbygger 
 combined <- demo_long %>%
-  inner_join(gdp_long, by = c("region", "year")) %>%
-  mutate(
-    gdp_per_capita = (gdp / population )* 1000000
-  )
+  left_join(gdp_long, by = join_by(region, time)) %>%
+  mutate(gdp_per_capita = gdp / population)
+  
 ```
