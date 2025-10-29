@@ -1,7 +1,13 @@
 ---
-title: "Assignment 1"
-format: html
-editor: visual
+title: "Assignment_1_—_MSB104_—_Group_3"
+author: "Irjan_&_Magnus"
+format:
+  html: default
+  pdf: default
+execute:
+  echo: true
+  warning: false
+  message: false
 ---
 
 ## 
@@ -73,3 +79,22 @@ combined <- demo_long %>%
   mutate(gdp_per_capita = gdp / population* 1000000)
   
 ```
+
+## Kort gjennomgang av datasett og variabler
+
+Datasette *demo_r_pjanggr3* som er hentet fra Eurostat inneholder årlige befolkningestimater på NUTS3-nivå for EU-, EFTA- og kandidatland. Variablene **values** viser totalt antall bosatte personer per 1. januar, målt i antall personer. Hver observasjon identifiseres ved regionkode(**geo**) og år (**time**), samnt kjønn (**sex**) og alder (**age**). I denne analysen benyttes kun total befolkning (**sex = T**,**age = TOTAL**), slik at dataene ikke er splittet etter kjønn eller alder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
