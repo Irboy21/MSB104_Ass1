@@ -1,6 +1,6 @@
 ---
-title: "Assignment_1_—_MSB104_—_Group_3"
-author: "Irjan_&_Magnus"
+title: "Assignment 1 — MSB104 — Group 3"
+author: "Irjan & Magnus"
 format:
   html: default
   pdf: default
@@ -77,7 +77,8 @@ gdp_long <- gdp %>%
 combined <- demo_long %>%
   left_join(gdp_long, by = join_by(region, time)) %>%
   mutate(gdp_per_capita = gdp / population* 1000000)
-  
+
+combined_clean <- na.omit(combined)
 ```
 
 ## Kort gjennomgang av datasett og variabler
@@ -85,10 +86,49 @@ combined <- demo_long %>%
 Datasette *demo_r_pjanggr3* som er hentet fra Eurostat inneholder årlige befolkningestimater på NUTS3-nivå for EU-, EFTA- og kandidatland. Variablene **values** viser totalt antall bosatte personer per 1. januar, målt i antall personer. Hver observasjon identifiseres ved regionkode(**geo**) og år (**time**), samnt kjønn (**sex**) og alder (**age**). I denne analysen benyttes kun total befolkning (**sex = T**,**age = TOTAL**), slik at dataene ikke er splittet etter kjønn eller alder.
 
 
+```{r}
+gdpc_summary <- combined_clean %>%
+  summarise(
+    gjennomsnitt = mean(gdp_per_capita),
+    median = median(gdp_per_capita),
+    standardavvik = sd(gdp_per_capita),
+    minimum = min(gdp_per_capita),
+    maksimum = max(gdp_per_capita)
+  )
 
+gdpc_summary
+```
+```{r}
+combined_clean %>%
+  group_by(time) %>%
+  summarise(mean_gdpc = mean(gdp_per_capita, na.rm = TRUE)) %>%
+  ggplot(aes(x = time, y = mean_gdpc)) +
+  geom_line(color = "steelblue") +
+  geom_point() +
+  labs(
+    title = "Utvikling i gjennomsnittlig BNP per innbygger (2000–2023)",
+    x = "År",
+    y = "Euro per person",
+    caption = "Kilde: Eurostat – nama_10r_3gdp og demo_r_pjanaggr3"
+  )
 
+```
 
+```{r}
+median_value <- median(combined$gdp_per_capita, na.rm = TRUE)
 
+ggplot(combined, aes(x = time, y = gdp_per_capita)) +
+  geom_jitter(alpha = 0.3, color = "gray50") +
+  geom_hline(yintercept = median_value, color = "darkblue", size = 1, linetype = "dashed") +
+  labs(
+    title = "BNP per innbygger over tid med markert median",
+    subtitle = paste("Median =", round(median_value, 0), "euro"),
+    x = "År",
+    y = "BNP per innbygger (euro)"
+  ) +
+  theme_minimal()
+
+```
 
 
 
