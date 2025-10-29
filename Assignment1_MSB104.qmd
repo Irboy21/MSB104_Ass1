@@ -26,6 +26,7 @@ Sys.setlocale("LC_ALL", "Norwegian")
 library(readxl)
 library(dplyr)
 library(tidyr)
+library(janitor)
 
 
 # Les inn DEMO som character
@@ -69,6 +70,6 @@ gdp_long <- gdp %>%
 # Beregne GDP per innbygger 
 combined <- demo_long %>%
   left_join(gdp_long, by = join_by(region, time)) %>%
-  mutate(gdp_per_capita = gdp / population)
+  mutate(gdp_per_capita = gdp / population* 1000000)
   
 ```
