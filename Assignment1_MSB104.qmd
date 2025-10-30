@@ -16,6 +16,8 @@ library(flextable)
 library(scales)
 library(tinytex)
 library(readxl)
+library(stringr)
+library(janitor)
 ```
 
 ```{r}
@@ -29,47 +31,88 @@ library(tidyr)
 library(janitor)
 
 
-# Les inn DEMO som character
-demo <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
+# Henter inn populasjons datasett fra Excel
+Populasjon <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
-# Les inn GDP som character
-gdp <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
+# Henter inn regional BNP datasett fra Excell 
+BNP <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
 
 ```
 
 ```{r}
-# ---- Gjør begge "long" ----
-demo_long <- demo %>%
+
+# Omgjør populasjon til langt format 
+PopulasjonLang <- Populasjon %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "time",
-    values_to = "population"
+    names_to = "Aar",
+    values_to = "Innbyggere"
   ) %>%
   mutate(
-    time = as.integer(str_remove(time, "^x")),
-    population = as.numeric(population)
+    Aar = as.integer(str_remove(Aar, "^x")),
+    Innbyggere = as.numeric(str_replace_all(Innbyggere, " ", ""))
   )
 
-gdp_long <- gdp %>%
-  pivot_longer(
-    cols = starts_with("x"),
-    names_to = "time",
-    values_to = "gdp"
-  ) %>%
-  mutate(
-    time = as.integer(str_remove(time, "^x")),
-    gdp = as.numeric(gdp)
-  )
 
 ```
 
 ```{r}
-# Beregne GDP per innbygger 
-combined <- demo_long %>%
-  left_join(gdp_long, by = join_by(region, time)) %>%
-  mutate(gdp_per_capita = gdp / population* 1000000)
+
+#Omgjør BNP til langt format
+
+BNPLang <- BNP %>%
+  pivot_longer(
+    cols = starts_with("x"),
+    names_to = "Aar",
+    values_to = "BNP"
+  ) %>%
+  mutate(
+    Aar = as.integer(str_remove(Aar, "^x")),
+    BNP = as.numeric(str_replace_all(BNP, " ", ""))
+  )
+```
+
+```{r}
+# Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner
+BNPPI <- PopulasjonLang %>%
+  left_join(BNPLang, by = join_by(region, Aar)) %>%
+  mutate(
+    Innbyggere = as.numeric(Innbyggere),
+    BNP = as.numeric(BNP),
+    BNPPI = (BNP * 1e6) / Innbyggere
+  )
+
   
+```
+
+```{r}
+BNPPI %>%
+  summarise(across(everything(), ~ sum(is.na(.x))))
+```
+
+```{r}
+#Fjerner alle regioner med NA verdier
+
+BNPPIRen <- na.omit(BNPPI)
+
+```
+
+```{r}
+
+# Grupper etter år
+
+BNPPIRen %>%
+  group_by(Aar) %>%  
+  summarise(
+    gjennomsnitt_BNP = mean(BNP, na.rm = TRUE),
+    median_BNP = median(BNP, na.rm = TRUE),
+    minste_BNP = min(BNP, na.rm = TRUE),
+    største_BNP = max(BNP, na.rm = TRUE)
+  ) %>%
+  arrange(Aar)
+
+
 ```
