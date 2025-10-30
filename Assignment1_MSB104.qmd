@@ -75,6 +75,14 @@ BNPLang <- BNP %>%
   )
 ```
 
+## Metadata BNP
+
+Det finnes ulike hoved metoder å beregne brytto nasjonalt produkt på.
+Eurostat har valgt å benytte den såkalte «inntekstmetoden».
+Eurostat velger denne metoden ovenfor utgifts metoden grunnet mangel på data over gode overføringer mellom regioner.
+
+Etter inntektsmetoden regnes BNP på følgende måte: Lønn som utbetales til ansatte + bedrifter sin fortjeneste + skatte og avgifter minus subsidier gitt fra staten + avskrivinger knyttet til industri.
+
 ```{r}
 # Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner
 BNPPI <- PopulasjonLang %>%
