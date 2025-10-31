@@ -84,22 +84,37 @@ Eurostat velger denne metoden ovenfor utgifts metoden grunnet mangel på data ov
 Etter inntektsmetoden regnes BNP på følgende måte: Lønn som utbetales til ansatte + bedrifter sin fortjeneste + skatte og avgifter minus subsidier gitt fra staten + avskrivinger knyttet til industri.
 
 ```{r}
-# Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner
-BNPPI <- PopulasjonLang %>%
-  left_join(BNPLang, by = join_by(region, Aar)) %>%
-  mutate(
-    Innbyggere = as.numeric(Innbyggere),
-    BNP = as.numeric(BNP),
-    BNPPI = (BNP * 1e6) / Innbyggere
-  )
+# Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner 
+
+BNPPI <- PopulasjonLang %>% 
+left_join(BNPLang, by = join_by(region, Aar)) %>%
+mutate( Innbyggere = as.numeric(Innbyggere), 
+BNP = as.numeric(BNP), 
+BNPPI = (BNP * 1e6) / Innbyggere, )
 
   
 ```
+
+\
+
+```{r}
+#Hvor mange observasjoner det er totalt i BNPPI
+nrow(BNPPI)
+
+```
+
+\
 
 ```{r}
 BNPPI %>%
   summarise(across(everything(), ~ sum(is.na(.x))))
 ```
+
+#I tabbelen over har vi kombinert de to datasettene hentet fra Eurostat.
+Vi har da en tabell som viser BNP per inbygger i hvert av NUTS3 områdene for delt på år.
+I hver obersvasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi.
+Datasettet består av totalt 4680 observasjoner, og 841 av dem ender opp ned NA verdi i BNPPI.
+For å videre kunne jobbe mer effektivt i utarbeidelsen av tabellene, lager vi et nytt datasett hvor alle observasjoner med NA verdi er fjernet.
 
 ```{r}
 #Fjerner alle regioner med NA verdier
@@ -113,14 +128,23 @@ BNPPIRen <- na.omit(BNPPI)
 # Grupper etter år
 
 BNPPIRen %>%
+  mutate(Aar = as.numeric(Aar)) %>%  # Sørger for numerisk år
   group_by(Aar) %>%  
   summarise(
-    gjennomsnitt_BNP = mean(BNP, na.rm = TRUE),
-    median_BNP = median(BNP, na.rm = TRUE),
-    minste_BNP = min(BNP, na.rm = TRUE),
-    største_BNP = max(BNP, na.rm = TRUE)
+    Mean_BNP = mean(BNP),
+    Median_BNP      = median(BNP),
+    Minste_BNP      = min(BNP),
+    Største_BNP     = max(BNP)
   ) %>%
-  arrange(Aar)
-
+  arrange(Aar) %>%
+  mutate(across(
+    Mean_BNP:Største_BNP,
+    ~ label_number(big.mark = " ")(.)
+  )) %>%
+  kable()
 
 ```
+
+I tabellen over ser vi utviklingen av gjenomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023.
+Verdiene er basert på alle obervasjonene fordelt på de NUTS3 regionene i de fire landene.
+Felles for alle utenom minsteverdi er at det er en generell vekst fra år 2000 til 2022, mens verdiene faller drastisk i år 2023.
