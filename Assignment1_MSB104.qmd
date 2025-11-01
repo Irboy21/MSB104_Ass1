@@ -204,3 +204,4 @@ BNPPI %>%
 
 I denne tabellen set vi at i BNPPI datasettet er det 140 observasjoner fra 2000 og 124 fra 2023 som har NA verdier.
 Dette skiller seg ut fra årene i mellom hvor det jevnt gjennom er 26 observasjoner med NA verdi.
+Totalt er det 195 obervasjoner hvert år.
