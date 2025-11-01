@@ -18,6 +18,7 @@ library(tinytex)
 library(readxl)
 library(stringr)
 library(janitor)
+library(tidyr)
 ```
 
 ```{r}
@@ -25,11 +26,6 @@ Sys.setlocale("LC_ALL", "Norwegian")
 ```
 
 ```{r}
-library(readxl)
-library(dplyr)
-library(tidyr)
-library(janitor)
-
 
 # Henter inn populasjons datasett fra Excel
 Populasjon <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
@@ -131,20 +127,80 @@ BNPPIRen %>%
   mutate(Aar = as.numeric(Aar)) %>%  # Sørger for numerisk år
   group_by(Aar) %>%  
   summarise(
-    Mean_BNP = mean(BNP),
-    Median_BNP      = median(BNP),
-    Minste_BNP      = min(BNP),
-    Største_BNP     = max(BNP)
+    gjennomsnitt_BNPPI = mean(BNPPI),
+    median_BNPPI      = median(BNPPI),
+    minste_BNPPI      = min(BNPPI),
+    største_BNPPI     = max(BNPPI)
   ) %>%
   arrange(Aar) %>%
   mutate(across(
-    Mean_BNP:Største_BNP,
+    gjennomsnitt_BNPPI:største_BNPPI,
     ~ label_number(big.mark = " ")(.)
   )) %>%
   kable()
 
+
 ```
 
 I tabellen over ser vi utviklingen av gjenomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023.
-Verdiene er basert på alle obervasjonene fordelt på de NUTS3 regionene i de fire landene.
-Felles for alle utenom minsteverdi er at det er en generell vekst fra år 2000 til 2022, mens verdiene faller drastisk i år 2023.
+Verdiene er basert på alle obervasjonene fra datasettet hvor obervasjoner med NA verdier er fjernet.
+Videre skal vi lage en deskreptiv analyse utifra statestikken som fremkommer av datasettet.
+For å enkelere visualisere dette lager vi linediagramer for sentrale mål.
+
+```{r}
+BNPPIRen %>%
+  group_by(Aar) %>% 
+  summarise(
+    Gjennomsnitt = mean(BNPPI, na.rm = TRUE),
+    Median = median(BNPPI, na.rm = TRUE)
+  ) %>%
+  pivot_longer(
+    cols = c(Gjennomsnitt, Median),
+    names_to = "Statistikk",
+    values_to = "BNPPI_verdi"
+  ) %>%
+  ggplot(aes(x = Aar, y = BNPPI_verdi, color = Statistikk)) +
+  geom_line(size = 1.2) +
+  geom_point(size = 2) +
+  labs(
+    title = "Utvikling i BNP per innbygger (gjennomsnitt og median)",
+    x = "År",
+    y = "BNP per innbygger (BNPPI)",
+    color = "Statistikk"
+  ) +
+  scale_color_manual(values = c("Gjennomsnitt" = "#2E86AB", "Median" = "#A93226")) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.5),
+    panel.grid.minor = element_blank()
+  )
+  )
+```
+
+I tabellen over ser vi utviklingen av gjenomsnitt og median verdien fra år 2000 til 2023.
+Begge de statistiske målene følger i stor grad samme utvikling.
+Det er en stor økning fra 2000 til 2001.
+Etter dette er det i hovedsak en jevn generel vekst fra år til år, med et par avvik.
+I både 2008 og 2020 ser vi reduksjon i BNPPI sammenlignet med det forekommende året.
+I 2023 ser vi igjen en drastisk endring, spesielt i Median hvor BNPPI reduseres fra ca 25 000 dollar til ca 15 000 dollar.
+Reduksjonen i år 2008 og 2020 er ikke overaskende og kan forklares med henholdsvis finanskrisen og Covid-19.
+
+En annen faktor som kan påvirke utviklingen av BNPPI er utartingen av NA verdier i data settet vårt.
+Som tidligere vist er det totalt 841 obersvasjoner som ikke kommer med i denne tabellen.
+I hvilken år disse fremkommer og hvilken NUTS3 regioner som forsvinner fra disse årene kan forventes å ha en effekt på gjenomsnittet for det året.
+Dette kommer av at noen land gjenerelt sett har høyere BNP enn andre.
+
+```{r}
+BNPPI %>%
+  group_by(Aar) %>%
+  summarise(
+    antall_NA = sum(is.na(BNPPI)),
+    total_obs = n()
+  ) %>%
+  arrange(Aar) %>%
+  kable() %>%
+  kable_styling(full_width = FALSE, position = "left")
+```
+
+I denne tabellen set vi at i BNPPI datasettet er det 140 observasjoner fra 2000 og 124 fra 2023 som har NA verdier.
+Dette skiller seg ut fra årene i mellom hvor det jevnt gjennom er 26 observasjoner med NA verdi.
