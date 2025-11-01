@@ -185,6 +185,7 @@ I både 2008 og 2020 ser vi reduksjon i BNPPI sammenlignet med det forekommende 
 I 2023 ser vi igjen en drastisk endring, spesielt i Median hvor BNPPI reduseres fra ca 25 000 dollar til ca 15 000 dollar.
 Reduksjonen i år 2008 og 2020 er ikke overaskende og kan forklares med henholdsvis finanskrisen og Covid-19.
 
+
 En annen faktor som kan påvirke utviklingen av BNPPI er utartingen av NA verdier i data settet vårt.
 Som tidligere vist er det totalt 841 obersvasjoner som ikke kommer med i denne tabellen.
 I hvilken år disse fremkommer og hvilken NUTS3 regioner som forsvinner fra disse årene kan forventes å ha en effekt på gjenomsnittet for det året.
@@ -205,3 +206,4 @@ BNPPI %>%
 I denne tabellen set vi at i BNPPI datasettet er det 140 observasjoner fra 2000 og 124 fra 2023 som har NA verdier.
 Dette skiller seg ut fra årene i mellom hvor det jevnt gjennom er 26 observasjoner med NA verdi.
 Totalt er det 195 obervasjoner hvert år.
+
