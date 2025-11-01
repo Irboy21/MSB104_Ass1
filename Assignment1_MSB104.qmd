@@ -19,6 +19,7 @@ library(readxl)
 library(stringr)
 library(janitor)
 library(tidyr)
+library(dineq)
 ```
 
 ```{r}
@@ -174,7 +175,7 @@ BNPPIRen %>%
     plot.title = element_text(face = "bold", hjust = 0.5),
     panel.grid.minor = element_blank()
   )
-  )
+  
 ```
 
 I tabellen over ser vi utviklingen av gjenomsnitt og median verdien fra år 2000 til 2023.
@@ -184,7 +185,6 @@ Etter dette er det i hovedsak en jevn generel vekst fra år til år, med et par 
 I både 2008 og 2020 ser vi reduksjon i BNPPI sammenlignet med det forekommende året.
 I 2023 ser vi igjen en drastisk endring, spesielt i Median hvor BNPPI reduseres fra ca 25 000 dollar til ca 15 000 dollar.
 Reduksjonen i år 2008 og 2020 er ikke overaskende og kan forklares med henholdsvis finanskrisen og Covid-19.
-
 
 En annen faktor som kan påvirke utviklingen av BNPPI er utartingen av NA verdier i data settet vårt.
 Som tidligere vist er det totalt 841 obersvasjoner som ikke kommer med i denne tabellen.
@@ -206,4 +206,36 @@ BNPPI %>%
 I denne tabellen set vi at i BNPPI datasettet er det 140 observasjoner fra 2000 og 124 fra 2023 som har NA verdier.
 Dette skiller seg ut fra årene i mellom hvor det jevnt gjennom er 26 observasjoner med NA verdi.
 Totalt er det 195 obervasjoner hvert år.
+En teori som kan forklare at median og gjenomsnittsveridene er veldig lave i forhold er at NUTS3 regioner med NA verdier i disse årstallene i hovedsak stammer fra land med relativt høyest BNPPI.
 
+## Part B: Regional ulikhet
+
+Oppsumering av artikkel
+
+## Ginis koeffisient
+
+I 2017 publiserte Christian Lessmann og Andre Seidel en artikkel hvor de ser på hvor godt egnet «lysdata» er til å estimere regional inntekt.
+Sentrale spørsmål som tas opp i artikkelen er hvordan regionale økonomiske ulikheter utvikler seg over tid, og hvilke faktorer som fører til endringer i regional ulikhet.
+ 
+
+I en 2012 artikkel som Lessmann og Seidel er inspirert av presenteres ideen om at «lysdata» er en indikasjon på hvor økonomisk utviklet et land er.
+Tankegangen er at aktiviteter som koster penger å gjennomføre på kvelden som regel trenger lys, og jo rikere et land/ region er jo flere har råd til å delta på slike aktiviteter.
+Ved å analysere satellitt bilder på nattestid kan mengden lys være en indikator på velstanden i området.
+
+Nytteverdien fra denne vinklingen kommer av at det er stor variasjon på hvor dokumentert regionale ulikheter er fra land til land.
+Artikkelen påpeker at tidligere studier på området fokuserer på vel- utviklede nasjoner, da det ikke finnes tilgjengelige gode nok data for mindre utviklete land på regionalt nivå.
+Dersom det kan bevises at dette konseptet holder vann får forskere enn ny måte å analysere mindre velstående land sin regionale ulikhet.
+
+For å undersøke hvor valid teorien er, analyserer artikkelen først velstående land hvor det allerede finnes godt dekkende data over regionale ulikheter.
+Ved å analysere bilder fra NASA satellitter og rangere regioner fra 1992 og utover, skaper de estimater over hvor mye økonomisk utvikling regioner har hatt i perioden.
+
+I studien brukes Gini-koeffisient.
+Dette er et mål som måler hvor skjevt ressurser i en befolkning fordeles, for eksempel mellom regioner.
+Gini-koeffisient har en skala fra 0 til 1.
+En 0-verdi betyr at alt er likt fordelt, og 1 betyr at alle ressursene ligger hos en eller et veldig få antall personer.
+I studien beregnes og måles koeffisienten i regioner over tid, som viser om det er divergens eller konvergens.
+Dersom koeffisient øker over tid vil det si at forskjellene mellom de rike og fattige øker over tid, og det er divergens.
+Hvis koeffisienten reduseres over tid reduseres forskjellen mellom rik og fattige, dvs konvergens.
+
+Ved å sammenligne estimatene med faktiske BNP data kommer det frem at teorien i stor grad stemmer overens i middels rike og rike land, mens i fattigere land man har data på er konseptet dårlig egnet.
+ 
