@@ -232,9 +232,52 @@ ggplot(SnittTidLand, aes(x = aar, y = gjennomsnitt_bnp, color = land_navn)) +
 
 ```
 
+# Part B: Regional Inequity
+
+## litarture Review
+
+• Read the paper by Lessmann & Seidel (2017). You will find a copy under Filer/pdf at the
+Canvas site of the course.
+‣ Give a short summary of the paper (200 – 400 words).
 
 
+## Gini Coefficient Calculation
 
+```{r}
+library(DescTools)
+
+# Beregn Gini
+gini_total <- Gini(Kombinert$bnp_per_innbygger, na.rm = TRUE)
+
+# Per land
+GiniLand <- Kombinert %>%
+  group_by(land) %>%
+  summarise(Gini = Gini(bnp_per_innbygger, na.rm = TRUE))
+
+```
+
+```{r}
+GiniLand <- GiniLand %>%
+  mutate(
+    land_navn = recode(land,
+      "IT" = "Italia",
+      "FI" = "Finland",
+      "LT" = "Litauen",
+      "RO" = "Romania"
+    )
+  )
+
+ggplot(GiniLand, aes(x = land_navn, y = Gini, fill = land_navn)) +
+  geom_col() +
+  labs(
+    title = "Gini-koeffisient for BNP per innbygger per land",
+    x = "Land",
+    y = "Gini-koeffisient"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+```
 
 
 
