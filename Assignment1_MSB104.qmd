@@ -5,12 +5,10 @@ format:
   html: default
   pdf: default
 execute:
-  echo: true
+  echo: false
   warning: false
   message: false
 ---
-
-## 
 
 ```{r}
 library(modelr)
@@ -24,68 +22,72 @@ library(tinytex)
 library(readxl)
 ```
 
-```{r}
+# Part A_ Sub-national GDP and GDP per capita
+## Data aquisition
+
+```{r, echo=TRUE}
 Sys.setlocale("LC_ALL", "Norwegian")
 ```
 
-```{r}
+```{r, echo=TRUE}
 library(readxl)
 library(dplyr)
 library(tidyr)
 library(janitor)
 
 
-# Les inn DEMO som character
-demo <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
+# Henter inn populasjons datasett fra excell
+Populasjon <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
-# Les inn GDP som character
-gdp <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
+# Henter inn regional BNP datasett fra excell
+BNP <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
-
 ```
 
-```{r}
-# ---- Gjør begge "long" ----
-demo_long <- demo %>%
+```{r, echo=TRUE}
+# Omgjør BNP og populasjonen til langt format
+
+PopulasjonLang <- Populasjon %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "time",
-    values_to = "population"
+    names_to = "aar",
+    values_to = "befolkning"
   ) %>%
   mutate(
-    time = as.integer(str_remove(time, "^x")),
-    population = as.numeric(population)
+    aar = as.integer(str_remove(aar, "^x")),
+    befolkning = as.numeric(befolkning)
   )
 
-gdp_long <- gdp %>%
+BNPLang <- BNP %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "time",
-    values_to = "gdp"
+    names_to = "aar",
+    values_to = "BNP"
   ) %>%
   mutate(
-    time = as.integer(str_remove(time, "^x")),
-    gdp = as.numeric(gdp)
+    aar = as.integer(str_remove(aar, "^x")),
+    BNP = as.numeric(BNP)
   )
 
 ```
 
-```{r}
-# Beregne GDP per innbygger 
-combined <- demo_long %>%
-  left_join(gdp_long, by = join_by(region, time)) %>%
-  mutate(gdp_per_capita = gdp / population* 1000000)
-
-combined_clean <- na.omit(combined)
-```
-
-## Kort gjennomgang av datasett og variabler
+### Kort gjennomgang av datasett og variabler
 
 Datasette *demo_r_pjanggr3* som er hentet fra Eurostat inneholder årlige befolkningestimater på NUTS3-nivå for EU-, EFTA- og kandidatland. Variablene **values** viser totalt antall bosatte personer per 1. januar, målt i antall personer. Hver observasjon identifiseres ved regionkode(**geo**) og år (**time**), samnt kjønn (**sex**) og alder (**age**). I denne analysen benyttes kun total befolkning (**sex = T**,**age = TOTAL**), slik at dataene ikke er splittet etter kjønn eller alder.
 
+## GDP per Capita Calculation
 
+```{r}
+Kombinert <- PopulasjonLang %>%
+  left_join(BNPLang, by = join_by(region, aar)) %>%
+  mutate(bnp_per_innbygger = (BNP * 1e6) / befolkning)
+
+```
+
+
+## Decriptive Analysis
 ```{r}
 gdpc_summary <- combined_clean %>%
   summarise(
@@ -98,6 +100,7 @@ gdpc_summary <- combined_clean %>%
 
 gdpc_summary
 ```
+
 ```{r}
 combined_clean %>%
   group_by(time) %>%
@@ -114,21 +117,6 @@ combined_clean %>%
 
 ```
 
-```{r}
-median_value <- median(combined$gdp_per_capita, na.rm = TRUE)
-
-ggplot(combined, aes(x = time, y = gdp_per_capita)) +
-  geom_jitter(alpha = 0.3, color = "gray50") +
-  geom_hline(yintercept = median_value, color = "darkblue", size = 1, linetype = "dashed") +
-  labs(
-    title = "BNP per innbygger over tid med markert median",
-    subtitle = paste("Median =", round(median_value, 0), "euro"),
-    x = "År",
-    y = "BNP per innbygger (euro)"
-  ) +
-  theme_minimal()
-
-```
 
 
 
