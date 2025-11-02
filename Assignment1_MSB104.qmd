@@ -107,7 +107,7 @@ gdpc_sammendrag
 
 Basert på Eurostat-dataene, er BNP per innbygger beregnet som total BNP delt på antall innbyggere i hver NUTS3-region. Datasettet dekker perioden 2000-2023 for Italia, Romania, Finland og Litauen. BNP- verdiene er målt i millioner euro og er konvertert til euro per person for å gjøre regionene sammenlignbare både mellom og innenfor landene.
 
-Gjennomsnittlig BNP per innbygger i utvalget er **19 883 euro**, med et standardavvik på **11 386 euro**, noe som viser en tydelig variasjon i økonomisk velstand mellom regionene. Minimumsverdien er **825 euro**, mens maksimum når opp mot **66 633 euro**, som reflekterer store forskjeller mellom utviklede regioner i Italia og Finland sammenlignet med mindre utviklede områder i Romania og Litauen. Medianverdien på **20 462 euro* ligger nær gjennomsnittet, noe som indikerer en tilnærmet symmetrisk fordeling, men noen enkelte regioner med svært høyt BNP per innbygger trekker gjennomsnittet litt opp.
+Gjennomsnittlig BNP per innbygger i utvalget er **19 883 euro**, med et standardavvik på **11 386 euro**, noe som viser en tydelig variasjon i økonomisk velstand mellom regionene. Minimumsverdien er **825 euro**, mens maksimum når opp mot **66 633 euro**, som reflekterer store forskjeller mellom utviklede regioner i Italia og Finland sammenlignet med mindre utviklede områder i Romania og Litauen. Medianverdien på **20 462 euro** ligger nær gjennomsnittet, noe som indikerer en tilnærmet symmetrisk fordeling, men noen enkelte regioner med svært høyt BNP per innbygger trekker gjennomsnittet litt opp.
 
 Over tid viser dataene en jevn vekst i BNP per innbygger i alle fire land. Finland og Italia hadde de høyeste nivåene gjennom hele perioden, mens Romania og Litauen viser sterk vekst og gradvis konvergens mot de rike landene etter 2010. Figurene nedenfor illustrerer både tidsutviklingen i gjennomsnittlig BNP per innbygger og fordelingen mellom regionene i det siste observasjonsåret, som danner grunnlaget for videre analyse av regional ulikhet i del B.
 
@@ -131,24 +131,34 @@ Kombinert %>%
 
 ```
 
-```{r}
+```{r, echo=TRUE}
 # Fordeling per land
 
-
-# Sørg for at du har en variabel med landkode (to første bokstaver i region)
+# Samler alle regionene basert på de 2 første bokstavene i geo variabelen for å samle alle regionene til hvert sitt land
 Kombinert <- Kombinert %>%
   mutate(land = substr(geo, 1, 2))
 
-# Beregn gjennomsnittlig BNP per innbygger per land
+
+# Beregner gjennomsnittlig BNP per innbygger per land
 SnittLand <- Kombinert %>%
   group_by(land) %>%
   summarise(gjennomsnitt_bnp = mean(bnp_per_innbygger, na.rm = TRUE))
 
-# Plot: én stolpe per land
-ggplot(SnittLand, aes(x = land, y = gjennomsnitt_bnp, fill = land)) +
+# Lager en til variabel slik at det blir enklere å lese av grafen
+SnittLand <- SnittLand %>%
+  mutate(
+    land_navn = recode(land,
+      "IT" = "Italia",
+      "FI" = "Finland",
+      "LT" = "Litauen",
+      "RO" = "Romania"
+    )
+  )
+
+ggplot(SnittLand, aes(x = land_navn, y = gjennomsnitt_bnp, fill = land_navn)) +
   geom_col(alpha = 0.8, width = 0.6) +
   geom_text(aes(label = round(gjennomsnitt_bnp, 0)), 
-            vjust = -0.4, size = 4, fontface = "bold") +
+            vjust = -0.4, size = 3, fontface = "bold") +
   labs(
     title = "Gjennomsnittlig BNP per innbygger (2000–2023)",
     x = "Land",
@@ -157,13 +167,13 @@ ggplot(SnittLand, aes(x = land, y = gjennomsnitt_bnp, fill = land)) +
   theme_minimal(base_size = 13) +
   theme(
     legend.position = "none",
-    plot.title = element_text(face = "bold", size = 15)
+    plot.title = element_text(face = "bold", size = 10)
   )
 
 ```
 
 
-```{r}
+```{r, echo=TRUE}
 library(tidyverse)
 library(ggrepel)
 
@@ -205,7 +215,7 @@ ggplot(SnittTidLand, aes(x = aar, y = gjennomsnitt_bnp, color = land_navn)) +
     segment.color = NA
   ) +
   scale_x_continuous(
-    breaks = seq(2000, 2023, 3)         # litt ekstra plass til etiketter
+    breaks = seq(2000, 2023, 3)
   ) +
   scale_color_brewer(palette = "Set1") +
   labs(
@@ -218,7 +228,6 @@ ggplot(SnittTidLand, aes(x = aar, y = gjennomsnitt_bnp, color = land_navn)) +
   theme(
     plot.title = element_text(face = "bold", size = 10),
     legend.position = "none",
-    plot.margin = margin(10, 60, 10, 10)
   )
 
 ```
