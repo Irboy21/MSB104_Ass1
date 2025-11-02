@@ -239,3 +239,23 @@ Hvis koeffisienten reduseres over tid reduseres forskjellen mellom rik og fattig
 
 Ved å sammenligne estimatene med faktiske BNP data kommer det frem at teorien i stor grad stemmer overens i middels rike og rike land, mens i fattigere land man har data på er konseptet dårlig egnet.
  
+
+## Beregne Gini-koeffisient på vårt datasett
+
+Videre i oppgaven skal vi beregne Gini-koeffisienten på NUTS2 nivå for landene Italia, Finland, Romania og Litauen.
+Første steg er å transformere BNNPPIRen datasettet våres for NUTS3 regioner til en oversikt over NUTS2 regioner.
+Hver NUTS3 region har en tilhørende "geo" kode.
+Disse består av 5 tegn, for eksempel ITC31 for Imperia.
+De fire første sympolene er det samme som NUTS 2 geo koden.
+Ved å samle alle obervasjoner hvor de firste første sympolene er like kan vi lage en datasett fordelt på NUTS 2 regioner.
+
+```{r}
+NUTS2 <- BNPPIRen %>%
+  mutate(
+    NUTS2 = substr(geo, 1, 4),    # Hent NUTS2-koden fra GEO
+    Aar = as.numeric(Aar)          # Sørg for at år er numerisk
+  )
+```
+
+```{}
+```
