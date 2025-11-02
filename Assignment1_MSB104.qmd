@@ -19,7 +19,7 @@ library(readxl)
 library(stringr)
 library(janitor)
 library(tidyr)
-library(dineq)
+library(dineq) 
 ```
 
 ```{r}
@@ -257,5 +257,55 @@ NUTS2 <- BNPPIRen %>%
   )
 ```
 
-```{}
+```{r}
+calc_gini_for_group <- function(df) {
+  if (nrow(df) < 2) {
+    return(NA_real_)  
+  } else {
+    return(gini.wtd(df$BNPPI, weights = df$Innbyggere))
+  }
+}
+```
+
+```{r}
+Gini_NUTS2_Aar <- NUTS2 %>%
+  group_by(NUTS2, Aar) %>%
+  filter(n() >= 2) %>%  # her fjernes NUTS2 med kun 1 NUTS3
+  summarise(
+    Gini = calc_gini_for_group(cur_data()),
+    Mean_BNPPI = weighted.mean(BNPPI, Innbyggere),
+    Total_Pop = sum(Innbyggere),
+    n_NUTS3 = n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+print(Gini_NUTS2_Aar)
+```
+
+```{r}
+Gini_over_time <- Gini_NUTS2_Aar %>%
+  filter(!is.na(Gini)) %>%   # Fjern NA
+  group_by(Aar) %>%
+  summarise(
+    Weighted_Gini = weighted.mean(Gini, Total_Pop),
+    .groups = "drop"
+  )
+```
+
+```{r}
+ggplot(Gini_over_time, aes(x = Aar, y = Weighted_Gini)) +
+  geom_line(color = "blue", size = 1) +
+  geom_point(color = "darkblue", size = 2) +
+  labs(
+    title = "Utvikling av Gini-koeffisienten over tid (veid gjennomsnitt per år)",
+    x = "År",
+    y = "Gini-koeffisient"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    axis.title = element_text(size = 12)
+  )
 ```
