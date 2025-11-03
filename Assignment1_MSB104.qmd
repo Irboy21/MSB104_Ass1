@@ -101,37 +101,33 @@ BNPPI = (BNP * 1e6) / befolkning, )
 
  
 
-```{r, echo=TRUE}
-# Kombinerer tabellene og filtrerer bort NA-verdiene
-
+```{r}
+# Fjerner alle regioner med NA verdier
 
 KombinertRen <- Kombinert %>%
   filter(!is.na(BNPPI))
 ```
 
 ```{r}
-#Hvor mange observasjoner det er totalt i BNPPI
-nrow(Kombinert)
+n_total <- nrow(Kombinert)
 
-```
-
-```{r}
 Kombinert %>%
-  summarise(across(everything(), ~ sum(is.na(.x))))
+  summarise(across(everything(), ~ sum(is.na(.x)))) %>%
+  mutate(n = n_total) %>%
+  select(n, everything()) %>%
+  kable(
+    caption = "Antall observasjoner (n) og NA-verdier per variabel",
+    align = c("c", rep("r", ncol(Kombinert)))
+  )
+
 ```
+
 
 I tabellene over har vi kombinert de to datasettene hentet fra Eurostat.
 Vi har da en tabell som viser BNP per innbygger i hvert av NUTS3 områdene for delt på år.
-I hver observasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi.
-Datasettet består av totalt 4680 observasjoner, og 841 av dem ender opp ned NA verdi i BNPPI.
+I hver observasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi. Datasettet består av totalt 4680 observasjoner, og 841 av dem ender opp ned NA verdi i BNPPI.
 For å videre kunne jobbe mer effektivt i utarbeidelsen av tabellene, lager vi et nytt datasett hvor alle observasjoner med NA verdi er fjernet.
 
-```{r}
-#Fjerner alle regioner med NA verdier
-
-KombinertRen <- na.omit(Kombinert)
-
-```
 
 ```{r}
 
@@ -160,10 +156,7 @@ kable(
 
 ```
 
-I tabellen over ser vi utviklingen av gjennomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023.
-Verdiene er basert på alle observasjonene fra datasettet hvor observasjoner med NA verdier er fjernet.
-Videre skal vi lage en deskriptiv analyse utifra statistikken som fremkommer av datasettet.
-For å enklere visualisere dette lager vi linediagrammer for sentrale mål.
+I tabellen over ser vi utviklingen av gjennomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023. Verdiene er basert på alle observasjonene fra datasettet hvor observasjoner med NA verdier er fjernet. Videre skal vi lage en deskriptiv analyse utifra statistikken som fremkommer av datasettet. For å enklere visualisere dette lager vi linediagrammer for sentrale mål.
 
 ```{r}
 #Lager et linjediagram som viser utvikling av mean og median BNPPI
@@ -188,20 +181,15 @@ KombinertRen %>%
     color = "Statistikk"
   ) +
   scale_color_manual(values = c("Gjennomsnitt" = "#2E86AB", "Median" = "#A93226")) +
-  theme_minimal(base_size = 14) +
+  theme_minimal(base_size = 12) +
   theme(
-    plot.title = element_text(face = "bold", hjust = 0.5),
+    plot.title = element_text(face = "bold", hjust = 0.5, size = 10),
     panel.grid.minor = element_blank()
   )
   
 ```
 
 ```{r}
-names(KombinertRen)
-
-```
-
-```{r, echo=TRUE}
 # 1. Beregn gjennomsnitt per land og år
 KombinertRen <- KombinertRen %>%
   mutate(
@@ -260,7 +248,6 @@ ggplot(SnittTidLand, aes(x = aar, y = gjennomsnitt_bnp, color = land_navn)) +
   )
 
 ```
-
 
 I tabellene over ser vi utviklingen av gjennomsnitt og median verdien fra år 2000 til 2023.
 Begge de statistiske målene følger i stor grad samme utvikling.
