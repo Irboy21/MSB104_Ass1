@@ -595,26 +595,92 @@ Koeffisienten ligger i mellom 0,02 og 0,11 for majoriteten av regionene gjennom 
 Dette indikerer at i hver enkelt NUTS2 region er det en jevn fordeling av BNPPI i de tilhørende NUTS3 regionene.
 
 ```{r}
-# Bruker eksisterende datasett uten å filtrere bort noen år
-Gini_NUTS1_Alle <- Gini_alle
-
-# Lager linjediagram for utviklingen av Gini på NUTS1-nivå
-ggplot(Gini_NUTS1_Alle, aes(x = aar, y = gini, group = land, color = land)) +
-  geom_line(size = 1) +
-  geom_point(size = 2) +
-  labs(
-    title = "Utvikling i Gini-koeffisienten for Italia (NUTS1), 2000–2023",
-    x = "År",
-    y = "Gini-koeffisient",
-    color = "NUTS1-region"
-  ) +
-  theme_minimal() +
-  theme(
-    legend.position = "bottom",
-    plot.title = element_text(face = "bold", size = 14),
-    axis.text.x = element_text(angle = 45, hjust = 1)
+# Lag NUTS2-kode fra NUTS3-kode (første 4 bokstaver)
+KombinertRen <- KombinertRen %>%
+  mutate(
+    nuts1 = substr(geo, 1, 2),
+    geo = trimws(toupper(geo))
   )
 
+NUTS1_data <- KombinertRen %>%
+  group_by(geo, nuts1, aar, land) %>%
+  summarise(
+    bnp = sum(BNP, na.rm = TRUE),
+    befolkning = sum(befolkning, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+```{r}
+Gini_FI_NUTS1 <- KombinertRen %>%
+  filter(land == "FI", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts1, aar) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+Gini_IT_NUTS1 <- KombinertRen %>%
+  filter(land == "IT", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts1, aar) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+Gini_RO_NUTS1 <- KombinertRen %>%
+  filter(land == "RO", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts1, aar) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+Gini_LT_NUTS1 <- KombinertRen %>%
+  filter(land == "LT", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts1, aar) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+Gini_alle_NUTS1 <- bind_rows(
+  Gini_IT_NUTS1 %>% mutate(land = "Italia"),
+  Gini_FI_NUTS1 %>% mutate(land = "Finland"),
+  Gini_RO_NUTS1 %>% mutate(land = "Romania"),
+  Gini_LT_NUTS1 %>% mutate(land = "Litauen")
+)
+
+ggplot(Gini_alle_NUTS1, aes(x = aar, y = gini, color = land, group = nuts1)) +
+  geom_line(linewidth = 1.2) +
+    scale_color_manual(
+    values = c(
+      "Italia" = "#CCCC00",    
+      "Finland" = "#0000FF",   
+      "Romania" = "#C00000",   
+      "Litauen" = "#e7298a"   
+    )
+  ) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2)",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "Land"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
 ```
 
 Her er det laget et linediagram som viser utviklingen av GINI koefisient på NUTS1 region basert på fordelingen av BNPPI i NUTS2 regionene.
