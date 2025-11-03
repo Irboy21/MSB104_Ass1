@@ -20,22 +20,20 @@ library(flextable)
 library(scales)
 library(tinytex)
 library(readxl)
+library(dineq)
+library(janitor)
+library(tidyr)
+library(knitr)
 ```
 
-# Part A_ Sub-national GDP and GDP per capita
-## Data aquisition
-
-```{r, echo=TRUE}
+```{r setup, include=FALSE}
 Sys.setlocale("LC_ALL", "Norwegian")
 ```
 
+# Part A Sub-national GDP and GDP per capita
+## Data aquisition
+
 ```{r, echo=TRUE}
-library(readxl)
-library(dplyr)
-library(tidyr)
-library(janitor)
-
-
 # Henter inn populasjons datasett fra excell
 Populasjon <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
@@ -100,9 +98,20 @@ gdpc_sammendrag <- Kombinert %>%
     standardavvik = sd(bnp_per_innbygger),
     minimum = min(bnp_per_innbygger),
     maksimum = max(bnp_per_innbygger)
-  )
+  ) %>%
+  
+  mutate(across(
+    everything(),
+    ~format(round(., 2), big.mark = " ", decimal.mark = ",")
+  ))
 
-gdpc_sammendrag
+kable(
+  gdpc_sammendrag,
+  caption = "Sammendrag av BNP per innbygger (2000–2023)",
+  align = "c",
+  digits = 2
+)
+
 ```
 
 Basert på Eurostat-dataene, er BNP per innbygger beregnet som total BNP delt på antall innbyggere i hver NUTS3-region. Datasettet dekker perioden 2000-2023 for Italia, Romania, Finland og Litauen. BNP- verdiene er målt i millioner euro og er konvertert til euro per person for å gjøre regionene sammenlignbare både mellom og innenfor landene.
@@ -279,8 +288,7 @@ nuts2_telling
 
 ```{r}
 
-library(dplyr)
-library(dineq)
+
 
 Gini_IT <- Kombinert %>%
   filter(land == "IT", !is.na(bnp_per_innbygger), bnp_per_innbygger > 0) %>%
@@ -293,7 +301,6 @@ Gini_IT <- Kombinert %>%
     .groups = "drop"
   )
 
-Gini_IT
 
 ggplot(Gini_IT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   geom_line(linewidth = 1.2) +
@@ -321,8 +328,6 @@ Gini_FI <- Kombinert %>%
     .groups = "drop"
   )
 
-Gini_FI
-
 ggplot(Gini_FI, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   geom_line(linewidth = 1.2) +
   labs(
@@ -347,8 +352,6 @@ Gini_RO <- Kombinert %>%
     ), 4),
     .groups = "drop"
   )
-
-Gini_RO
 
 ggplot(Gini_RO, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   geom_line(linewidth = 1.2) +
@@ -376,8 +379,6 @@ Gini_LT <- Kombinert %>%
     .groups = "drop"
   )
 
-Gini_LT
-
 ggplot(Gini_LT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   geom_line(linewidth = 1.2) +
   labs(
@@ -398,8 +399,6 @@ Gini_alle <- bind_rows(
   Gini_RO %>% mutate(land = "Romania"),
   Gini_LT %>% mutate(land = "Litauen")
 )
-
-head(Gini_alle)
 
 ggplot(Gini_alle, aes(x = aar, y = gini, color = land, group = nuts2)) +
   geom_line(linewidth = 1.2) +
@@ -434,9 +433,14 @@ Gini_gjennomsnitt <- Gini_alle %>%
   ) %>%
   arrange(desc(gjennomsnitt_gini))
 
-Gini_gjennomsnitt
-
+kable(
+  Gini_gjennomsnitt,
+  caption = "Gjennomsnittlig Gini-koeffisient per land (uten 0-verdier)",
+  align = "lcccc",
+  digits = 4
+)
 ```
+
 ```{r}
 ggplot(Gini_gjennomsnitt, aes(x = reorder(land, gjennomsnitt_gini), y = gjennomsnitt_gini, fill = land)) +
   geom_col(show.legend = FALSE) +
@@ -459,6 +463,65 @@ ggplot(Gini_gjennomsnitt, aes(x = reorder(land, gjennomsnitt_gini), y = gjennoms
 ```
 
 
+```{r}
+# Beregn gjennomsnittlig Gini per år (på tvers av alle land)
+Gini_total <- Gini_alle %>%
+  filter(!is.na(gini), gini > 0) %>%
+  group_by(aar) %>%
+  summarise(
+    gjennomsnitt_gini = mean(gini, na.rm = TRUE),
+    sd_gini = sd(gini, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Lag graf
+ggplot(Gini_total, aes(x = aar, y = gjennomsnitt_gini)) +
+  geom_line(color = "#0000FF", linewidth = 1.2) +
+  geom_point(color = "#0000FF", size = 2) +
+  geom_ribbon(aes(ymin = gjennomsnitt_gini - sd_gini,
+                  ymax = gjennomsnitt_gini + sd_gini),
+              fill = "#C27E3A", alpha = 0.15) +
+  labs(
+    title = "Gjennomsnittlig Gini-koeffisient over tid (alle land)",
+    subtitle = "Beregnet på NUTS2-nivå (2000–2023)",
+    x = "År",
+    y = "Gjennomsnittlig Gini-koeffisient"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 15),
+    plot.subtitle = element_text(size = 12)
+  )
+
+```
+
+## Diskusjon
+
+De beregnede Gini-koeffisientene for BNP per innbygger på NUTS2-nivå viser tydelige forskjeller i graden av regional ulikhet mellom landene i utvalget. Romania og Litauen har de høyeste gjennomsnittlige Gini-verdiene på henholdsvis 0,1139 og 0,1107, mens Italia (0,0510) og Finland (0,0346) viser langt lavere nivåer av regional ulikhet. Dette innebærer at de østeuropeiske landene, som i større grad har vært gjennom en overgangsøkonomi og rask omstilling etter EU-innlemmelsen, fortsatt opplever mer betydelige forskjeller i økonomisk utvikling mellom regionene sammenlignet med de mer etablerte økonomiene i Vest- og Nord-Europa.
+
+**Romania** skiller seg ut som landet med størst regional ulikhet. Både gjennomsnittet og variasjonen (standardavvik = 0.0350) er høye, noe som indikerer store forskjeller mellom regionene og betydelig endring over tid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Resultatene fra analysen viser tydelige mønstre i den regionale økonomiske ulikheten mellom de fire landene. Italia og Finland, som begge har modne og diversifiserte økonomier, viser lave og stabile Gini-koeffisienter. Dette indikerer at at inntektsnivået mellom regionen er relativt balansert, og at den økonomiske veksten har vært jevnt fordelt. Italia har likevel små, men medvarende forskjeller mellom nord og sør, noe som gjenspeiles i at enkelte NUTS2-regioner ligger over landsgjennomsnittet.
+
+Romania og Litauen viser derimot høyere Gini-koeffisienter, som peker på større regionale forskjeller. i Romania skyldes dette i stor grad forskjellen mellom hovedstadregionen Bucuresti-Ilfov og de litt mer landlige regionene. Litauen viser et lignende mønster, med rask vekst i Vilnius-regionen sammenlignet med de sørlige og østlige områdene.
+
+Over tid ser vi altså en økende konvergens mellom landene, men fortsatt betydelig intern ulikhet i de nye EU-medlemmene. Denne utviklingen kan 
 
 
 
