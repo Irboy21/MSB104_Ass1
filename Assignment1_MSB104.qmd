@@ -1,10 +1,14 @@
 ---
-title: "Assignment 1"
-format: html
-editor: visual
+title: "Assignment 1 — MSB104 — Group 3"
+author: "Irjan & Magnus"
+format:
+  html: default
+  pdf: default
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
-
-## 
 
 ```{r}
 library(modelr)
@@ -20,28 +24,32 @@ library(stringr)
 library(janitor)
 library(tidyr)
 library(dineq) 
+library(knitr)
+library(ggrepel)
 ```
 
-```{r}
+```{r setup, include=FALSE}
 Sys.setlocale("LC_ALL", "Norwegian")
 ```
 
-```{r}
+# Part A Sub-national GDP and GDP per capita
+## Data aquisition
 
-# Henter inn populasjons datasett fra Excel
+```{r, echo=TRUE}
+# Henter inn populasjons datasett fra excell
 Populasjon <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
-# Henter inn regional BNP datasett fra Excell 
+# Henter inn regional BNP datasett fra excell
 BNP <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
-
 ```
 
-```{r}
 
-# Omgjør populasjon til langt format 
+```{r, echo=TRUE}
+# Omgjør Populasjonen til langt format
+
 PopulasjonLang <- Populasjon %>%
   pivot_longer(
     cols = starts_with("x"),
@@ -53,12 +61,7 @@ PopulasjonLang <- Populasjon %>%
     befolkning = as.numeric(str_replace_all(befolkning, " ", ""))
   )
 
-
-```
-
-```{r}
-
-#Omgjør BNP til langt format
+# Omgjør BNP til langt format
 
 BNPLang <- BNP %>%
   pivot_longer(
@@ -72,13 +75,18 @@ BNPLang <- BNP %>%
   )
 ```
 
-## Metadata BNP
+### Kort gjennomgang av datasett og variabler
+
+Datasette *demo_r_pjanggr3* som er hentet fra Eurostat inneholder årlige befolkningestimater på NUTS3-nivå for EU-, EFTA- og kandidatland. Variablene **values** viser totalt antall bosatte personer per 1. januar, målt i antall personer. Hver observasjon identifiseres ved regionkode(**geo**) og år (**time**), samnt kjønn (**sex**) og alder (**age**). I denne analysen benyttes kun total befolkning (**sex = T**,**age = TOTAL**), slik at dataene ikke er splittet etter kjønn eller alder.
 
 Det finnes ulike hoved metoder å beregne brytto nasjonalt produkt på.
 Eurostat har valgt å benytte den såkalte «inntekstmetoden».
 Eurostat velger denne metoden ovenfor utgifts metoden grunnet mangel på data over gode overføringer mellom regioner.
 
 Etter inntektsmetoden regnes BNP på følgende måte: Lønn som utbetales til ansatte + bedrifter sin fortjeneste + skatte og avgifter minus subsidier gitt fra staten + avskrivinger knyttet til industri.
+
+
+## BNP per innbygger
 
 ```{r}
 # Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner 
@@ -89,10 +97,17 @@ mutate( befolkning = as.numeric(befolkning),
 BNP = as.numeric(BNP), 
 BNPPI = (BNP * 1e6) / befolkning, )
 
-  
 ```
 
-\
+ 
+
+```{r, echo=TRUE}
+# Kombinerer tabellene og filtrerer bort NA-verdiene
+
+
+KombinertRen <- Kombinert %>%
+  filter(!is.na(BNPPI))
+```
 
 ```{r}
 #Hvor mange observasjoner det er totalt i BNPPI
@@ -100,16 +115,14 @@ nrow(Kombinert)
 
 ```
 
-\
-
 ```{r}
 Kombinert %>%
   summarise(across(everything(), ~ sum(is.na(.x))))
 ```
 
-I tabbelen over har vi kombinert de to datasettene hentet fra Eurostat.
-Vi har da en tabell som viser BNP per inbygger i hvert av NUTS3 områdene for delt på år.
-I hver obersvasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi.
+I tabellene over har vi kombinert de to datasettene hentet fra Eurostat.
+Vi har da en tabell som viser BNP per innbygger i hvert av NUTS3 områdene for delt på år.
+I hver observasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi.
 Datasettet består av totalt 4680 observasjoner, og 841 av dem ender opp ned NA verdi i BNPPI.
 For å videre kunne jobbe mer effektivt i utarbeidelsen av tabellene, lager vi et nytt datasett hvor alle observasjoner med NA verdi er fjernet.
 
@@ -139,16 +152,18 @@ KombinertRen %>%
     gjennomsnitt_BNPPI:største_BNPPI,
     ~ label_number(big.mark = " ")(.)
   )) %>%
-  kable()
-
-
+kable(
+    caption = "Utvikling i BNP per innbygger (gjennomsnitt, median, minimum og maksimum) per år",
+    align = c("c", "r", "r", "r", "r"),
+    col.names = c("År", "Gjennomsnitt BNPPI", "Median BNPPI", "Minste BNPPI", "Største BNPPI")
+  )
 
 ```
 
-I tabellen over ser vi utviklingen av gjenomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023.
-Verdiene er basert på alle obervasjonene fra datasettet hvor obervasjoner med NA verdier er fjernet.
-Videre skal vi lage en deskreptiv analyse utifra statestikken som fremkommer av datasettet.
-For å enkelere visualisere dette lager vi linediagramer for sentrale mål.
+I tabellen over ser vi utviklingen av gjennomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023.
+Verdiene er basert på alle observasjonene fra datasettet hvor observasjoner med NA verdier er fjernet.
+Videre skal vi lage en deskriptiv analyse utifra statistikken som fremkommer av datasettet.
+For å enklere visualisere dette lager vi linediagrammer for sentrale mål.
 
 ```{r}
 #Lager et linjediagram som viser utvikling av mean og median BNPPI
@@ -181,18 +196,84 @@ KombinertRen %>%
   
 ```
 
-I tabellen over ser vi utviklingen av gjenomsnitt og median verdien fra år 2000 til 2023.
+```{r}
+names(KombinertRen)
+
+```
+
+```{r, echo=TRUE}
+# 1. Beregn gjennomsnitt per land og år
+KombinertRen <- KombinertRen %>%
+  mutate(
+    land = substr( geo, 1, 2)
+  )
+SnittTidLand <- KombinertRen %>%
+  group_by(land, aar) %>%
+  summarise(
+    gjennomsnitt_bnp = mean(BNPPI, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# 2. Bytt ut landkodene med fulle navn
+SnittTidLand <- SnittTidLand %>%
+  mutate(
+    land_navn = recode(land,
+      "IT" = "Italia",
+      "FI" = "Finland",
+      "LT" = "Litauen",
+      "RO" = "Romania"
+    )
+  )
+
+# 3. Finn siste observasjon for etikettplassering
+etiketter <- SnittTidLand %>%
+  group_by(land_navn) %>%
+  filter(aar == max(aar))
+
+# 4. Lag linjediagram med etiketter
+ggplot(SnittTidLand, aes(x = aar, y = gjennomsnitt_bnp, color = land_navn)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  geom_text_repel(
+    data = etiketter,
+    aes(label = land_navn),
+    nudge_x = 2.5,
+    size = 3,
+    direction = "y",
+    hjust = 0,
+    segment.color = NA
+  ) +
+  scale_x_continuous(
+    breaks = seq(2000, 2023, 3)
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "Utvikling i gjennomsnittlig BNP per innbygger (2000–2023)",
+    x = "År",
+    y = "BNP per innbygger (euro)",
+    color = NULL
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 10),
+    legend.position = "none",
+  )
+
+```
+
+
+I tabellene over ser vi utviklingen av gjennomsnitt og median verdien fra år 2000 til 2023.
 Begge de statistiske målene følger i stor grad samme utvikling.
 Det er en stor økning fra 2000 til 2001.
-Etter dette er det i hovedsak en jevn generel vekst fra år til år, med et par avvik.
+Etter dette er det i hovedsak en jevn generelt vekst fra år til år, med et par avvik.
 I både 2008 og 2020 ser vi reduksjon i BNPPI sammenlignet med det forekommende året.
 I 2023 ser vi igjen en drastisk endring, spesielt i Median hvor BNPPI reduseres fra ca 25 000 dollar til ca 15 000 dollar.
-Reduksjonen i år 2008 og 2020 er ikke overaskende og kan forklares med henholdsvis finanskrisen og Covid-19.
+Reduksjonen i år 2008 og 2020 er ikke overraskende og kan forklares med henholdsvis finanskrisen og Covid-19.
 
 En annen faktor som kan påvirke utviklingen av BNPPI er utartingen av NA verdier i data settet vårt.
-Som tidligere vist er det totalt 841 obersvasjoner som ikke kommer med i denne tabellen.
-I hvilken år disse fremkommer og hvilken NUTS3 regioner som forsvinner fra disse årene kan forventes å ha en effekt på gjenomsnittet for det året.
-Dette kommer av at noen land gjenerelt sett har høyere BNP enn andre.
+Som tidligere vist er det totalt 841 observasjoner som ikke kommer med i denne tabellen.
+I hvilken år disse fremkommer og hvilken NUTS3 regioner som forsvinner fra disse årene kan forventes å ha en effekt på gjennomsnittet for det året.
+Dette kommer av at noen land generelt sett har høyere BNP enn andre.
 
 ```{r}
 #Sjekke hvor mange observasjoner det er og hvor mange som inneholder NA verdier per år
@@ -207,16 +288,16 @@ Kombinert %>%
   kable_styling(full_width = FALSE, position = "left")
 ```
 
-I denne tabellen set vi at i BNPPI datasettet er det 140 observasjoner fra 2000 og 124 fra 2023 som har NA verdier.
+I denne tabellen ser vi at i BNPPI datasettet er det 140 observasjoner fra 2000 og 124 fra 2023 som har NA verdier.
 Dette skiller seg ut fra årene i mellom hvor det jevnt gjennom er 26 observasjoner med NA verdi.
-Totalt er det 195 obervasjoner hvert år.
-En teori som kan forklare at median og gjenomsnittsveridene er veldig lave i forhold er at NUTS3 regioner med NA verdier i disse årstallene i hovedsak stammer fra land med relativt høyest BNPPI.
+Totalt er det 195 observasjoner hvert år.
+En teori som kan forklare at median og gjennomsnittsverdiene er veldig lave i forhold er at NUTS3 regioner med NA verdier i disse årstallene i hovedsak stammer fra land med relativt høyest BNPPI.
 
-## Part B: Regional ulikhet
-
-Oppsumering av artikkel
+# Part B: Regional ulikhet
 
 ## Ginis koeffisient
+
+### Oppsumering av artikkel
 
 I 2017 publiserte Christian Lessmann og Andre Seidel en artikkel hvor de ser på hvor godt egnet «lysdata» er til å estimere regional inntekt.
 Sentrale spørsmål som tas opp i artikkelen er hvordan regionale økonomiske ulikheter utvikler seg over tid, og hvilke faktorer som fører til endringer i regional ulikhet.
@@ -253,142 +334,55 @@ Disse består av 5 tegn, for eksempel ITC31 for Imperia.
 De fire første sympolene er det samme som NUTS 2 geo koden.
 Ved å samle alle obervasjoner hvor de firste første sympolene er like kan vi lage en datasett fordelt på NUTS 2 regioner.
 
+
+
 ```{r}
-#Definerer et nytt datasett hvor NUTS3 regionene delles inn i NUTS2 regioner
-NUTS2 <- BNPPIRen %>%
+# Lag NUTS2-kode fra NUTS3-kode (første 4 bokstaver)
+KombinertRen <- KombinertRen %>%
   mutate(
-    NUTS2 = substr(geo, 1, 4),    
-    Aar = as.numeric(Aar)          
+    nuts2 = substr(geo, 1, 4),
+    geo = trimws(toupper(geo))
   )
-```
 
-```{r}
-calc_gini_for_group <- function(df) {
-  if (nrow(df) < 2) {
-    return(NA_real_)  
-  } else {
-    return(gini.wtd(df$BNPPI, weights = df$Innbyggere))
-  }
-}
-```
 
-```{r}
-#For å kunne beregne GINI koefisienten av alle inkluderte observasjoner fjernes alle NUTS2 regioner som bare inneholder en NUTS3 reigion. 
-Gini_NUTS2_Aar <- NUTS2 %>%
-  group_by(NUTS2, Aar) %>%
-  filter(n() >= 2) %>%  
+NUTS2_data <- KombinertRen %>%
+  group_by(geo, nuts2, aar, land) %>%
   summarise(
-    Gini = calc_gini_for_group(cur_data()),
-    Mean_BNPPI = weighted.mean(BNPPI, Innbyggere),
-    Total_Pop = sum(Innbyggere),
-    n_NUTS3 = n(),
+    bnp = sum(BNP, na.rm = TRUE),
+    befolkning = sum(befolkning, na.rm = TRUE),
     .groups = "drop"
   )
 ```
 
 ```{r}
-print(Gini_NUTS2_Aar)
+# oversikt over hvor mange nuts2 regioner det er i hvert land
+nuts2_telling <- NUTS2_data %>%
+  group_by(land) %>%
+  summarise(antall_nuts2 = n_distinct(nuts2))
+
+nuts2_telling
+
 ```
 
-```{r}
-# Antall unike NUTS2-regioner
-length(unique(Gini_NUTS2_Aar$NUTS2))
-
-```
+I datasettet er det tilsammen 36 NUTS2 regioner, men hvilken land disse faller innenfor er ganske skjevfordelt. Det er 21 NUTS2 regioner fra Italia, mens Litauen har 2.
+Finland og Romania har henholdsvis 5 og 8 NUTS2 regioner.
 
 ```{r}
-# Legg til NUTS1 (landkode)
-NUTS2_antall <- Gini_NUTS2_Aar %>%
-  mutate(NUTS1 = substr(NUTS2, 1, 2)) %>%  # Hent landkode fra NUTS2
-  distinct(NUTS1, NUTS2) %>%               # Sørg for at hver NUTS2 bare telles én gang
-  group_by(NUTS1) %>%                      # Grupper etter land
-  summarise(Antall_NUTS2 = n())            # Tell antall NUTS2 per NUTS1
-
-# Se resultatet
-NUTS2_antall
-```
-
-\
-Her er det laget en oversikt over alle NUTS2 regioner og den tilhørende beregnede GINI verdien.
-GINI verdien beskriver hvor jevn fordelt BNPPI er fordelt mellom NUTS3 regionene som havner i samme NUTS2 region.
-I datasettet er det tilsammen 30 NUTS2 regioner, men hvilken land disse faller innenfor er ganske skjevfordelt.
-Det er 18 NUTS2 regioner fra Italia, mens Lithauen har bare 1.
-Finland og Romania har henholdsvis 3 og 8 NUTS2 regioner.
-Dette stammer av at større land som regel har flere NUTS2 regioner enn mindre land.\
-
-```{r}
-Gini_over_time <- Gini_NUTS2_Aar %>%
-  filter(!is.na(Gini)) %>%   # Fjern NA
-  group_by(Aar) %>%
+Gini_IT <- KombinertRen %>%
+  filter(land == "IT", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts2, aar) %>%
   summarise(
-    Weighted_Gini = weighted.mean(Gini, Total_Pop),
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
     .groups = "drop"
   )
-```
 
-```{r}
-ggplot(Gini_over_time, aes(x = Aar, y = Weighted_Gini)) +
-  geom_line(color = "blue", size = 1) +
-  geom_point(color = "darkblue", size = 2) +
+ggplot(Gini_IT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
   labs(
-    title = "Utvikling av Gini-koeffisienten over tid (veid gjennomsnitt per år)",
-    x = "År",
-    y = "Gini-koeffisient"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
-    axis.title = element_text(size = 12)
-  )
-```
-
-I tabellen over vises den generelle utviklingen av GINI koefiseienten.
-Slik som i bergegningene av BNPPI får årstall 2000 og 2023 sterkt fravikende resultater grunnet manglende data.
-Får å enkelere kunne analysere Gini koefisentens betydning vil det videre brukes et datasett som følger tidslinjen 2001-2022.
-
-```{r}
-# Filtrer til kun år 2001–2022 og legg til NUTS1 (landkode)
-Gini_NUTS2_Aar_filtered <- Gini_NUTS2_Aar %>%
-  filter(Aar >= 2001 & Aar <= 2022) %>%
-  mutate(NUTS1 = substr(NUTS2, 1, 2))  # Henter de to første bokstavene (landkode)
-
-# Lag linjediagram
-ggplot(Gini_NUTS2_Aar_filtered, aes(x = Aar, y = Gini, group = NUTS2, color = NUTS1)) +
-  geom_line(size = 1, alpha = 0.8) +
-  labs(
-    title = "Utvikling i Gini-koeffisient for NUTS2-regioner (2001–2022)",
-    subtitle = "Farge viser hvilket land (NUTS1) regionen tilhører",
-    x = "År",
-    y = "Gini-koeffisient",
-    color = "Land (NUTS1)"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    legend.position = "top",
-    panel.grid.minor = element_blank(),
-    plot.title = element_text(face = "bold", size = 15),
-    plot.subtitle = element_text(size = 12)
-  )
-```
-
-I dette linjegrammet vises GINI koefisienten sin utvikling i perioden 2001-2022.
-Fargen på linjene indikerer hvilken NUTS1 region NUTS2 regionene tilhører.
-Tabellen blir noe uoversiktelig da det er 30 observasjoner.
-For å gi et bedre analyse grunnlag splittes disse videre opp i to tabeller, en for NUTS2 regioner i Italia og en for de resterende landene.
-
-```{r}
-# Filtrer til kun Italia (NUTS1 = "IT")
-Gini_Italia <- Gini_NUTS2_Aar %>%
-  mutate(NUTS1 = substr(NUTS2, 1, 2)) %>%
-  filter(NUTS1 == "IT", Aar >= 2001, Aar <= 2022)
-
-# Lag linjediagram for italienske NUTS2-regioner
-ggplot(Gini_Italia, aes(x = Aar, y = Gini, color = NUTS2, group = NUTS2)) +
-  geom_line(size = 1) +
-  geom_point(size = 2, alpha = 0.8) +
-  labs(
-    title = "Utvikling i Gini-koeffisient for NUTS2-regioner i Italia (2001–2022)",
-    subtitle = "Hver linje representerer én NUTS2-region",
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Italia",
     x = "År",
     y = "Gini-koeffisient",
     color = "NUTS2-region"
@@ -401,29 +395,180 @@ ggplot(Gini_Italia, aes(x = Aar, y = Gini, color = NUTS2, group = NUTS2)) +
     plot.subtitle = element_text(size = 12),
     panel.grid.minor = element_blank()
   )
+  theme(plot.title = element_text(face = "bold", size = 15))
 ```
 
+Regionene ITC 4 og ITG2 skiller seg ut her da de gjennom hele rekken har en koeffisient mellom 0,10 og 0,17. Dette tyder på at i disse regionene er det en større skjevfordeling av BNPPI enn i resten av landet. I en gjennomsnittsberegning av den gjennomsnittlige Koeffisienten per år ligger den på rundt 0,05.
+
 ```{r}
-
-#Filtrer til Italia og år 2001-2022
-Gini_Italia <- Gini_NUTS2_Aar %>%
-  mutate(NUTS1 = substr(NUTS2, 1, 2)) %>%
-  filter(NUTS1 == "IT", Aar >= 2001, Aar <= 2022)
-
-# Beregn gjennomsnittlig Gini-koeffisient per år
-Avg_Gini_Italia_per_aar <- Gini_Italia %>%
-  group_by(Aar) %>%
+Gini_FI <- KombinertRen %>%
+  filter(land == "FI", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts2, aar) %>%
   summarise(
-    Mean_Gini = mean(Gini, na.rm = TRUE),
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
     .groups = "drop"
   )
 
-# Lag linjediagram av gjennomsnittlig Gini-koeffisient
-ggplot(Avg_Gini_Italia_per_aar, aes(x = Aar, y = Mean_Gini)) +
-  geom_line(color = "blue", size = 1) +
-  geom_point(color = "darkblue", size = 2) +
+ggplot(Gini_FI, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
   labs(
-    title = "Gjennomsnittlig Gini-koeffisient i Italia (NUTS2) per år",
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Finland",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+```{r}
+Gini_RO <- KombinertRen %>%
+  filter(land == "RO", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts2, aar,) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+ggplot(Gini_RO, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Romania",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+
+```{r}
+Gini_LT <- KombinertRen %>%
+  filter(land == "LT", !is.na(BNPPI), BNPPI > 0) %>%
+  group_by(nuts2, aar,) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = BNPPI,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+ggplot(Gini_LT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Litauen",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+```{r}
+Gini_alle <- bind_rows(
+  Gini_IT %>% mutate(land = "Italia"),
+  Gini_FI %>% mutate(land = "Finland"),
+  Gini_RO %>% mutate(land = "Romania"),
+  Gini_LT %>% mutate(land = "Litauen")
+)
+
+ggplot(Gini_alle, aes(x = aar, y = gini, color = land, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+    scale_color_manual(
+    values = c(
+      "Italia" = "#CCCC00",    
+      "Finland" = "#0000FF",   
+      "Romania" = "#C00000",   
+      "Litauen" = "#e7298a"   
+    )
+  ) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2)",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "Land"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+```{r}
+Gini_gjennomsnitt <- Gini_alle %>%
+  filter(!is.na(gini), gini > 0) %>%  # fjerner NA og 0-verdier
+  group_by(land) %>%
+  summarise(
+    gjennomsnitt_gini = round(mean(gini, na.rm = TRUE), 4),
+    sd_gini = round(sd(gini, na.rm = TRUE), 4),
+    min_gini = round(min(gini, na.rm = TRUE), 4),
+    max_gini = round(max(gini, na.rm = TRUE), 4),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(gjennomsnitt_gini))
+
+kable(
+  Gini_gjennomsnitt,
+  caption = "Gjennomsnittlig Gini-koeffisient per land (uten 0-verdier)",
+  align = "lcccc",
+  digits = 4
+)
+```
+
+```{r}
+ggplot(Gini_gjennomsnitt, aes(x = reorder(land, gjennomsnitt_gini), y = gjennomsnitt_gini, fill = land)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = round(gjennomsnitt_gini, 3)), vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c(
+     "Italia" = "#CCCC00",    
+      "Finland" = "#0000FF",   
+      "Romania" = "#C00000",   
+      "Litauen" = "#e7298a"
+  )) +
+  labs(
+    title = "Gjennomsnittlig Gini-koeffisient per land (2000–2023)",
+    subtitle = "Beregnet på NUTS2-nivå, uten nullverdier",
+    x = "Land",
+    y = "Gjennomsnittlig Gini"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+
+```{r}
+# Beregn gjennomsnittlig Gini per år (på tvers av alle land)
+Gini_total <- Gini_alle %>%
+  filter(!is.na(gini), gini > 0) %>%
+  group_by(aar) %>%
+  summarise(
+    gjennomsnitt_gini = mean(gini, na.rm = TRUE),
+    sd_gini = sd(gini, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Lag graf
+ggplot(Gini_total, aes(x = aar, y = gjennomsnitt_gini)) +
+  geom_line(color = "#0000FF", linewidth = 1.2) +
+  geom_point(color = "#0000FF", size = 2) +
+  geom_ribbon(aes(ymin = gjennomsnitt_gini - sd_gini,
+                  ymax = gjennomsnitt_gini + sd_gini),
+              fill = "#C27E3A", alpha = 0.15) +
+  labs(
+    title = "Gjennomsnittlig Gini-koeffisient over tid (alle land)",
+    subtitle = "Beregnet på NUTS2-nivå (2000–2023)",
     x = "År",
     y = "Gjennomsnittlig Gini-koeffisient"
   ) +
@@ -433,51 +578,23 @@ ggplot(Avg_Gini_Italia_per_aar, aes(x = Aar, y = Mean_Gini)) +
     panel.grid.minor = element_blank()
   )
 ```
-
-I tabellen over ser vi GINI koefisienten for alle NUTS2 regionene i vårt datasett som tilhører Italia.
-Koefisienten ligger i mellom 0,02 og 0,10 for majoriteten av regionene gjennom hele årrekken.
+I tabellen over ser vi GINI koeffisienten for alle NUTS2 regionene som tilhører vårt datasett. GINI verdien beskriver hvor jevn fordelt BNPPI er fordelt mellom NUTS3 regionene som havner i samme NUTS2 region. Koeffisienten ligger i mellom 0,02 og 0,11 for majoriteten av regionene gjennom hele årrekken.
 Dette indikerer at i hver enkelt NUTS2 region er det en jevn fordeling av BNPPI i de tilhørende NUTS3 regionene.
-Regionene ITC 4 og ITG2 skiller seg ut her da de gjennom hele rekken har en koefisient mellom 0,10 og 0,17.
-Dette tyder på at i disse regionene er det en større skjevfordeling av BNPPI enn i resten av landet.
-I en gjenomsnittberegning av den gjennomsnittelige Koefiseienten per år ligger den på rundt 0,05
+
 
 ```{r}
+# Bruker eksisterende datasett uten å filtrere bort noen år
+Gini_NUTS1_Alle <- Gini_alle
 
-# Filtrer for Italia (NUTS1 starter med "IT")
-Italia_NUTS2 <- NUTS2 %>%
-  filter(substr(NUTS2, 1, 2) == "IT")
-
-# Funksjon for å beregne Gini med vekt (Innbyggere)
-calc_gini_for_group <- function(df) {
-  if(nrow(df) < 2) return(NA_real_)  # Hvis for få observasjoner
-  gini.wtd(df$BNPPI, weights = df$Innbyggere)
-}
-
-# Beregn Gini på NUTS1-nivå per år
-Gini_NUTS1_Italia <- Italia_NUTS2 %>%
-  mutate(NUTS1 = substr(NUTS2, 1, 2)) %>%  # Legg til NUTS1-kode (IT)
-  group_by(NUTS1, Aar) %>%
-  summarise(
-    Gini = calc_gini_for_group(cur_data()),
-    Total_Pop = sum(Innbyggere, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-print(Gini_NUTS1_Italia)
-```
-
-```{r}
-Gini_NUTS1_Italia_filtered <- Gini_NUTS1_Italia %>%
-  filter(Aar >= 2001, Aar <= 2022)
-
-ggplot(Gini_NUTS1_Italia_filtered, aes(x = Aar, y = Gini, group = NUTS1, color = NUTS1)) +
+# Lager linjediagram for utviklingen av Gini på NUTS1-nivå
+ggplot(Gini_NUTS1_Alle, aes(x = aar, y = gini, group = land, color = land)) +
   geom_line(size = 1) +
   geom_point(size = 2) +
   labs(
-    title = "Utvikling i Gini-koeffisienten for Italia (NUTS1), 2001-2022",
+    title = "Utvikling i Gini-koeffisienten for Italia (NUTS1), 2000–2023",
     x = "År",
     y = "Gini-koeffisient",
-    color = "NUTS1 Region"
+    color = "NUTS1-region"
   ) +
   theme_minimal() +
   theme(
@@ -485,6 +602,7 @@ ggplot(Gini_NUTS1_Italia_filtered, aes(x = Aar, y = Gini, group = NUTS1, color =
     plot.title = element_text(face = "bold", size = 14),
     axis.text.x = element_text(angle = 45, hjust = 1)
   )
+
 ```
 
 Her er det laget et linediagram som viser utviklingen av GINI koefisient på NUTS1 region basert på fordelingen av BNPPI i NUTS2 regionene.
@@ -492,29 +610,24 @@ Dette tallet sier noe om fordelingen av BNPPI mellom NUTS2 regioner sett opp mot
 Koefisienten ligger mellom 0,17 og 0,19.
 Dette indikerer at det i Italia er en større skjevfordeling mellom NUTS2 regionene, enn det er i NUTS 3 regionene satt opp mot regioner i samme NUT2.
 
-```{r}
-# Filtrer NUTS2-regioner for Litauen (LT), Finland (FI) og Romania (RO) mellom 2001-2022
-Gini_selected_countries <- Gini_NUTS2_Aar %>%
-  mutate(NUTS1 = substr(NUTS2, 1, 2)) %>%
-  filter(NUTS1 %in% c("LT", "FI", "RO"), Aar >= 2001, Aar <= 2022)
+## Diskusjon
 
-# Lag linjediagram med NUTS2-regioner som separate linjer, farget etter region
-ggplot(Gini_selected_countries, aes(x = Aar, y = Gini, group = NUTS2, color = NUTS2)) +
-  geom_line(size = 1) +
-  geom_point(size = 2, alpha = 0.7) +
-  labs(
-    title = "Utvikling i Gini-koeffisient for NUTS2-regioner i Litauen, Finland og Romania (2001–2022)",
-    subtitle = "Hver linje representerer én NUTS2-region",
-    x = "År",
-    y = "Gini-koeffisient",
-    color = "NUTS2-region"
-  ) +
-  theme_minimal(base_size = 13) +
-  theme(
-    legend.position = "right",
-    legend.title = element_text(face = "bold"),
-    plot.title = element_text(face = "bold", size = 15),
-    plot.subtitle = element_text(size = 12),
-    panel.grid.minor = element_blank()
-  )
-```
+De beregnede Gini-koeffisientene for BNP per innbygger på NUTS2-nivå viser tydelige forskjeller i graden av regional ulikhet mellom landene i utvalget. Romania og Litauen har de høyeste gjennomsnittlige Gini-verdiene på henholdsvis 0,1139 og 0,1107, mens Italia (0,0510) og Finland (0,0346) viser langt lavere nivåer av regional ulikhet. Dette innebærer at de østeuropeiske landene, som i større grad har vært gjennom en overgangsøkonomi og rask omstilling etter EU-innlemmelsen, fortsatt opplever mer betydelige forskjeller i økonomisk utvikling mellom regionene sammenlignet med de mer etablerte økonomiene i Vest- og Nord-Europa.
+
+**Romania** skiller seg ut som landet med størst regional ulikhet. Både gjennomsnittet og variasjonen (standardavvik = 0.0350) er høye, noe som indikerer store forskjeller mellom regionene og betydelig endring over tid.
+
+Resultatene fra analysen viser tydelige mønstre i den regionale økonomiske ulikheten mellom de fire landene. Italia og Finland, som begge har modne og diversifiserte økonomier, viser lave og stabile Gini-koeffisienter. Dette indikerer at at inntektsnivået mellom regionen er relativt balansert, og at den økonomiske veksten har vært jevnt fordelt. Italia har likevel små, men medvarende forskjeller mellom nord og sør, noe som gjenspeiles i at enkelte NUTS2-regioner ligger over landsgjennomsnittet.
+
+Romania og Litauen viser derimot høyere Gini-koeffisienter, som peker på større regionale forskjeller. i Romania skyldes dette i stor grad forskjellen mellom hovedstadregionen Bucuresti-Ilfov og de litt mer landlige regionene. Litauen viser et lignende mønster, med rask vekst i Vilnius-regionen sammenlignet med de sørlige og østlige områdene.
+
+Over tid ser vi altså en økende konvergens mellom landene, men fortsatt betydelig intern ulikhet i de nye EU-medlemmene. Denne utviklingen kan 
+
+
+
+
+
+
+Gjennomsnittlig BNP per innbygger i utvalget er **19 883 euro**, med et standardavvik på **11 386 euro**, noe som viser en tydelig variasjon i økonomisk velstand mellom regionene. Minimumsverdien er **825 euro**, mens maksimum når opp mot **66 633 euro**, som reflekterer store forskjeller mellom utviklede regioner i Italia og Finland sammenlignet med mindre utviklede områder i Romania og Litauen. Medianverdien på **20 462 euro** ligger nær gjennomsnittet, noe som indikerer en tilnærmet symmetrisk fordeling, men noen enkelte regioner med svært høyt BNP per innbygger trekker gjennomsnittet litt opp.
+
+
+Over tid viser dataene en jevn vekst i BNP per innbygger i alle fire land. Finland og Italia hadde de høyeste nivåene gjennom hele perioden, mens Romania og Litauen viser sterk vekst og gradvis konvergens mot de rike landene etter 2010. Figurene nedenfor illustrerer både tidsutviklingen i gjennomsnittlig BNP per innbygger og fordelingen mellom regionene i det siste observasjonsåret, som danner grunnlaget for videre analyse av regional ulikhet i del B.
