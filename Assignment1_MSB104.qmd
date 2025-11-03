@@ -553,8 +553,9 @@ ggplot(Gini_gjennomsnitt, aes(x = reorder(land, gjennomsnitt_gini), y = gjennoms
     x = "Land",
     y = "Gjennomsnittlig Gini"
   ) +
-  theme_minimal(base_size = 13) +
-  theme(plot.title = element_text(face = "bold", size = 15))
+  theme_minimal(base_size = 10) +
+  theme(plot.title = element_text(face = "bold", size = 12)) +
+  expand_limits(y = max(Gini_gjennomsnitt$gjennomsnitt_gini) + 0.01)
 
 ```
 
@@ -582,9 +583,9 @@ ggplot(Gini_total, aes(x = aar, y = gjennomsnitt_gini)) +
     x = "År",
     y = "Gjennomsnittlig Gini-koeffisient"
   ) +
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 10) +
   theme(
-    plot.title = element_text(face = "bold", size = 15),
+    plot.title = element_text(face = "bold", size = 12),
     panel.grid.minor = element_blank()
   )
 ```
@@ -595,7 +596,7 @@ Koeffisienten ligger i mellom 0,02 og 0,11 for majoriteten av regionene gjennom 
 Dette indikerer at i hver enkelt NUTS2 region er det en jevn fordeling av BNPPI i de tilhørende NUTS3 regionene.
 
 ```{r}
-# Lag NUTS2-kode fra NUTS3-kode (første 4 bokstaver)
+# Lag NUTS1-kode fra NUTS3-kode (første 2 bokstaver)
 KombinertRen <- KombinertRen %>%
   mutate(
     nuts1 = substr(geo, 1, 2),
