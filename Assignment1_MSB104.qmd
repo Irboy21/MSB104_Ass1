@@ -698,22 +698,12 @@ Dette innebærer at de østeuropeiske landene, som i større grad har vært gjen
 **Romania** skiller seg ut som landet med størst regional ulikhet.
 Både gjennomsnittet og variasjonen (standardavvik = 0.0350) er høye, noe som indikerer store forskjeller mellom regionene og betydelig endring over tid.
 
-Resultatene fra analysen viser tydelige mønstre i den regionale økonomiske ulikheten mellom de fire landene.
-Italia og Finland, som begge har modne og diversifiserte økonomier, viser lave og stabile Gini-koeffisienter.
-Dette indikerer at at inntektsnivået mellom regionen er relativt balansert, og at den økonomiske veksten har vært jevnt fordelt.
-Italia har likevel små, men medvarende forskjeller mellom nord og sør, noe som gjenspeiles i at enkelte NUTS2-regioner ligger over landsgjennomsnittet.
 
-Romania og Litauen viser derimot høyere Gini-koeffisienter, som peker på større regionale forskjeller.
-i Romania skyldes dette i stor grad forskjellen mellom hovedstadregionen Bucuresti-Ilfov og de litt mer landlige regionene.
-Litauen viser et lignende mønster, med rask vekst i Vilnius-regionen sammenlignet med de sørlige og østlige områdene.
+Samlet sett viser tidsserien for Gini-koeffisientene på NUTS2-nivå at de fleste landene opplever svak økning i ulikhet etter 2010, noe som sammenfaller med finanskrisen og senere perioder med økonomisk omstilling. Øst-Europa (spesielt Romania og Litauen) viser tegn til økonomisk konvergens på nasjonalt nivå, men ikke nødvendigvis på regionalt nivå – de rikeste regionene vokser fortsatt raskere enn resten. I Vest- og Nord-Europa er bildet mer stabilt, men den økonomiske veksten er også i større grad konsentrert i byområder.
 
-Over tid ser vi altså en økende konvergens mellom landene, men fortsatt betydelig intern ulikhet i de nye EU-medlemmene.
-Denne utviklingen kan
 
-Gjennomsnittlig BNP per innbygger i utvalget er **19 883 euro**, med et standardavvik på **11 386 euro**, noe som viser en tydelig variasjon i økonomisk velstand mellom regionene.
-Minimumsverdien er **825 euro**, mens maksimum når opp mot **66 633 euro**, som reflekterer store forskjeller mellom utviklede regioner i Italia og Finland sammenlignet med mindre utviklede områder i Romania og Litauen.
-Medianverdien på **20 462 euro** ligger nær gjennomsnittet, noe som indikerer en tilnærmet symmetrisk fordeling, men noen enkelte regioner med svært høyt BNP per innbygger trekker gjennomsnittet litt opp.
 
-Over tid viser dataene en jevn vekst i BNP per innbygger i alle fire land.
-Finland og Italia hadde de høyeste nivåene gjennom hele perioden, mens Romania og Litauen viser sterk vekst og gradvis konvergens mot de rike landene etter 2010.
-Figurene nedenfor illustrerer både tidsutviklingen i gjennomsnittlig BNP per innbygger og fordelingen mellom regionene i det siste observasjonsåret, som danner grunnlaget for videre analyse av regional ulikhet i del B.
+## Del C: Dokumentasjon av AI
+
+Vi har benyttet chatGTP modell 4.1 og 5 gjennom denne oppgaven. Først har vi benyttet AI til å tolke og forstå oppgaveteksten samt gitt oss et utgangspunkt til hvor vi skal starte med behandlingen av eurostat dataene. Videre har vi benyttet AI til å finne/løse feil i kodene. Ledeteksten vi har benyttet er å gi oppgaveteksten og pensum til chatGPT. Dette ga oss flere ideer om ulike modeller som vi har benyttet i denne oppgaven.
+
