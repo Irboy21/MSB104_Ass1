@@ -45,12 +45,12 @@ BNP <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
 PopulasjonLang <- Populasjon %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "Aar",
-    values_to = "Innbyggere"
+    names_to = "aar",
+    values_to = "befolkning"
   ) %>%
   mutate(
-    Aar = as.integer(str_remove(Aar, "^x")),
-    Innbyggere = as.numeric(str_replace_all(Innbyggere, " ", ""))
+    aar = as.integer(str_remove(aar, "^x")),
+    befolkning = as.numeric(str_replace_all(befolkning, " ", ""))
   )
 
 
@@ -63,11 +63,11 @@ PopulasjonLang <- Populasjon %>%
 BNPLang <- BNP %>%
   pivot_longer(
     cols = starts_with("x"),
-    names_to = "Aar",
+    names_to = "aar",
     values_to = "BNP"
   ) %>%
   mutate(
-    Aar = as.integer(str_remove(Aar, "^x")),
+    aar = as.integer(str_remove(aar, "^x")),
     BNP = as.numeric(str_replace_all(BNP, " ", ""))
   )
 ```
@@ -83,11 +83,11 @@ Etter inntektsmetoden regnes BNP på følgende måte: Lønn som utbetales til an
 ```{r}
 # Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner 
 
-BNPPI <- PopulasjonLang %>% 
-left_join(BNPLang, by = join_by(region, Aar)) %>%
-mutate( Innbyggere = as.numeric(Innbyggere), 
+Kombinert <- PopulasjonLang %>% 
+left_join(BNPLang, by = join_by(region, aar)) %>%
+mutate( befolkning = as.numeric(befolkning), 
 BNP = as.numeric(BNP), 
-BNPPI = (BNP * 1e6) / Innbyggere, )
+BNPPI = (BNP * 1e6) / befolkning, )
 
   
 ```
@@ -96,14 +96,14 @@ BNPPI = (BNP * 1e6) / Innbyggere, )
 
 ```{r}
 #Hvor mange observasjoner det er totalt i BNPPI
-nrow(BNPPI)
+nrow(Kombinert)
 
 ```
 
 \
 
 ```{r}
-BNPPI %>%
+Kombinert %>%
   summarise(across(everything(), ~ sum(is.na(.x))))
 ```
 
@@ -116,29 +116,31 @@ For å videre kunne jobbe mer effektivt i utarbeidelsen av tabellene, lager vi e
 ```{r}
 #Fjerner alle regioner med NA verdier
 
-BNPPIRen <- na.omit(BNPPI)
+KombinertRen <- na.omit(Kombinert)
 
 ```
 
 ```{r}
 
-# Grupper etter år
-
-BNPPIRen %>%
-  mutate(Aar = as.numeric(Aar)) %>% 
-  group_by(Aar) %>%  
+KombinertRen %>%
+  mutate(
+    aar = as.numeric(aar),
+    BNPPI = as.numeric(BNPPI)
+  ) %>% 
+  group_by(aar) %>%  
   summarise(
     gjennomsnitt_BNPPI = mean(BNPPI),
-    median_BNPPI      = median(BNPPI),
-    minste_BNPPI      = min(BNPPI),
-    største_BNPPI     = max(BNPPI)
+    median_BNPPI       = median(BNPPI),
+    minste_BNPPI       = min(BNPPI),
+    største_BNPPI      = max(BNPPI)
   ) %>%
-  arrange(Aar) %>%
+  arrange(aar) %>%
   mutate(across(
     gjennomsnitt_BNPPI:største_BNPPI,
     ~ label_number(big.mark = " ")(.)
   )) %>%
   kable()
+
 
 
 ```
@@ -150,8 +152,8 @@ For å enkelere visualisere dette lager vi linediagramer for sentrale mål.
 
 ```{r}
 #Lager et linjediagram som viser utvikling av mean og median BNPPI
-BNPPIRen %>%
-  group_by(Aar) %>% 
+KombinertRen %>%
+  group_by(aar) %>% 
   summarise(
     Gjennomsnitt = mean(BNPPI, na.rm = TRUE),
     Median = median(BNPPI, na.rm = TRUE)
@@ -161,7 +163,7 @@ BNPPIRen %>%
     names_to = "Statistikk",
     values_to = "BNPPI_verdi"
   ) %>%
-  ggplot(aes(x = Aar, y = BNPPI_verdi, color = Statistikk)) +
+  ggplot(aes(x = aar, y = BNPPI_verdi, color = Statistikk)) +
   geom_line(size = 1.2) +
   geom_point(size = 2) +
   labs(
@@ -194,13 +196,13 @@ Dette kommer av at noen land gjenerelt sett har høyere BNP enn andre.
 
 ```{r}
 #Sjekke hvor mange observasjoner det er og hvor mange som inneholder NA verdier per år
-BNPPI %>%
-  group_by(Aar) %>%
+Kombinert %>%
+  group_by(aar) %>%
   summarise(
-    antall_NA = sum(is.na(BNPPI)),
+    antall_NA = sum(is.na(Kombinert)),
     total_obs = n()
   ) %>%
-  arrange(Aar) %>%
+  arrange(aar) %>%
   kable() %>%
   kable_styling(full_width = FALSE, position = "left")
 ```
