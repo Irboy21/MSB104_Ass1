@@ -164,7 +164,7 @@ KombinertRen %>%
     values_to = "BNPPI_verdi"
   ) %>%
   ggplot(aes(x = aar, y = BNPPI_verdi, color = Statistikk)) +
-  geom_line(size = 1.2) +
+  geom_line(linewidth = 1.2) +
   geom_point(size = 2) +
   labs(
     title = "Utvikling i BNP per innbygger (gjennomsnitt og median)",
@@ -199,7 +199,7 @@ Dette kommer av at noen land gjenerelt sett har høyere BNP enn andre.
 Kombinert %>%
   group_by(aar) %>%
   summarise(
-    antall_NA = sum(is.na(Kombinert)),
+    antall_NA = sum(is.na(BNPPI)),
     total_obs = n()
   ) %>%
   arrange(aar) %>%
