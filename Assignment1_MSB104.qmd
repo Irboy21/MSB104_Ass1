@@ -404,7 +404,7 @@ ggplot(Gini_FI, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   theme(plot.title = element_text(face = "bold", size = 12))
 
 ```
-Tabellen over viser at ulikheten mellom regionene synker gradvis fra rundt 2005 til 2020, noe som tyder på økende økonomisk konvergens mellom regionene. Mot slutten ser vi en svak økning i ulikhet, og en ny region dukker opp med verdier kun fra 2023, noe som forklarer den brå linjen helt til høyre i figuren
+Tabellen over viser Gini-koeffisienten for regionene i Finland. Vi ser at to av regionene ikke vises eller er på null, dette skyldes at det ikke er noe data fra disse regionene. I grafen ser vi at ulikheten mellom regionene synker gradvis fra rundt 2005 til 2020, noe som tyder på økende økonomisk konvergens mellom regionene. Mot slutten ser vi en svak økning i ulikhet, og en ny region dukker opp med verdier kun fra 2023, noe som forklarer den brå linjen helt til høyre i figuren
 
 
 ```{r}
@@ -427,8 +427,8 @@ ggplot(Gini_RO, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
     y = "Gini-koeffisient",
     color = "NUTS2-region"
   ) +
-  theme_minimal(base_size = 13) +
-  theme(plot.title = element_text(face = "bold", size = 15))
+  theme_minimal(base_size = 10) +
+  theme(plot.title = element_text(face = "bold", size = 12))
 
 ```
 
@@ -453,8 +453,8 @@ ggplot(Gini_LT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
     y = "Gini-koeffisient",
     color = "NUTS2-region"
   ) +
-  theme_minimal(base_size = 13) +
-  theme(plot.title = element_text(face = "bold", size = 15))
+  theme_minimal(base_size = 10) +
+  theme(plot.title = element_text(face = "bold", size = 12))
 
 ```
 
@@ -486,6 +486,9 @@ ggplot(Gini_alle, aes(x = aar, y = gini, color = land, group = nuts2)) +
   theme(plot.title = element_text(face = "bold", size = 15))
 
 ```
+Grafen viser utviklingen i Gini-koeffisienten på NUTS2-nivå for Italia, Finland, Romania og Litauen. 
+Romania (rød) har gjennom hele perioden de høyeste verdiene, med tydelige svingninger som indikerer store økonomiske forskjeller mellom regionene. Italia (gul) har også relativt høye og varierende verdier, men generelt lavere enn Romania. Litauen (rosa) ligger stabilt midt i feltet med moderat ulikhet, mens Finland (blå) har de laveste og mest stabile Gini-verdiene over tid. Samlet sett viser grafen at regionale ulikheter er størst i Romania og minst i Finland, mens Italia og Litauen ligger mellom disse ytterpunktene.
+
 
 ```{r}
 Gini_gjennomsnitt <- Gini_alle %>%
