@@ -33,6 +33,7 @@ Sys.setlocale("LC_ALL", "Norwegian")
 ```
 
 # Part A Sub-national GDP and GDP per capita
+
 ## Data aquisition
 
 ```{r, echo=TRUE}
@@ -45,7 +46,6 @@ BNP <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
   clean_names()
 
 ```
-
 
 ```{r, echo=TRUE}
 # Omgjør Populasjonen til langt format
@@ -77,14 +77,17 @@ BNPLang <- BNP %>%
 
 ### Kort gjennomgang av datasett og variabler
 
-Datasette *demo_r_pjanggr3* som er hentet fra Eurostat inneholder årlige befolkningestimater på NUTS3-nivå for EU-, EFTA- og kandidatland. Variablene **values** viser totalt antall bosatte personer per 1. januar, målt i antall personer. Hver observasjon identifiseres ved regionkode(**geo**) og år (**time**), samnt kjønn (**sex**) og alder (**age**). I denne analysen benyttes kun total befolkning (**sex = T**,**age = TOTAL**), slik at dataene ikke er splittet etter kjønn eller alder.
+Datasette *demo_r_pjanggr3* som er hentet fra Eurostat inneholder årlige befolkningestimater på NUTS3-nivå for EU-, EFTA- og kandidatland.
+Variablene **values** viser totalt antall bosatte personer per 1.
+januar, målt i antall personer.
+Hver observasjon identifiseres ved regionkode(**geo**) og år (**time**), samnt kjønn (**sex**) og alder (**age**).
+I denne analysen benyttes kun total befolkning (**sex = T**,**age = TOTAL**), slik at dataene ikke er splittet etter kjønn eller alder.
 
 Det finnes ulike hoved metoder å beregne brytto nasjonalt produkt på.
 Eurostat har valgt å benytte den såkalte «inntekstmetoden».
 Eurostat velger denne metoden ovenfor utgifts metoden grunnet mangel på data over gode overføringer mellom regioner.
 
 Etter inntektsmetoden regnes BNP på følgende måte: Lønn som utbetales til ansatte + bedrifter sin fortjeneste + skatte og avgifter minus subsidier gitt fra staten + avskrivinger knyttet til industri.
-
 
 ## BNP per innbygger
 
@@ -98,8 +101,6 @@ BNP = as.numeric(BNP),
 BNPPI = (BNP * 1e6) / befolkning, )
 
 ```
-
- 
 
 ```{r}
 # Fjerner alle regioner med NA verdier
@@ -122,12 +123,11 @@ Kombinert %>%
 
 ```
 
-
 I tabellene over har vi kombinert de to datasettene hentet fra Eurostat.
 Vi har da en tabell som viser BNP per innbygger i hvert av NUTS3 områdene for delt på år.
-I hver observasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi. Datasettet består av totalt 4680 observasjoner, og 841 av dem ender opp ned NA verdi i BNPPI.
+I hver observasjon hvor det forekommer en NA verdi i populasjon og eller total BNP vil også få BNPPI som NA verdi.
+Datasettet består av totalt 4680 observasjoner, og 841 av dem ender opp ned NA verdi i BNPPI.
 For å videre kunne jobbe mer effektivt i utarbeidelsen av tabellene, lager vi et nytt datasett hvor alle observasjoner med NA verdi er fjernet.
-
 
 ```{r}
 
@@ -156,7 +156,10 @@ kable(
 
 ```
 
-I tabellen over ser vi utviklingen av gjennomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023. Verdiene er basert på alle observasjonene fra datasettet hvor observasjoner med NA verdier er fjernet. Videre skal vi lage en deskriptiv analyse utifra statistikken som fremkommer av datasettet. For å enklere visualisere dette lager vi linediagrammer for sentrale mål.
+I tabellen over ser vi utviklingen av gjennomsnitt, median, minste og høyeste verdi for BNP per inbygger for fra år 2000 til år 2023.
+Verdiene er basert på alle observasjonene fra datasettet hvor observasjoner med NA verdier er fjernet.
+Videre skal vi lage en deskriptiv analyse utifra statistikken som fremkommer av datasettet.
+For å enklere visualisere dette lager vi linediagrammer for sentrale mål.
 
 ```{r}
 #Lager et linjediagram som viser utvikling av mean og median BNPPI
@@ -312,7 +315,12 @@ Ved å sammenligne estimatene med faktiske BNP data kommer det frem at teorien i
 
 ## Beregne Gini-koeffisient på vårt datasett
 
-Videre i oppgaven skal vi beregne Gini-koeffisienten på NUTS2 nivå for landene Italia, Finland, Romania og Litauen. Første steg er å transformere KombinertRen datasettet våres for NUTS3 regioner til en oversikt over NUTS2 regioner. Hver NUTS3 region har en tilhørende "geo" kode. Disse består av 5 tegn, for eksempel ITC31 for Imperia. De fire første symbolene er det samme som NUTS 2 geo koden. Ved å samle alle observasjoner hvor de første første symbolene er like kan vi lage en datasett fordelt på NUTS 2 regioner.
+Videre i oppgaven skal vi beregne Gini-koeffisienten på NUTS2 nivå for landene Italia, Finland, Romania og Litauen.
+Første steg er å transformere KombinertRen datasettet våres for NUTS3 regioner til en oversikt over NUTS2 regioner.
+Hver NUTS3 region har en tilhørende "geo" kode.
+Disse består av 5 tegn, for eksempel ITC31 for Imperia.
+De fire første symbolene er det samme som NUTS 2 geo koden.
+Ved å samle alle observasjoner hvor de første første symbolene er like kan vi lage en datasett fordelt på NUTS 2 regioner.
 
 ```{r}
 # Lag NUTS2-kode fra NUTS3-kode (første 4 bokstaver)
@@ -344,9 +352,9 @@ nuts2_telling %>%
   )
 ```
 
-I datasettet er det tilsammen 36 NUTS2 regioner, men hvilken land disse faller innenfor er ganske skjevfordelt. Det er 21 NUTS2 regioner fra Italia, mens Litauen har 2.
+I datasettet er det tilsammen 36 NUTS2 regioner, men hvilken land disse faller innenfor er ganske skjevfordelt.
+Det er 21 NUTS2 regioner fra Italia, mens Litauen har 2.
 Finland og Romania har henholdsvis 5 og 8 NUTS2 regioner.
-
 
 ```{r}
 Gini_IT <- KombinertRen %>%
@@ -378,7 +386,9 @@ ggplot(Gini_IT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   )
 ```
 
-Regionene ITC 4 og ITG2 skiller seg ut her da de gjennom hele rekken har en koeffisient mellom 0,10 og 0,17. Dette tyder på at i disse regionene er det en større skjevfordeling av BNPPI enn i resten av landet. I en gjennomsnittsberegning av den gjennomsnittlige Koeffisienten per år ligger den på rundt 0,05.
+Regionene ITC 4 og ITG2 skiller seg ut her da de gjennom hele rekken har en koeffisient mellom 0,10 og 0,17.
+Dette tyder på at i disse regionene er det en større skjevfordeling av BNPPI enn i resten av landet.
+I en gjennomsnittsberegning av den gjennomsnittlige Koeffisienten per år ligger den på rundt 0,05.
 
 ```{r}
 Gini_FI <- KombinertRen %>%
@@ -404,8 +414,11 @@ ggplot(Gini_FI, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   theme(plot.title = element_text(face = "bold", size = 12))
 
 ```
-Tabellen over viser Gini-koeffisienten for regionene i Finland. Vi ser at to av regionene ikke vises eller er på null, dette skyldes at det ikke er noe data fra disse regionene. I grafen ser vi at ulikheten mellom regionene synker gradvis fra rundt 2005 til 2020, noe som tyder på økende økonomisk konvergens mellom regionene. Mot slutten ser vi en svak økning i ulikhet, og en ny region dukker opp med verdier kun fra 2023, noe som forklarer den brå linjen helt til høyre i figuren
 
+Tabellen over viser Gini-koeffisienten for regionene i Finland.
+Vi ser at to av regionene ikke vises eller er på null, dette skyldes at det ikke er noe data fra disse regionene.
+I grafen ser vi at ulikheten mellom regionene synker gradvis fra rundt 2005 til 2020, noe som tyder på økende økonomisk konvergens mellom regionene.
+Mot slutten ser vi en svak økning i ulikhet, og en ny region dukker opp med verdier kun fra 2023, noe som forklarer den brå linjen helt til høyre i figuren
 
 ```{r}
 Gini_RO <- KombinertRen %>%
@@ -432,6 +445,9 @@ ggplot(Gini_RO, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
 
 ```
 
+Romaina viser et større sprik i fordelingen av Gini koeffisienten enn Italia.
+Gjennomsnittet ligger på 0,11, mens majoriteten av NUTS2 regionene faller innenfor intervallet 0,6 til 0,17.
+ Blant de fire landene vi analyserer har Romania den største variasjonen i hvor jevn BNPPI er fordelt mellom NUTS3 basert på tilhørende NUTS2 region.
 
 ```{r}
 Gini_LT <- KombinertRen %>%
@@ -457,6 +473,13 @@ ggplot(Gini_LT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   theme(plot.title = element_text(face = "bold", size = 12))
 
 ```
+
+Litauen består av to NUTS 2 regioner.
+LT01 består av bare en NUTS3 region, og det er ikke mulig å beregne en GINI koeffisient i regionen.
+LT01 viser gjennom tidsrekken en økende trend.
+Dette tyder på at de to siste tiårene har det oppstått en større skjevfordeling av ressurser mellom NUTS3 regionene tilhørerne LT01.
+Regionen har ca.
+en dobbelt så stor Koeffisient som Italia sitt gjennomsnitt, men skjevfordelingen er lavere enn Italias region med høyest koeffisient.
 
 ```{r}
 Gini_alle <- bind_rows(
@@ -486,9 +509,12 @@ ggplot(Gini_alle, aes(x = aar, y = gini, color = land, group = nuts2)) +
   theme(plot.title = element_text(face = "bold", size = 15))
 
 ```
-Grafen viser utviklingen i Gini-koeffisienten på NUTS2-nivå for Italia, Finland, Romania og Litauen. 
-Romania (rød) har gjennom hele perioden de høyeste verdiene, med tydelige svingninger som indikerer store økonomiske forskjeller mellom regionene. Italia (gul) har også relativt høye og varierende verdier, men generelt lavere enn Romania. Litauen (rosa) ligger stabilt midt i feltet med moderat ulikhet, mens Finland (blå) har de laveste og mest stabile Gini-verdiene over tid. Samlet sett viser grafen at regionale ulikheter er størst i Romania og minst i Finland, mens Italia og Litauen ligger mellom disse ytterpunktene.
 
+Grafen viser utviklingen i Gini-koeffisienten på NUTS2-nivå for Italia, Finland, Romania og Litauen.
+Romania (rød) har gjennom hele perioden de høyeste verdiene, med tydelige svingninger som indikerer store økonomiske forskjeller mellom regionene.
+Italia (gul) har også relativt høye og varierende verdier, men generelt lavere enn Romania.
+Litauen (rosa) ligger stabilt midt i feltet med moderat ulikhet, mens Finland (blå) har de laveste og mest stabile Gini-verdiene over tid.
+Samlet sett viser grafen at regionale ulikheter er størst i Romania og minst i Finland, mens Italia og Litauen ligger mellom disse ytterpunktene.
 
 ```{r}
 Gini_gjennomsnitt <- Gini_alle %>%
@@ -532,7 +558,6 @@ ggplot(Gini_gjennomsnitt, aes(x = reorder(land, gjennomsnitt_gini), y = gjennoms
 
 ```
 
-
 ```{r}
 # Beregn gjennomsnittlig Gini per år (på tvers av alle land)
 Gini_total <- Gini_alle %>%
@@ -563,9 +588,11 @@ ggplot(Gini_total, aes(x = aar, y = gjennomsnitt_gini)) +
     panel.grid.minor = element_blank()
   )
 ```
-I tabellen over ser vi GINI koeffisienten for alle NUTS2 regionene som tilhører vårt datasett. GINI verdien beskriver hvor jevn fordelt BNPPI er fordelt mellom NUTS3 regionene som havner i samme NUTS2 region. Koeffisienten ligger i mellom 0,02 og 0,11 for majoriteten av regionene gjennom hele årrekken.
-Dette indikerer at i hver enkelt NUTS2 region er det en jevn fordeling av BNPPI i de tilhørende NUTS3 regionene.
 
+I tabellen over ser vi GINI koeffisienten for alle NUTS2 regionene som tilhører vårt datasett.
+GINI verdien beskriver hvor jevn fordelt BNPPI er fordelt mellom NUTS3 regionene som havner i samme NUTS2 region.
+Koeffisienten ligger i mellom 0,02 og 0,11 for majoriteten av regionene gjennom hele årrekken.
+Dette indikerer at i hver enkelt NUTS2 region er det en jevn fordeling av BNPPI i de tilhørende NUTS3 regionene.
 
 ```{r}
 # Bruker eksisterende datasett uten å filtrere bort noen år
@@ -597,22 +624,29 @@ Dette indikerer at det i Italia er en større skjevfordeling mellom NUTS2 region
 
 ## Diskusjon
 
-De beregnede Gini-koeffisientene for BNP per innbygger på NUTS2-nivå viser tydelige forskjeller i graden av regional ulikhet mellom landene i utvalget. Romania og Litauen har de høyeste gjennomsnittlige Gini-verdiene på henholdsvis 0,1139 og 0,1107, mens Italia (0,0510) og Finland (0,0346) viser langt lavere nivåer av regional ulikhet. Dette innebærer at de østeuropeiske landene, som i større grad har vært gjennom en overgangsøkonomi og rask omstilling etter EU-innlemmelsen, fortsatt opplever mer betydelige forskjeller i økonomisk utvikling mellom regionene sammenlignet med de mer etablerte økonomiene i Vest- og Nord-Europa.
+De beregnede Gini-koeffisientene for BNP per innbygger på NUTS2-nivå viser tydelige forskjeller i graden av regional ulikhet mellom landene i utvalget.
+Romania og Litauen har de høyeste gjennomsnittlige Gini-verdiene på henholdsvis 0,1139 og 0,1107, mens Italia (0,0510) og Finland (0,0346) viser langt lavere nivåer av regional ulikhet.
+Dette innebærer at de østeuropeiske landene, som i større grad har vært gjennom en overgangsøkonomi og rask omstilling etter EU-innlemmelsen, fortsatt opplever mer betydelige forskjeller i økonomisk utvikling mellom regionene sammenlignet med de mer etablerte økonomiene i Vest- og Nord-Europa.
 
-**Romania** skiller seg ut som landet med størst regional ulikhet. Både gjennomsnittet og variasjonen (standardavvik = 0.0350) er høye, noe som indikerer store forskjeller mellom regionene og betydelig endring over tid.
+**Romania** skiller seg ut som landet med størst regional ulikhet.
+Både gjennomsnittet og variasjonen (standardavvik = 0.0350) er høye, noe som indikerer store forskjeller mellom regionene og betydelig endring over tid.
 
-Resultatene fra analysen viser tydelige mønstre i den regionale økonomiske ulikheten mellom de fire landene. Italia og Finland, som begge har modne og diversifiserte økonomier, viser lave og stabile Gini-koeffisienter. Dette indikerer at at inntektsnivået mellom regionen er relativt balansert, og at den økonomiske veksten har vært jevnt fordelt. Italia har likevel små, men medvarende forskjeller mellom nord og sør, noe som gjenspeiles i at enkelte NUTS2-regioner ligger over landsgjennomsnittet.
+Resultatene fra analysen viser tydelige mønstre i den regionale økonomiske ulikheten mellom de fire landene.
+Italia og Finland, som begge har modne og diversifiserte økonomier, viser lave og stabile Gini-koeffisienter.
+Dette indikerer at at inntektsnivået mellom regionen er relativt balansert, og at den økonomiske veksten har vært jevnt fordelt.
+Italia har likevel små, men medvarende forskjeller mellom nord og sør, noe som gjenspeiles i at enkelte NUTS2-regioner ligger over landsgjennomsnittet.
 
-Romania og Litauen viser derimot høyere Gini-koeffisienter, som peker på større regionale forskjeller. i Romania skyldes dette i stor grad forskjellen mellom hovedstadregionen Bucuresti-Ilfov og de litt mer landlige regionene. Litauen viser et lignende mønster, med rask vekst i Vilnius-regionen sammenlignet med de sørlige og østlige områdene.
+Romania og Litauen viser derimot høyere Gini-koeffisienter, som peker på større regionale forskjeller.
+i Romania skyldes dette i stor grad forskjellen mellom hovedstadregionen Bucuresti-Ilfov og de litt mer landlige regionene.
+Litauen viser et lignende mønster, med rask vekst i Vilnius-regionen sammenlignet med de sørlige og østlige områdene.
 
-Over tid ser vi altså en økende konvergens mellom landene, men fortsatt betydelig intern ulikhet i de nye EU-medlemmene. Denne utviklingen kan 
+Over tid ser vi altså en økende konvergens mellom landene, men fortsatt betydelig intern ulikhet i de nye EU-medlemmene.
+Denne utviklingen kan
 
+Gjennomsnittlig BNP per innbygger i utvalget er **19 883 euro**, med et standardavvik på **11 386 euro**, noe som viser en tydelig variasjon i økonomisk velstand mellom regionene.
+Minimumsverdien er **825 euro**, mens maksimum når opp mot **66 633 euro**, som reflekterer store forskjeller mellom utviklede regioner i Italia og Finland sammenlignet med mindre utviklede områder i Romania og Litauen.
+Medianverdien på **20 462 euro** ligger nær gjennomsnittet, noe som indikerer en tilnærmet symmetrisk fordeling, men noen enkelte regioner med svært høyt BNP per innbygger trekker gjennomsnittet litt opp.
 
-
-
-
-
-Gjennomsnittlig BNP per innbygger i utvalget er **19 883 euro**, med et standardavvik på **11 386 euro**, noe som viser en tydelig variasjon i økonomisk velstand mellom regionene. Minimumsverdien er **825 euro**, mens maksimum når opp mot **66 633 euro**, som reflekterer store forskjeller mellom utviklede regioner i Italia og Finland sammenlignet med mindre utviklede områder i Romania og Litauen. Medianverdien på **20 462 euro** ligger nær gjennomsnittet, noe som indikerer en tilnærmet symmetrisk fordeling, men noen enkelte regioner med svært høyt BNP per innbygger trekker gjennomsnittet litt opp.
-
-
-Over tid viser dataene en jevn vekst i BNP per innbygger i alle fire land. Finland og Italia hadde de høyeste nivåene gjennom hele perioden, mens Romania og Litauen viser sterk vekst og gradvis konvergens mot de rike landene etter 2010. Figurene nedenfor illustrerer både tidsutviklingen i gjennomsnittlig BNP per innbygger og fordelingen mellom regionene i det siste observasjonsåret, som danner grunnlaget for videre analyse av regional ulikhet i del B.
+Over tid viser dataene en jevn vekst i BNP per innbygger i alle fire land.
+Finland og Italia hadde de høyeste nivåene gjennom hele perioden, mens Romania og Litauen viser sterk vekst og gradvis konvergens mot de rike landene etter 2010.
+Figurene nedenfor illustrerer både tidsutviklingen i gjennomsnittlig BNP per innbygger og fordelingen mellom regionene i det siste observasjonsåret, som danner grunnlaget for videre analyse av regional ulikhet i del B.
