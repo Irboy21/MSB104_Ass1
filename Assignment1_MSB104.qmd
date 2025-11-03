@@ -684,10 +684,7 @@ ggplot(Gini_alle_NUTS1, aes(x = aar, y = gini, color = land, group = nuts1)) +
   theme(plot.title = element_text(face = "bold", size = 15))
 ```
 
-Her er det laget et linediagram som viser utviklingen av GINI koefisient på NUTS1 region basert på fordelingen av BNPPI i NUTS2 regionene.
-Dette tallet sier noe om fordelingen av BNPPI mellom NUTS2 regioner sett opp mot hele landet.
-Koefisienten ligger mellom 0,17 og 0,19.
-Dette indikerer at det i Italia er en større skjevfordeling mellom NUTS2 regionene, enn det er i NUTS 3 regionene satt opp mot regioner i samme NUT2.
+Her er det laget et linjediagram som viser utviklingen av GINI koeffisient på NUTS1-nivå (Land) basert på fordelingen av BNPPI i NUTS2 regionene. Koeffisientene sier noe om fordelingen av BNPPI mellom NUTS2 regioner sett opp mot hele landet. Vi ser at Italia sin koeffisienten ligger mellom 0,17 og 0,19. Dette indikerer at det i Italia er en større skjevfordeling mellom NUTS2 regionene, enn det er i NUTS3 regionene satt opp mot regioner i samme NUTS2.
 
 ## Diskusjon
 
