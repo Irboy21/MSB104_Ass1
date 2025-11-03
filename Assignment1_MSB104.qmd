@@ -87,7 +87,7 @@ Kombinert <- PopulasjonLang %>%
 Kombinert <- Kombinert %>%
   filter(!is.na(bnp_per_innbygger))
 ```
-
+  
 
 ## Decriptive Analysis
 ```{r}
