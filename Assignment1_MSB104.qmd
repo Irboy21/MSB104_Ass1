@@ -282,9 +282,7 @@ En teori som kan forklare at median og gjennomsnittsverdiene er veldig lave i fo
 
 # Part B: Regional ulikhet
 
-## Ginis koeffisient
-
-### Oppsumering av artikkel
+## Oppsumering av artikkel
 
 I 2017 publiserte Christian Lessmann og Andre Seidel en artikkel hvor de ser på hvor godt egnet «lysdata» er til å estimere regional inntekt.
 Sentrale spørsmål som tas opp i artikkelen er hvordan regionale økonomiske ulikheter utvikler seg over tid, og hvilke faktorer som fører til endringer i regional ulikhet.
@@ -314,14 +312,7 @@ Ved å sammenligne estimatene med faktiske BNP data kommer det frem at teorien i
 
 ## Beregne Gini-koeffisient på vårt datasett
 
-Videre i oppgaven skal vi beregne Gini-koeffisienten på NUTS2 nivå for landene Italia, Finland, Romania og Litauen.
-Første steg er å transformere BNNPPIRen datasettet våres for NUTS3 regioner til en oversikt over NUTS2 regioner.
-Hver NUTS3 region har en tilhørende "geo" kode.
-Disse består av 5 tegn, for eksempel ITC31 for Imperia.
-De fire første sympolene er det samme som NUTS 2 geo koden.
-Ved å samle alle obervasjoner hvor de firste første sympolene er like kan vi lage en datasett fordelt på NUTS 2 regioner.
-
-
+Videre i oppgaven skal vi beregne Gini-koeffisienten på NUTS2 nivå for landene Italia, Finland, Romania og Litauen. Første steg er å transformere KombinertRen datasettet våres for NUTS3 regioner til en oversikt over NUTS2 regioner. Hver NUTS3 region har en tilhørende "geo" kode. Disse består av 5 tegn, for eksempel ITC31 for Imperia. De fire første symbolene er det samme som NUTS 2 geo koden. Ved å samle alle observasjoner hvor de første første symbolene er like kan vi lage en datasett fordelt på NUTS 2 regioner.
 
 ```{r}
 # Lag NUTS2-kode fra NUTS3-kode (første 4 bokstaver)
@@ -330,7 +321,6 @@ KombinertRen <- KombinertRen %>%
     nuts2 = substr(geo, 1, 4),
     geo = trimws(toupper(geo))
   )
-
 
 NUTS2_data <- KombinertRen %>%
   group_by(geo, nuts2, aar, land) %>%
@@ -347,12 +337,16 @@ nuts2_telling <- NUTS2_data %>%
   group_by(land) %>%
   summarise(antall_nuts2 = n_distinct(nuts2))
 
-nuts2_telling
-
+nuts2_telling %>%
+  kable(
+    caption = "Antall NUTS2-regioner per land",
+    align = c("l", "r")
+  )
 ```
 
 I datasettet er det tilsammen 36 NUTS2 regioner, men hvilken land disse faller innenfor er ganske skjevfordelt. Det er 21 NUTS2 regioner fra Italia, mens Litauen har 2.
 Finland og Romania har henholdsvis 5 og 8 NUTS2 regioner.
+
 
 ```{r}
 Gini_IT <- KombinertRen %>%
@@ -374,15 +368,14 @@ ggplot(Gini_IT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
     y = "Gini-koeffisient",
     color = "NUTS2-region"
   ) +
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 10) +
   theme(
     legend.position = "right",
     legend.title = element_text(face = "bold"),
-    plot.title = element_text(face = "bold", size = 15),
-    plot.subtitle = element_text(size = 12),
+    plot.title = element_text(face = "bold", size = 12),
+    plot.subtitle = element_text(size = 10),
     panel.grid.minor = element_blank()
   )
-  theme(plot.title = element_text(face = "bold", size = 15))
 ```
 
 Regionene ITC 4 og ITG2 skiller seg ut her da de gjennom hele rekken har en koeffisient mellom 0,10 og 0,17. Dette tyder på at i disse regionene er det en større skjevfordeling av BNPPI enn i resten av landet. I en gjennomsnittsberegning av den gjennomsnittlige Koeffisienten per år ligger den på rundt 0,05.
@@ -407,10 +400,12 @@ ggplot(Gini_FI, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
     y = "Gini-koeffisient",
     color = "NUTS2-region"
   ) +
-  theme_minimal(base_size = 13) +
-  theme(plot.title = element_text(face = "bold", size = 15))
+  theme_minimal(base_size = 10) +
+  theme(plot.title = element_text(face = "bold", size = 12))
 
 ```
+Tabellen over viser at ulikheten mellom regionene synker gradvis fra rundt 2005 til 2020, noe som tyder på økende økonomisk konvergens mellom regionene. Mot slutten ser vi en svak økning i ulikhet, og en ny region dukker opp med verdier kun fra 2023, noe som forklarer den brå linjen helt til høyre i figuren
+
 
 ```{r}
 Gini_RO <- KombinertRen %>%
