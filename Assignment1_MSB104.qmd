@@ -244,53 +244,219 @@ Canvas site of the course.
 ## Gini Coefficient Calculation
 
 ```{r}
-library(DescTools)
+library(tidyverse)
+library(dineq)
 
-# Beregn Gini
-gini_total <- Gini(Kombinert$bnp_per_innbygger, na.rm = TRUE)
+# Lag NUTS2-kode fra NUTS3-kode (første 4 bokstaver)
+Kombinert <- Kombinert %>%
+  mutate(
+    nuts2 = substr(geo, 1, 4),
+    geo = trimws(toupper(geo))
+  )
 
-# Per land
-GiniLand <- Kombinert %>%
+
+NUTS2_data <- Kombinert %>%
+  group_by(geo, nuts2, aar, land) %>%
+  summarise(
+    bnp = sum(BNP, na.rm = TRUE),
+    befolkning = sum(befolkning, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    bnp_per_innbygger = (bnp * 1e6) / befolkning
+  )
+```
+
+```{r}
+# oversikt over hvor mange nuts2 regioner det er i hvert land
+nuts2_telling <- NUTS2_data %>%
   group_by(land) %>%
-  summarise(Gini = Gini(bnp_per_innbygger, na.rm = TRUE))
+  summarise(antall_nuts2 = n_distinct(nuts2))
+
+nuts2_telling
 
 ```
 
 ```{r}
-GiniLand <- GiniLand %>%
-  mutate(
-    land_navn = recode(land,
-      "IT" = "Italia",
-      "FI" = "Finland",
-      "LT" = "Litauen",
-      "RO" = "Romania"
-    )
+
+library(dplyr)
+library(dineq)
+
+Gini_IT <- Kombinert %>%
+  filter(land == "IT", !is.na(bnp_per_innbygger), bnp_per_innbygger > 0) %>%
+  group_by(nuts2, aar) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = bnp_per_innbygger,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
   )
 
-ggplot(GiniLand, aes(x = land_navn, y = Gini, fill = land_navn)) +
-  geom_col() +
+Gini_IT
+
+ggplot(Gini_IT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
   labs(
-    title = "Gini-koeffisient for BNP per innbygger per land",
-    x = "Land",
-    y = "Gini-koeffisient"
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Italia",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
   ) +
-  theme_minimal() +
-  theme(legend.position = "none")
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+```{r}
+
+Gini_FI <- Kombinert %>%
+  filter(land == "FI", !is.na(bnp_per_innbygger), bnp_per_innbygger > 0) %>%
+  group_by(nuts2, aar) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = bnp_per_innbygger,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+Gini_FI
+
+ggplot(Gini_FI, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Finland",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
+
+```
+
+```{r}
+Gini_RO <- Kombinert %>%
+  filter(land == "RO", !is.na(bnp_per_innbygger), bnp_per_innbygger > 0) %>%
+  group_by(nuts2, aar,) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = bnp_per_innbygger,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
+
+Gini_RO
+
+ggplot(Gini_RO, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Romania",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
 
 ```
 
 
+```{r}
+Gini_LT <- Kombinert %>%
+  filter(land == "LT", !is.na(bnp_per_innbygger), bnp_per_innbygger > 0) %>%
+  group_by(nuts2, aar,) %>%
+  summarise(
+    gini = round(gini.wtd(
+      x = bnp_per_innbygger,
+      weights = befolkning
+    ), 4),
+    .groups = "drop"
+  )
 
+Gini_LT
 
+ggplot(Gini_LT, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2) – Litauen",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "NUTS2-region"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
 
+```
 
+```{r}
+Gini_alle <- bind_rows(
+  Gini_IT %>% mutate(land = "Italia"),
+  Gini_FI %>% mutate(land = "Finland"),
+  Gini_RO %>% mutate(land = "Romania"),
+  Gini_LT %>% mutate(land = "Litauen")
+)
 
+head(Gini_alle)
 
+ggplot(Gini_alle, aes(x = aar, y = gini, color = land, group = nuts2)) +
+  geom_line(linewidth = 1.2) +
+    scale_color_manual(
+    values = c(
+      "Italia" = "#CCCC00",    
+      "Finland" = "#0000FF",   
+      "Romania" = "#C00000",   
+      "Litauen" = "#e7298a"   
+    )
+  ) +
+  labs(
+    title = "Utvikling i Gini-koeffisienter (NUTS2)",
+    x = "År",
+    y = "Gini-koeffisient",
+    color = "Land"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
 
+```
+```{r}
+Gini_gjennomsnitt <- Gini_alle %>%
+  filter(!is.na(gini), gini > 0) %>%  # fjerner NA og 0-verdier
+  group_by(land) %>%
+  summarise(
+    gjennomsnitt_gini = round(mean(gini, na.rm = TRUE), 4),
+    sd_gini = round(sd(gini, na.rm = TRUE), 4),
+    min_gini = round(min(gini, na.rm = TRUE), 4),
+    max_gini = round(max(gini, na.rm = TRUE), 4),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(gjennomsnitt_gini))
 
+Gini_gjennomsnitt
 
+```
+```{r}
+ggplot(Gini_gjennomsnitt, aes(x = reorder(land, gjennomsnitt_gini), y = gjennomsnitt_gini, fill = land)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = round(gjennomsnitt_gini, 3)), vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c(
+     "Italia" = "#CCCC00",    
+      "Finland" = "#0000FF",   
+      "Romania" = "#C00000",   
+      "Litauen" = "#e7298a"
+  )) +
+  labs(
+    title = "Gjennomsnittlig Gini-koeffisient per land (2000–2023)",
+    subtitle = "Beregnet på NUTS2-nivå, uten nullverdier",
+    x = "Land",
+    y = "Gjennomsnittlig Gini"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold", size = 15))
 
-
+```
 
 
 
