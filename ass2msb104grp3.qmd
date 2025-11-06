@@ -4,3 +4,7 @@ format: pdf
 editor: visual
 ---
 
+```{r}
+data <- 2+2
+```
+
