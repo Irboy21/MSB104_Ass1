@@ -25,5 +25,8 @@ library(ggrepel)
 ```{r}
 Populasjon <- readRDS("data/Populasjon.rds")
 BNP <- readRDS("data/BNP.rds")
+
+eksempel <- 2+2
+saveRDS(eksempel, "data/eksempel.rds")
 ```
 
