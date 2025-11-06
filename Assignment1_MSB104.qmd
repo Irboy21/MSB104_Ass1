@@ -32,9 +32,9 @@ library(ggrepel)
 Sys.setlocale("LC_ALL", "Norwegian")
 ```
 
-# Part A Sub-national GDP and GDP per capita
+# Del A: Regional BNP og BNP per innbygger
 
-## Data aquisition
+## Innhenting av data
 
 ```{r, echo=TRUE}
 # Henter inn populasjons datasett fra excell
@@ -283,7 +283,7 @@ Dette skiller seg ut fra årene i mellom hvor det jevnt gjennom er 26 observasjo
 Totalt er det 195 observasjoner hvert år.
 En teori som kan forklare at median og gjennomsnittsverdiene er veldig lave i forhold er at NUTS3 regioner med NA verdier i disse årstallene i hovedsak stammer fra land med relativt høyest BNPPI.
 
-# Part B: Regional ulikhet
+# Del B: Regional ulikhet
 
 ## Oppsumering av artikkel
 
@@ -684,10 +684,7 @@ ggplot(Gini_alle_NUTS1, aes(x = aar, y = gini, color = land, group = nuts1)) +
   theme(plot.title = element_text(face = "bold", size = 15))
 ```
 
-Her er det laget et linediagram som viser utviklingen av GINI koefisient på NUTS1 region basert på fordelingen av BNPPI i NUTS2 regionene.
-Dette tallet sier noe om fordelingen av BNPPI mellom NUTS2 regioner sett opp mot hele landet.
-Koefisienten ligger mellom 0,17 og 0,19.
-Dette indikerer at det i Italia er en større skjevfordeling mellom NUTS2 regionene, enn det er i NUTS 3 regionene satt opp mot regioner i samme NUT2.
+Her er det laget et linjediagram som viser utviklingen av GINI koeffisient på NUTS1-nivå (Land) basert på fordelingen av BNPPI i NUTS2 regionene. Koeffisientene sier noe om fordelingen av BNPPI mellom NUTS2 regioner sett opp mot hele landet. Vi ser at Italia sin koeffisienten ligger mellom 0,17 og 0,19. Dette indikerer at det i Italia er en større skjevfordeling mellom NUTS2 regionene, enn det er i NUTS3 regionene satt opp mot regioner i samme NUTS2.
 
 ## Diskusjon
 
@@ -695,13 +692,9 @@ De beregnede Gini-koeffisientene for BNP per innbygger på NUTS2-nivå viser tyd
 Romania og Litauen har de høyeste gjennomsnittlige Gini-verdiene på henholdsvis 0,1139 og 0,1107, mens Italia (0,0510) og Finland (0,0346) viser langt lavere nivåer av regional ulikhet.
 Dette innebærer at de østeuropeiske landene, som i større grad har vært gjennom en overgangsøkonomi og rask omstilling etter EU-innlemmelsen, fortsatt opplever mer betydelige forskjeller i økonomisk utvikling mellom regionene sammenlignet med de mer etablerte økonomiene i Vest- og Nord-Europa.
 
-**Romania** skiller seg ut som landet med størst regional ulikhet.
-Både gjennomsnittet og variasjonen (standardavvik = 0.0350) er høye, noe som indikerer store forskjeller mellom regionene og betydelig endring over tid.
+Samlet sett viser tidsserien for Gini-koeffisientene på NUTS2-nivå at de fleste landene opplever svak økning i ulikhet etter 2010, noe som sammenfaller med finanskrisen og senere perioder med økonomisk omstilling. Øst-Europa (spesielt Romania og Litauen) viser tegn til økonomisk konvergens på nasjonalt nivå, men ikke nødvendigvis på regionalt nivå – de rikeste regionene vokser fortsatt raskere enn resten.
 
-
-Samlet sett viser tidsserien for Gini-koeffisientene på NUTS2-nivå at de fleste landene opplever svak økning i ulikhet etter 2010, noe som sammenfaller med finanskrisen og senere perioder med økonomisk omstilling. Øst-Europa (spesielt Romania og Litauen) viser tegn til økonomisk konvergens på nasjonalt nivå, men ikke nødvendigvis på regionalt nivå – de rikeste regionene vokser fortsatt raskere enn resten. I Vest- og Nord-Europa er bildet mer stabilt, men den økonomiske veksten er også i større grad konsentrert i byområder.
-
-
+Når det gjelder regionale ulikheter, indikerer resultatene at økonomisk vekst i EU ikke har vært likt fordelt. Land som Finland har klart å opprettholde en jevn fordeling, mens andre land, særlig Romania, som vi ser har en store variasjoner i hvor jevnt fordelt BNPPI-er fra region til region.
 
 ## Del C: Dokumentasjon av AI
 
