@@ -5,6 +5,25 @@ editor: visual
 ---
 
 ```{r}
-data <- 2+2
+library(modelr)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(vtable)
+library(flextable)
+library(scales)
+library(tinytex)
+library(readxl)
+library(stringr)
+library(janitor)
+library(tidyr)
+library(dineq) 
+library(knitr)
+library(ggrepel)
+```
+
+```{r}
+Populasjon <- readRDS("data/Populasjon.rds")
+BNP <- readRDS("data/BNP.rds")
 ```
 
