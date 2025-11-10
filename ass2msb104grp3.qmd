@@ -79,3 +79,32 @@ GINI_NUTS2 <- KombinertRen %>%
   filter(!is.na(GINI_BNPPI) & GINI_BNPPI != 0) %>%  # fjerner NA og 0
   arrange(land, nuts2, aar)
 ```
+
+```{r}
+
+# Beregn vekst fra 2016 til 2017 på NUTS2 nivå
+NUTS2_growth <- NUTS2_bnppi %>%
+  arrange(nuts2, aar) %>%
+  group_by(nuts2, land) %>%
+  mutate(
+    BNPPI_growth = (bnppi - lag(bnppi)) / lag(bnppi) * 100
+  ) %>%
+  filter(aar == 2017) %>%  # Kun 2017 som oppgaven spesifiserer
+  select(nuts2, land, aar, BNPPI_growth)
+
+```
+
+```{r}
+# Kombiner vekst og ulikhet på NUTS2-nivå
+Model_data_2017 <- GINI_NUTS2 %>%
+  filter(aar == 2017) %>%
+  left_join(NUTS2_growth, by = c("nuts2", "land", "aar")) %>%
+  filter(!is.na(BNPPI_growth), !is.na(GINI_BNPPI))
+```
+
+```{r}
+# Lineær regresjon
+model <- lm(GINI_BNPPI ~ BNPPI_growth, data = Model_data_2017)
+
+summary(model)
+```
