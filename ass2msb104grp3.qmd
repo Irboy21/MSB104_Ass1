@@ -27,3 +27,55 @@ Populasjon <- readRDS("data/Populasjon.rds")
 BNP <- readRDS("data/BNP.rds")
 ```
 
+```{r}
+NUTS2_bnppi <- NUTS2_data %>%
+  mutate(
+    nuts2 = substr(geo, 1, 4),             # Henter ut de 4 første tegnene fra NUTS3-koden
+    bnp = as.numeric(bnp),
+    befolkning = as.numeric(befolkning)
+  ) %>%
+  group_by(nuts2, land, aar) %>%
+  summarise(
+    total_bnp = sum(bnp, na.rm = TRUE),       # Summer BNP (i millioner)
+    total_befolkning = sum(befolkning, na.rm = TRUE)
+  ) %>%
+  mutate(
+    bnppi = round((total_bnp * 1e6) / total_befolkning)  # BNP i hele kroner per innbygger
+  ) %>%
+  select(nuts2, land, aar, bnppi) %>%
+  arrange(land, nuts2, aar)
+
+
+```
+
+```{r}
+library(dplyr)
+
+# Funksjon som beregner Gini gitt verdier (y) og vekter (p)
+gini_weighted <- function(y, p) {
+  df <- data.frame(y = y, p = p) %>%
+    filter(!is.na(y), !is.na(p)) %>%
+    arrange(y)
+  
+  y <- df$y
+  p <- df$p / sum(df$p)  # normaliser vekter
+  y_bar <- sum(y * p)
+  
+  if (y_bar == 0) return(NA)  # unngå deling på null
+  
+  diff_matrix <- abs(outer(y, y, "-"))
+  gini <- 0.5 / y_bar * sum(outer(p, p, "*") * diff_matrix)
+  
+  return(gini)
+}
+
+# Beregn GINI per NUTS2 og år, og fjern nullresultater
+GINI_NUTS2 <- KombinertRen %>%
+  group_by(nuts2, land, aar) %>%
+  summarise(
+    GINI_BNPPI = gini_weighted(BNPPI, befolkning),
+    .groups = "drop"
+  ) %>%
+  filter(!is.na(GINI_BNPPI) & GINI_BNPPI != 0) %>%  # fjerner NA og 0
+  arrange(land, nuts2, aar)
+```
