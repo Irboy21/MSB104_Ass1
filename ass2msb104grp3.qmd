@@ -2,6 +2,7 @@
 title: "Ass2MSB104GRP3"
 format: pdf
 editor: visual
+bibliography: references.bib
 ---
 
 ```{r}
@@ -49,48 +50,33 @@ NUTS2_bnppi <- NUTS2_data %>%
 ```
 
 ```{r}
-library(dplyr)
 
-# Funksjon som beregner Gini gitt verdier (y) og vekter (p)
-gini_weighted <- function(y, p) {
-  df <- data.frame(y = y, p = p) %>%
-    filter(!is.na(y), !is.na(p)) %>%
-    arrange(y)
-  
-  y <- df$y
-  p <- df$p / sum(df$p)  # normaliser vekter
-  y_bar <- sum(y * p)
-  
-  if (y_bar == 0) return(NA)  # unngå deling på null
-  
-  diff_matrix <- abs(outer(y, y, "-"))
-  gini <- 0.5 / y_bar * sum(outer(p, p, "*") * diff_matrix)
-  
-  return(gini)
-}
-
-# Beregn GINI per NUTS2 og år, og fjern nullresultater
+# Beregn GINI per NUTS2 og år
 GINI_NUTS2 <- KombinertRen %>%
   group_by(nuts2, land, aar) %>%
   summarise(
-    GINI_BNPPI = gini_weighted(BNPPI, befolkning),
+    GINI_BNPPI = gini.wtd(BNPPI, weights = befolkning),
     .groups = "drop"
   ) %>%
-  filter(!is.na(GINI_BNPPI) & GINI_BNPPI != 0) %>%  # fjerner NA og 0
+  filter(!is.na(GINI_BNPPI) & GINI_BNPPI != 0) %>%
   arrange(land, nuts2, aar)
 ```
+
+Her beregnes GINI på NUTS2 nivå utifra BNPPI på regionene på NUTS 3 nivå som tilhører de enkelte NUTS2 regionene.
+Variablene som benyttes er BNP og befolkningstall på NUTS 3 region som beregner BNP per innbygger.
+BNPPI på NUTS2 nivå beregnes ved å slå sammen alle NUTS3 regioner hvor de firste første tegnene i GEO koden er like.
 
 ```{r}
 
 # Beregn vekst fra 2016 til 2017 på NUTS2 nivå
-NUTS2_growth <- NUTS2_bnppi %>%
+NUTS2_vekst <- NUTS2_bnppi %>%
   arrange(nuts2, aar) %>%
   group_by(nuts2, land) %>%
   mutate(
-    BNPPI_growth = (bnppi - lag(bnppi)) / lag(bnppi) * 100
+    BNPPI_vekst = (bnppi - lag(bnppi)) / lag(bnppi) * 100
   ) %>%
   filter(aar == 2017) %>%  # Kun 2017 som oppgaven spesifiserer
-  select(nuts2, land, aar, BNPPI_growth)
+  select(nuts2, land, aar, BNPPI_vekst)
 
 ```
 
@@ -98,13 +84,20 @@ NUTS2_growth <- NUTS2_bnppi %>%
 # Kombiner vekst og ulikhet på NUTS2-nivå
 Model_data_2017 <- GINI_NUTS2 %>%
   filter(aar == 2017) %>%
-  left_join(NUTS2_growth, by = c("nuts2", "land", "aar")) %>%
-  filter(!is.na(BNPPI_growth), !is.na(GINI_BNPPI))
+  left_join(NUTS2_vekst, by = c("nuts2", "land", "aar")) %>%
+  filter(!is.na(BNPPI_vekst), !is.na(GINI_BNPPI))
 ```
 
 ```{r}
 # Lineær regresjon
-model <- lm(GINI_BNPPI ~ BNPPI_growth, data = Model_data_2017)
+model <- lm(GINI_BNPPI ~ BNPPI_vekst, data = Model_data_2017)
 
 summary(model)
 ```
+
+I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
+I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
+Dette kommer av at i rikere land er vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
+I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
+Dette kalles "kuznets" effekten.
+I den linære regresjonsmodellen vi har laget her kan vi ikke fange opp kuznets effekten, da den utfører regresjon av alle NUTS2 regioner, og vi skiller ikke på NUTS1 region.
