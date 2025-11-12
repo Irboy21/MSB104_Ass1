@@ -93,7 +93,6 @@ modelsummary(
   title = "Enkel regresjonsmodel. {#tbl-reg1}"
 )
 
-summary(mod1)
 ```
 
 
@@ -146,7 +145,6 @@ edu_data <- edu_raw %>%
     Utdanningsverdi = values) %>%
   filter(nchar(nuts2) == 4)
 
-#
 selected_countries <- c("FI", "IT", "LT", "RO")
 
 edu_data <- edu_data %>%
@@ -156,71 +154,8 @@ edu_data <- edu_data %>%
 
 ### Arbeidsledighet
 
-```{r}
-unemp_raw <- get_eurostat("lfst_r_lfu3rt", time_format = "num")
 
 
-unemp_data <- unemp_raw %>%
-  filter(sex == "T", age == "Y15-74", TIME_PERIOD == 2017) %>%
-  select(geo, TIME_PERIOD, values) %>%
-  rename(
-    nuts2 = geo,
-    aar = TIME_PERIOD,
-    unemployment_rate = values) %>%
-    filter(nchar(nuts2) == 4)
-
-unemp_data <- unemp_data %>%
-  filter(substr(nuts2, 1, 2) %in% selected_countries)
-
-# slår sammen og finner gjennomsnittet av duplikatene
-unemp_data <- unemp_data %>%
-  group_by(nuts2) %>%
-  summarise(
-    unemployment_rate = mean(unemployment_rate, na.rm = TRUE)
-  ) %>%
-  ungroup()
-
-# Rydder opp i desimaler
-unemp_data <- unemp_data %>%
-  mutate(unemployment_rate = round(unemployment_rate, 1))
-
-
-```
-
-### Transport-infrastruktur - motorveiglengde per region
-
-```{r}
-road_raw <- get_eurostat("tran_r_net", time_format = "num")
-
-road_data <- road_raw %>%
-  filter(tra_infr == "MWAY", TIME_PERIOD == 2017) %>%
-  select(geo, TIME_PERIOD, values) %>%
-  rename(
-    nuts2 = geo,
-    aar = TIME_PERIOD,
-    motorway_km = values) %>%
-  filter(nchar(nuts2) == 4)
-
-road_data <- road_data %>%
-  filter(substr(nuts2, 1, 2) %in% selected_countries)
-# 
-# road_data <- road_data %>%
-#   group_by(nuts2) %>%
-#   summarise(
-#     motorway_km = mean(motorway_km, na.rm = TRUE)
-#   ) %>%
-#   ungroup()
-# 
-# road_data <- road_data %>%
-#   mutate(motorway_km = round(motorway_km, 1))
-```
-### Slår sammen alle datasettene
-
-```{r}
-# filtrer ut landene som ikke er ønsket
-
-
-```
 
 
 
