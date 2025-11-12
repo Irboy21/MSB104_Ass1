@@ -71,9 +71,13 @@ NUTS2_data <- NUTS2_BNP %>%
 # Del A: Vekst og Ulikhet
 ## Model Estimater
 
+
+
+## Model Diagnostikk
+
 ```{r}
 # Beregn BNP per innbygger-vekst for NUTS2
-Model_data_2017 <- NUTS2_data %>%
+Vekst_data <- NUTS2_data %>%
   arrange(nuts2, aar) %>%
   group_by(nuts2) %>%
   mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
@@ -81,21 +85,16 @@ Model_data_2017 <- NUTS2_data %>%
   select(nuts2, vekst, gini)
 
 # Estimer enkel lineær regresjon
-model <- lm(gini ~ vekst, data = Vekst_data)
-
+model1 <- lm(gini ~ vekst, data = Vekst_data)
 ```
 
- Her er det laget et nytt datasett, hvor den prosentvise endringen i BNPPI fra 2016 til 2017 beregnes.
-Veksten blir beregnet ved å subtrahere BNPPI verdien i 2017 med 2016 verdien.
-Ved å dele differansen på BNPPI verdien i 2016, kommer vi frem til vekstraten.
-Formelen utfører denne beregningen på alle NUTS2 regionene.\
-## Model Diagnostikk
+
 
 ```{r}
 
 
 modelsummary(
-  list("Model 1: GINI ~ Vekst" = model),
+  list("Model 1: GINI ~ Vekst" = model1),
   statistic = "({std.error})",
   stars = TRUE,
   gof_omit = "IC|Log|F",
