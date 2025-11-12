@@ -238,6 +238,13 @@ Befolkningstethet <- read_excel("Befolkningstethet.xlsx", sheet = 2, col_types =
 
 ```
 
+```{r}
+# Henter inn Befolkningstetthet datasett fra excel
+Hoyere_utdanning <- read_excel("Hoyere_utdanning.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+```
+
 ## Valg av variabler
 
 Det er hentet inn 3 nye datasett som kan være med å forklare ulikhet mellom regioner.
@@ -246,7 +253,7 @@ Det er derfor intressant å utvide modellen for å fange opp flere årsaker til 
 Dataene som tilføyes er arbeidsledighet, og befolkningstethet.
 Etter metadataene kommer det frem at det er populasjonen i alderen mellom 15 og 74 år som er tatt med i datasettet.
 
-Arbeidsledighet ver målt i prosent, og sier hvor stor andel av befolkningen innenfor NUTS2 regionene som er arbeidsledige.
+Arbeidsledighet er målt i prosent, og sier hvor stor andel av befolkningen innenfor NUTS2 regionene som er arbeidsledige.
 Arbeidsledighet er en vanlig indikatorene som benyttes for å vurdere regionale økonomiske tilstander.
 Variablen sier noe om hvor god tilgang det er på arbeidsmuligheter i regionen.
 Dersom en region har høy arbeidsledighet, er det mangel på økonokiske muligheter til befolkningen, som gir en økt inntektsulikhet.
@@ -256,3 +263,18 @@ Befolkningstetthet måler hvor mange innbyggere en region har per kvadratkilomet
 Dette er en indikator på hvor urbane de ulike regionene er.
 Områder med høy tetthet kan kalles for byområder, mens de med lav faller innenfor forstadene.
 I mange land, for eksempel Norge er det typisk at industriend sentrer seg rundt byområder, hvor det er bedre tilgang på utdanning og et bredere spektrum av arbeidsmuligheter.
+
+```{r}
+Sammenstilt <- Model_data_2017 %>%
+  inner_join(Arbeidsledighet %>% select(nuts2, arbeidsledighet), by = "nuts2") %>%
+  inner_join(Befolkningstethet %>% select(nuts2, bpk), by = "nuts2") %>%
+  inner_join(Hoyere_utdanning %>% select(nuts2, hoyere_utdanning), by = "nuts2") %>%
+  mutate(
+    arbeidsledighet = as.numeric(str_replace_all(arbeidsledighet, ",", ".")),
+    bpk = as.numeric(str_replace_all(bpk, ",", ".")),
+    hoyere_utdanning = as.numeric(str_replace_all(hoyere_utdanning, ",", "."))
+  ) %>%
+  filter(!is.na(arbeidsledighet), !is.na(bpk), !is.na(hoyere_utdanning))
+
+
+```
