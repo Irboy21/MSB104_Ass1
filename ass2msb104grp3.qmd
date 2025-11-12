@@ -2,10 +2,13 @@
 title: "Ass2MSB104GRP3"
 format: pdf
 editor: visual
+
 execute:
   echo: false
   warning: false
   message: false
+bibliography: references.bib
+
 ---
 
 ```{r, include=FALSE}
@@ -25,11 +28,13 @@ library(dineq)
 library(knitr)
 library(ggrepel)
 library(modelsummary)
-library(eurostat)
+library(broom)
+
 ```
 
 ```{r setup, include=FALSE}
 Sys.setlocale("LC_ALL", "Norwegian")
+
 ```
 
 ```{r}
@@ -37,6 +42,7 @@ KombinertRen <- readRDS("data/KombinertRen.rds")
 Gini_alle <- readRDS("data/Gini_alle.rds")
 
 ```
+
 
 ```{r}
 # legger til NUTS2 i KombinertRen
@@ -79,7 +85,10 @@ mod1 <- lm(gini ~ vekst, data = Vekst_data)
 
 ```
 
- 
+ Her er det laget et nytt datasett, hvor den prosentvise endringen i BNPPI fra 2016 til 2017 beregnes.
+Veksten blir beregnet ved å subtrahere BNPPI verdien i 2017 med 2016 verdien.
+Ved å dele differansen på BNPPI verdien i 2016, kommer vi frem til vekstraten.
+Formelen utfører denne beregningen på alle NUTS2 regionene.\
 ## Model Diagnostikk
 
 ```{r}
@@ -96,12 +105,25 @@ modelsummary(
 
 ```
 
+I funksjonen over fremkommer analysegrunnlaget som skal brukes i regresjons modellen.
+Vekst er sattt som uavhengi variabel, og GINI koefisienten som avhengi variabel.
+Med dette datasettet kan vi teste @lessmann2017 sin teori om at det er en sammenheng mellom økonomisk vekst of ulikhet.
+
+
 
 Resultatene fra den enkle lineære regresjonsmodellen (se @tbl-reg1) viser at økonomisk vekst (Vekst) har en positiv og statistisk signifikant sammenheng med regional ulikhet (GINI) på NUTS2-nivå i 2017. Koeffisienten til vekst (β₁ = 0.538, SE = 0.160) indikerer at regioner med høyere vekst i BNP per innbygger også har høyere grad av ulikhet. Dette funnet peker mot et mønster av regional divergens, hvor økonomisk vekst i større grad samles i allerede velstående regioner.
 
 Modellens konstantledd (β₀ = 0.044) representerer forventet ulikhet i regioner uten økonomisk vekst, altså et GINI-nivå på rundt 0.044. Forklaringskraften er moderat (R² = 0.295, justert R² = 0.269), noe som innebærer at omtrent 30 % av variasjonen i ulikhet kan forklares av vekstforskjeller mellom regionene. Resten av variasjonene må tilskrives andre faktorer som ikke inngår i denne modellen. Disse variablene kan for eksempel være utdanning, demografi og eller næringsstruktur. Residualstandardfeilen (RMSE ≈ 0.04) viser at modellens prediksjoner har relativ små avvik fra observerte verdier.
 
 Vider så kan vi se på F statistikken for å finne ut av hvor sannsynlig det for at variablene er signifikante. I vår regresjonsmodell kommer det frem en F-statistikk på 11.3 og en p-verdi på 0.0023. F-statistikk på 11.3 er ganske høyt, noe som betyr at variasjonen forklart av modellen er betydelig større enn det man forventer fra tilfeldigheter. En p-verdi på 0.0023 betyr at det er en 0.23% sannsynlighet for å få et så sterkt resultat dersom det ikke finnes en sammenheng mellom variablene. Dersom vi bruker en vanlig signifikansnivå 5%, så er 0.0023 mye lavere enn 0.05, altså kan vi forkaste nullhypotesen (altså at det ikke er noen effekt eller sammenheng)
+
+I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
+I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
+Dette kommer av at i rikere land er vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
+I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
+Dette kalles "kuznets" effekten.
+Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets effekten indikere at datasettets inneholder mest regioner med lavere velstand relativt sett.
+
 
 
 ## Visualisering
@@ -127,22 +149,112 @@ ggplot(Vekst_data, aes(x = vekst, y = gini)) +
 ```
 
 
-som vist i @fig-gini-growth ser vi at
+
 
 # Del B: Utforsker andre determinanter for ulikhet
 
+
+
+## Part B: Andre variabler som påvirker ulikhet
+
 ## Data Tilhenting
 
-### Begrunnelse av variabler
+
+```{r}
+# Henter inn Arbeidsledighet datasett fra excel
+Arbeidsledighet <- read_excel("Arbeidsledighet.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+```
+
+```{r}
+# Henter inn Befolkningstetthet datasett fra excel
+Befolkningstethet <- read_excel("Befolkningstethet.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+```
+
+```{r}
+# Henter inn Befolkningstetthet datasett fra excel
+Hoyere_utdanning <- read_excel("Hoyere_utdanning.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+```
+
+
+```{r}
+Sammenstilt <- Vekst_data %>%
+  select(nuts2, vekst, gini) %>%
+  inner_join(Arbeidsledighet %>% select(nuts2, arbeidsledighet), by = "nuts2") %>%
+  inner_join(Befolkningstethet %>% select(nuts2, bpk), by = "nuts2") %>%
+  inner_join(Hoyere_utdanning %>% select(nuts2, hoyere_utdanning), by = "nuts2") %>%
+  filter(
+    !is.na(arbeidsledighet),
+    !is.na(bpk),
+    !is.na(hoyere_utdanning)
+  ) %>%
+  mutate(
+    # Konverterer tekstverdier til numeriske
+    arbeidsledighet = as.numeric(gsub(",", ".", gsub("[^0-9,\\.]", "", arbeidsledighet))),
+    bpk = as.numeric(gsub(",", ".", gsub("[^0-9,\\.]", "", bpk))),
+    hoyere_utdanning = as.numeric(gsub(",", ".", gsub("[^0-9,\\.]", "", hoyere_utdanning)))
+  )
+
+# Se på strukturen av datasettet for å bekrefte at alt stemmer
+```
+
+
+```{r}
+# Sørg for at alle variabler er numeriske (ryddig og robust konvertering)
+Sammenstilt <- Sammenstilt %>%
+  mutate(
+    across(c(arbeidsledighet, bpk, hoyere_utdanning),
+           ~ as.numeric(gsub(",", ".", gsub("[^0-9,\\.]", "", .))))
+  )
+
+# Estimer multippel lineær regresjon
+model_multi <- lm(gini ~ vekst + arbeidsledighet + bpk + hoyere_utdanning, data = Sammenstilt)
+
+# Hent og formater resultater med flere desimaler for små tall
+regression_results <- tidy(model_multi) %>%
+  mutate(
+    Estimate = ifelse(term == "bpk",
+                      format(round(estimate, 6), nsmall = 6),   # flere desimaler for bpk
+                      format(round(estimate, 4), nsmall = 4)),
+    `Std. Error` = format(round(std.error, 4), nsmall = 4),
+    `t value` = format(round(statistic, 4), nsmall = 4),
+    `Pr(>|t|)` = format(round(p.value, 4), nsmall = 4)
+  ) %>%
+  select(term, Estimate, `Std. Error`, `t value`, `Pr(>|t|)`)
+
+# Vis tabell
+kable(
+  regression_results,
+  caption = "Regresjonsresultater for modell med Gini som avhengig variabel (2017)"
+)
+```
+
+
+
+## Valg av variabler
+
+Det er hentet inn 3 nye datasett som kan være med å forklare ulikhet mellom regioner.
+Som det kom frem i del A gir modell \@ref(tab:passelighet) oss en forklaringskraft på ca 29%.
+Det er derfor intressant å utvide modellen for å fange opp flere årsaker til ulikhet, samt å se hvor relavante andre variabler kan være.
+Dataene som tilføyes er arbeidsledighet, og befolkningstethet.
+Etter metadataene kommer det frem at det er populasjonen i alderen mellom 15 og 74 år som er tatt med i datasettet.
+
+Arbeidsledighet er målt i prosent, og sier hvor stor andel av befolkningen innenfor NUTS2 regionene som er arbeidsledige.
+Arbeidsledighet er en vanlig indikatorene som benyttes for å vurdere regionale økonomiske tilstander.
+Variablen sier noe om hvor god tilgang det er på arbeidsmuligheter i regionen.
+Dersom en region har høy arbeidsledighet, er det mangel på økonokiske muligheter til befolkningen, som gir en økt inntektsulikhet.
+Det forventes derfor at det er en positiv korelasjon mellom arbeidsledighet og ulikhet.
+
+Befolkningstetthet måler hvor mange innbyggere en region har per kvadratkilometer.
+Dette er en indikator på hvor urbane de ulike regionene er.
+Områder med høy tetthet kan kalles for byområder, mens de med lav faller innenfor forstadene.
+I mange land, for eksempel Norge er det typisk at industriend sentrer seg rundt byområder, hvor det er bedre tilgang på utdanning og et bredere spektrum av arbeidsmuligheter.
 
 Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning. I dette datasettet har vi filtrert og definert høyere utdanning ved koden ED5-8. ED5-8 er altså  tertiær utdanning, som omfatter Bachelorgrad (ED5), Mastergrad (ED7) og Doktorgrad (ED8). Et høyt utdanningsnivå bidrar til økt produktivitet, innovasjon og høyere inntekstnivå, som kan redusere ulikhet gjennom bedre arbeidsmuligheter. Samtidig kan forskjeller i utdanning mellom regioner føre til en økende ulikhet dersom utdanning og kompetanse i hovedsak er konsentrert i urbane eller økonomisk sterke områder. Utdanning kan dermed føre til både muligheten for konvergens og risikoen for regional divergens.
-### Utdanning - andel av befolkningen med høyere utdanning
-
-
-
-
-
-# Del C: Dokumentasjon for bruken av KI
 
 
 
@@ -150,11 +262,32 @@ Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning.
 
 
 
+\
 
+```{r}
+# Estimer lineær regresjon med oppdaterte variabelnavn
+model_multi <- lm(gini ~ vekst + arbeidsledighet + bpk + hoyere_utdanning, data = Sammenstilt)
 
+# Oppsummer modellen
+summary_model <- summary(model_multi)
 
+# Hent ut R2 og justert R2
+r_squared <- summary_model$r.squared
+adj_r_squared <- summary_model$adj.r.squared
 
+# Hent ut F-statistikk og frihetsgrader
+f_stat <- summary_model$fstatistic[1]
+f_numdf <- summary_model$fstatistic[2]
+f_dendf <- summary_model$fstatistic[3]
 
+# Beregn p-verdien til F-statistikken
+f_p_value <- pf(f_stat, f_numdf, f_dendf, lower.tail = FALSE)
 
-
+# Skriv ut resultatene pent
+cat("R-squared: ", format(round(r_squared, 4), nsmall = 4), "\n")
+cat("Adjusted R-squared: ", format(round(adj_r_squared, 4), nsmall = 4), "\n")
+cat("F-statistic: ", format(round(f_stat, 2), nsmall = 2), 
+    " on ", f_numdf, " and ", f_dendf, " DF\n")
+cat("Model p-value (F-test): ", format(signif(f_p_value, 4)), "\n")
+```
 
