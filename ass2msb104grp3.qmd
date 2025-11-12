@@ -123,38 +123,19 @@ ggplot(Vekst_data, aes(x = vekst, y = gini)) +
 
 ## Data Tilhenting
 
+### Begrunnelse av variabler
+
+Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning. I dette datasettet har vi filtrert og definert høyere utdanning ved koden ED5-8. ED5-8 er altså  tertiær utdanning, som omfatter Bachelorgrad (ED5), Mastergrad (ED7) og Doktorgrad (ED8). Et høyt utdanningsnivå bidrar til økt produktivitet, innovasjon og høyere inntekstnivå, som kan redusere ulikhet gjennom bedre arbeidsmuligheter. Samtidig kan forskjeller i utdanning mellom regioner føre til en økende ulikhet dersom utdanning og kompetanse i hovedsak er konsentrert i urbane eller økonomisk sterke områder. Utdanning kan dermed føre til både muligheten for konvergens og risikoen for regional divergens.
 ### Utdanning - andel av befolkningen med høyere utdanning
 
-```{r}
-edu_raw <- get_eurostat("edat_lfse_04", time_format = "num")
-
-# Lager en landskode variabel slik at jeg kan filtrere bort uønskede land
-edu_raw <- edu_raw %>%
-   mutate(land = substr(geo, 1, 2))
 
 
-edu_data <- edu_raw %>%
-  filter(age == "Y25-64",           # aldersgruppen 25–64 år
-         sex == "T",                # total (begge kjønn)
-         isced11 == "ED5-8",        # tertiær utdanning
-         TIME_PERIOD == 2017) %>%
-  select(geo, TIME_PERIOD, values, land) %>%
-  rename(
-    nuts2 = geo,
-    aar = TIME_PERIOD,
-    Utdanningsverdi = values) %>%
-  filter(nchar(nuts2) == 4)
 
-selected_countries <- c("FI", "IT", "LT", "RO")
-
-edu_data <- edu_data %>%
-  filter(substr(nuts2, 1, 2) %in% selected_countries)
-
-```
 
 ### Arbeidsledighet
 
 
+# Del C: Dokumentasjon for bruken av KI
 
 
 
