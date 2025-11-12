@@ -73,7 +73,7 @@ NUTS2_data <- NUTS2_BNP %>%
 
 ```{r}
 # Beregn BNP per innbygger-vekst for NUTS2
-Vekst_data <- NUTS2_data %>%
+Model_data_2017 <- NUTS2_data %>%
   arrange(nuts2, aar) %>%
   group_by(nuts2) %>%
   mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
@@ -81,7 +81,7 @@ Vekst_data <- NUTS2_data %>%
   select(nuts2, vekst, gini)
 
 # Estimer enkel lineær regresjon
-mod1 <- lm(gini ~ vekst, data = Vekst_data)
+model <- lm(gini ~ vekst, data = Vekst_data)
 
 ```
 
@@ -95,7 +95,7 @@ Formelen utfører denne beregningen på alle NUTS2 regionene.\
 
 
 modelsummary(
-  list("Model 1: GINI ~ Vekst" = mod1),
+  list("Model 1: GINI ~ Vekst" = model),
   statistic = "({std.error})",
   stars = TRUE,
   gof_omit = "IC|Log|F",
@@ -137,7 +137,7 @@ Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets eff
 #| warning: false
 #| message: false
 
-ggplot(Vekst_data, aes(x = vekst, y = gini)) +
+ggplot(Model_data_2017, aes(x = vekst, y = gini)) +
   geom_point(color = "blue") +
   geom_smooth(method = "lm", se = TRUE, color = "darkred") +
   labs(
@@ -254,15 +254,11 @@ Dette er en indikator på hvor urbane de ulike regionene er.
 Områder med høy tetthet kan kalles for byområder, mens de med lav faller innenfor forstadene.
 I mange land, for eksempel Norge er det typisk at industriend sentrer seg rundt byområder, hvor det er bedre tilgang på utdanning og et bredere spektrum av arbeidsmuligheter.
 
+
 Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning. I dette datasettet har vi filtrert og definert høyere utdanning ved koden ED5-8. ED5-8 er altså  tertiær utdanning, som omfatter Bachelorgrad (ED5), Mastergrad (ED7) og Doktorgrad (ED8). Et høyt utdanningsnivå bidrar til økt produktivitet, innovasjon og høyere inntekstnivå, som kan redusere ulikhet gjennom bedre arbeidsmuligheter. Samtidig kan forskjeller i utdanning mellom regioner føre til en økende ulikhet dersom utdanning og kompetanse i hovedsak er konsentrert i urbane eller økonomisk sterke områder. Utdanning kan dermed føre til både muligheten for konvergens og risikoen for regional divergens.
 
 
 
-
-
-
-
-\
 
 ```{r}
 # Estimer lineær regresjon med oppdaterte variabelnavn
@@ -291,3 +287,7 @@ cat("F-statistic: ", format(round(f_stat, 2), nsmall = 2),
 cat("Model p-value (F-test): ", format(signif(f_p_value, 4)), "\n")
 ```
 
+
+# Del C: Dokumentasjon for bruken av KI
+
+Vi har benyttes oss av Chat-gpt5 og Chat-gpt4. i denne oppgaven vi brukt KI til å først og fremst forstå og tolke hva oppgaven spør etter.
