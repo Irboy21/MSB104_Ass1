@@ -238,4 +238,21 @@ Befolkningstethet <- read_excel("Befolkningstethet.xlsx", sheet = 2, col_types =
 
 ```
 
-V
+## Valg av variabler
+
+Det er hentet inn 3 nye datasett som kan være med å forklare ulikhet mellom regioner.
+Som det kom frem i del A gir modell \@ref(tab:passelighet) oss en forklaringskraft på ca 29%.
+Det er derfor intressant å utvide modellen for å fange opp flere årsaker til ulikhet, samt å se hvor relavante andre variabler kan være.
+Dataene som tilføyes er arbeidsledighet, og befolkningstethet.
+Etter metadataene kommer det frem at det er populasjonen i alderen mellom 15 og 74 år som er tatt med i datasettet.
+
+Arbeidsledighet ver målt i prosent, og sier hvor stor andel av befolkningen innenfor NUTS2 regionene som er arbeidsledige.
+Arbeidsledighet er en vanlig indikatorene som benyttes for å vurdere regionale økonomiske tilstander.
+Variablen sier noe om hvor god tilgang det er på arbeidsmuligheter i regionen.
+Dersom en region har høy arbeidsledighet, er det mangel på økonokiske muligheter til befolkningen, som gir en økt inntektsulikhet.
+Det forventes derfor at det er en positiv korelasjon mellom arbeidsledighet og ulikhet.
+
+Befolkningstetthet måler hvor mange innbyggere en region har per kvadratkilometer.
+Dette er en indikator på hvor urbane de ulike regionene er.
+Områder med høy tetthet kan kalles for byområder, mens de med lav faller innenfor forstadene.
+I mange land, for eksempel Norge er det typisk at industriend sentrer seg rundt byområder, hvor det er bedre tilgang på utdanning og et bredere spektrum av arbeidsmuligheter.
