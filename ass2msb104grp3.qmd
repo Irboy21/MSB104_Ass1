@@ -82,7 +82,7 @@ NUTS2_vekst <- NUTS2_bnppi %>%
 
 \
 Her er det laget et nytt datasett, hvor den prosentvise endringen i BNPPI fra 2016 til 2017 beregnes.
-Denne endringen blir beregnet ved å subtrahere BNPPI verdien i 2017 med 2016 verdien.
+Veksten blir beregnet ved å subtrahere BNPPI verdien i 2017 med 2016 verdien.
 Ved å dele differansen på BNPPI verdien i 2016, kommer vi frem til vekstraten.
 Formelen utfører denne beregningen på alle NUTS2 regionene.
 \
@@ -96,7 +96,7 @@ Model_data_2017 <- GINI_NUTS2 %>%
 ```
 
 I funksjonen over fremkommer analysegrunnlaget som skal brukes i regresjons modellen.
-Vekst er sattt som uavhengi variabel, og BNPPI som avhengi variabel.
+Vekst er sattt som uavhengi variabel, og GINI koefisienten som avhengi variabel.
 Med dette datasettet kan vi teste @lessmann2017 sin teori om at det er en sammenheng mellom økonomisk vekst of ulikhet.
 
 ```{r}
@@ -105,6 +105,10 @@ model <- lm(GINI_BNPPI ~ BNPPI_vekst, data = Model_data_2017)
 
 summary(model)
 ```
+
+Som det kommer frem av regresjonsanalysens ß0 verdi er den forventede GINI verdien 0,0441 når vekst er null.
+I dette datasettet kommer der frem at det er en positiv korelasjon mellom vekst og ulikhet.
+ß1 har en forventing på 0,0053, som vil si at GINI koefisienten forventes å øke med denne verdien for hvert prosentpoeng BNPPI øker med.
 
 I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
 I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
