@@ -21,6 +21,7 @@ library(tidyr)
 library(dineq) 
 library(knitr)
 library(ggrepel)
+library(broom)
 ```
 
 ```{r}
@@ -112,10 +113,41 @@ summary(model)
 
 ## 
 
-```{)}
+```{r tab:regresjon, echo=FALSE}
+
+# Hent ut koeffisienter med broom::tidy
+tidy_model <- broom::tidy(model)
+
+# Lag signifikansstjerner basert på p-verdier
+tidy_model <- tidy_model %>%
+  mutate(
+    Significance = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      p.value < 0.1   ~ ".",
+      TRUE            ~ ""
+    )
+  ) %>%
+  rename(
+    Variabel = term,
+    Estimate = estimate,
+    `Std. Error` = std.error,
+    `t-verdi` = statistic,
+    `p-verdi` = p.value
+  ) %>%
+  select(Variabel, Estimate, `Std. Error`, `t-verdi`, `p-verdi`, Significance)
+
+# Presenter tabellen med kable
+kable(
+  tidy_model,
+  digits = 4,
+  caption = "Regresjonsresultater for modellen",
+  col.names = c("Variabel", "Estimert koeffisient", "Standardfeil", "t-verdi", "p-verdi", "Signifikans")
+)
 ```
 
-Som det kommer frem av regresjonsanalysens ß0 verdi er den forventede GINI verdien 0,0441 når vekst er null.
+Som det kommer frem i \@ref(tab:regresjon) er den forventede GINI verdien 0,0441 når vekst er lik null.
 I dette datasettet kommer der frem at det er en positiv korelasjon mellom vekst og ulikhet.
 ß1 har en forventing på 0,0053, som vil si at GINI koefisienten forventes å øke med denne verdien for hvert prosentpoeng BNPPI øker.
 
@@ -125,3 +157,69 @@ Dette kommer av at i rikere land er vil i stor grad de rike regionene være såp
 I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
 Dette kalles "kuznets" effekten.
 Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets effekten indikere at datasettets inneholder mest regioner med lavere velstand relativt sett.
+
+```{r}
+# ... koden for "goodness-of-fit" tabellen ...
+
+# Hent summary av modellen
+mod_sum <- summary(model)
+
+# Lag en dataframe med relevante mål
+fit_stats <- tibble(
+  Statistik = c(
+    "R-squared",
+    "Adjusted R-squared",
+    "Residual Standard Error",
+    "F-statistic",
+    "F-statistic p-verdi"
+  ),
+  Verdi = c(
+    round(mod_sum$r.squared, 4),
+    round(mod_sum$adj.r.squared, 4),
+    round(mod_sum$sigma, 4),
+    round(mod_sum$fstatistic[1], 2),
+    signif(pf(mod_sum$fstatistic[1], mod_sum$fstatistic[2], mod_sum$fstatistic[3], lower.tail = FALSE), 4)
+  )
+)
+
+# Lag tabell med kable
+kable(
+  fit_stats,
+  caption = "Goodness-of-fit statistikk for modellen",
+  col.names = c("Statistikk", "Verdi")
+)
+```
+
+I \@ref(tab:passelighet) presenteres statestikk som sier noe om hvor pålitlig regresjonsanalysen er.
+R^2^ viser at omtrent 29,5% av variasjonen i ulikhet kan forklares av vekst i BNPPI.
+Justert R^2^ tar høyde for hvor mange viarabler som er med i regresjonen, og gir en forklaringskraft på 26,8%.
+Ettersom regresjonen bare har en variabel er ikke dette er overaskende resultat.
+
+F statestikk er et mål som evaluerer om modeller har signifikant forklaringskraft.
+Dersom den går mot 1 betyr det at modellen ikke er egnet til å forklare sammenhenger, jo større tallet blir jo sterkere validitet kan man gi til modellen.
+P-verdien måler hvor pålitlig F statestikk verdien er.
+I \@ref(tab:passelighet) har vi F statestikk målt til 11,3.
+Et spåpass høyt tall vil si at modellen viser en sammenheng mellom de to variablene som ikke kan ansees som tilfelig.
+I følge P verdigen er det en 0,23% sansynlighet for at variablene ikke har en sammenheng, som gir et sterkt grunnlag til å forkaste nullhypotese.
+
+Samlet sett viser statestikken at modellen har validitet, men at det eksisterer ytterlige variabler som også påvirker utviklingen.
+
+```{r}
+ggplot(Model_data_2017, aes(x = BNPPI_vekst, y = GINI_BNPPI)) +
+  geom_point(color = "blue", size = 3, alpha = 0.7) +                    # Punkter
+  geom_smooth(method = "lm", se = TRUE, color = "red", linetype = "dashed") +  # Regresjonslinje med konfidensbånd
+  labs(
+    title = "Sammenheng mellom økonomisk vekst og regional ulikhet",
+    subtitle = "Data fra NUTS2-regioner, år 2017",
+    x = "BNP per innbygger, vekst (%) fra 2016 til 2017",
+    y = "GINI-koeffisient for ulikhet",
+    caption = "Scatterplot med regresjonslinje som viser sammenhengen mellom BNP-vekst og ulikhet i regioner."
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 12),
+    plot.caption = element_text(size = 10, face = "italic"),
+    axis.title = element_text(size = 12)
+  )
+```
