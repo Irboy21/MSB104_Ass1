@@ -80,6 +80,13 @@ NUTS2_vekst <- NUTS2_bnppi %>%
 
 ```
 
+\
+Her er det laget et nytt datasett, hvor den prosentvise endringen i BNPPI fra 2016 til 2017 beregnes.
+Denne endringen blir beregnet ved å subtrahere BNPPI verdien i 2017 med 2016 verdien.
+Ved å dele differansen på BNPPI verdien i 2016, kommer vi frem til vekstraten.
+Formelen utfører denne beregningen på alle NUTS2 regionene.
+\
+
 ```{r}
 # Kombiner vekst og ulikhet på NUTS2-nivå
 Model_data_2017 <- GINI_NUTS2 %>%
@@ -87,6 +94,10 @@ Model_data_2017 <- GINI_NUTS2 %>%
   left_join(NUTS2_vekst, by = c("nuts2", "land", "aar")) %>%
   filter(!is.na(BNPPI_vekst), !is.na(GINI_BNPPI))
 ```
+
+I funksjonen over fremkommer analysegrunnlaget som skal brukes i regresjons modellen.
+Vekst er sattt som uavhengi variabel, og BNPPI som avhengi variabel.
+Med dette datasettet kan vi teste @lessmann2017 sin teori om at det er en sammenheng mellom økonomisk vekst of ulikhet.
 
 ```{r}
 # Lineær regresjon
