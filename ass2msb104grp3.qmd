@@ -4,7 +4,7 @@ format: pdf
 editor: visual
 execute:
   echo: false
-  
+  warning: true
 ---
 
 ```{r, include=FALSE}
@@ -24,6 +24,7 @@ library(dineq)
 library(knitr)
 library(ggrepel)
 library(modelsummary)
+library(eurostat)
 ```
 
 ```{r setup, include=FALSE}
@@ -103,18 +104,6 @@ Modellens konstantledd (β₀ = 0.044) representerer forventet ulikhet i regione
 Vider så kan vi se på F statistikken for å finne ut av hvor sannsynlig det for at variablene er signifikante. I vår regresjonsmodell kommer det frem en F-statistikk på 11.3 og en p-verdi på 0.0023. F-statistikk på 11.3 er ganske høyt, noe som betyr at variasjonen forklart av modellen er betydelig større enn det man forventer fra tilfeldigheter. En p-verdi på 0.0023 betyr at det er en 0.23% sannsynlighet for å få et så sterkt resultat dersom det ikke finnes en sammenheng mellom variablene. Dersom vi bruker en vanlig signifikansnivå 5%, så er 0.0023 mye lavere enn 0.05, altså kan vi forkaste nullhypotesen (altså at det ikke er noen effekt eller sammenheng)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 ## Visualisering
 ```{r}
 
@@ -133,8 +122,105 @@ ggplot(Vekst_data, aes(x = vekst, y = gini)) +
 
 # Del B: Utforsker andre determinanter for ulikhet
 
+## Data Tilhenting
+
+### Utdanning - andel av befolkningen med høyere utdanning
+
+```{r}
+edu_raw <- get_eurostat("edat_lfse_04", time_format = "num")
+
+# Lager en landskode variabel slik at jeg kan filtrere bort uønskede land
+edu_raw <- edu_raw %>%
+   mutate(land = substr(geo, 1, 2))
 
 
+edu_data <- edu_raw %>%
+  filter(age == "Y25-64",           # aldersgruppen 25–64 år
+         sex == "T",                # total (begge kjønn)
+         isced11 == "ED5-8",        # tertiær utdanning
+         TIME_PERIOD == 2017) %>%
+  select(geo, TIME_PERIOD, values, land) %>%
+  rename(
+    nuts2 = geo,
+    aar = TIME_PERIOD,
+    Utdanningsverdi = values) %>%
+  filter(nchar(nuts2) == 4)
+
+#
+selected_countries <- c("FI", "IT", "LT", "RO")
+
+edu_data <- edu_data %>%
+  filter(substr(nuts2, 1, 2) %in% selected_countries)
+
+```
+
+### Arbeidsledighet
+
+```{r}
+unemp_raw <- get_eurostat("lfst_r_lfu3rt", time_format = "num")
+
+
+unemp_data <- unemp_raw %>%
+  filter(sex == "T", age == "Y15-74", TIME_PERIOD == 2017) %>%
+  select(geo, TIME_PERIOD, values) %>%
+  rename(
+    nuts2 = geo,
+    aar = TIME_PERIOD,
+    unemployment_rate = values) %>%
+    filter(nchar(nuts2) == 4)
+
+unemp_data <- unemp_data %>%
+  filter(substr(nuts2, 1, 2) %in% selected_countries)
+
+# slår sammen og finner gjennomsnittet av duplikatene
+unemp_data <- unemp_data %>%
+  group_by(nuts2) %>%
+  summarise(
+    unemployment_rate = mean(unemployment_rate, na.rm = TRUE)
+  ) %>%
+  ungroup()
+
+# Rydder opp i desimaler
+unemp_data <- unemp_data %>%
+  mutate(unemployment_rate = round(unemployment_rate, 1))
+
+
+```
+
+### Transport-infrastruktur - motorveiglengde per region
+
+```{r}
+road_raw <- get_eurostat("tran_r_net", time_format = "num")
+
+road_data <- road_raw %>%
+  filter(tra_infr == "MWAY", TIME_PERIOD == 2017) %>%
+  select(geo, TIME_PERIOD, values) %>%
+  rename(
+    nuts2 = geo,
+    aar = TIME_PERIOD,
+    motorway_km = values) %>%
+  filter(nchar(nuts2) == 4)
+
+road_data <- road_data %>%
+  filter(substr(nuts2, 1, 2) %in% selected_countries)
+# 
+# road_data <- road_data %>%
+#   group_by(nuts2) %>%
+#   summarise(
+#     motorway_km = mean(motorway_km, na.rm = TRUE)
+#   ) %>%
+#   ungroup()
+# 
+# road_data <- road_data %>%
+#   mutate(motorway_km = round(motorway_km, 1))
+```
+### Slår sammen alle datasettene
+
+```{r}
+# filtrer ut landene som ikke er ønsket
+
+
+```
 
 
 
