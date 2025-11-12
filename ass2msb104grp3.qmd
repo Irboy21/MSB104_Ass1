@@ -4,7 +4,8 @@ format: pdf
 editor: visual
 execute:
   echo: false
-  warning: true
+  warning: false
+  message: false
 ---
 
 ```{r, include=FALSE}
@@ -104,7 +105,15 @@ Vider så kan vi se på F statistikken for å finne ut av hvor sannsynlig det fo
 
 
 ## Visualisering
+
 ```{r}
+#| label: fig-gini-growth
+#| fig-cap: "Sammenheng mellom regional ulikhet (målt ved Gini-koeffisienten) og økonomisk vekst i BNP per innbygger for NUTS2-regioner i 2017. Figuren viser en positiv sammenheng, hvor regioner med høyere veksttakt også tenderer til å ha høyere inntektsulikhet. Den røde linjen representerer estimert lineær regresjon med 95 % konfidensintervall (grått felt)."
+#| fig-width: 7
+#| fig-height: 5
+#| fig-pos: "H"
+#| warning: false
+#| message: false
 
 ggplot(Vekst_data, aes(x = vekst, y = gini)) +
   geom_point(color = "blue") +
@@ -115,9 +124,10 @@ ggplot(Vekst_data, aes(x = vekst, y = gini)) +
     y = "Regional ulikhet (Gini)"
   ) +
   theme_minimal()
-
 ```
 
+
+som vist i @fig-gini-growth ser vi at
 
 # Del B: Utforsker andre determinanter for ulikhet
 
@@ -130,9 +140,6 @@ Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning.
 
 
 
-
-
-### Arbeidsledighet
 
 
 # Del C: Dokumentasjon for bruken av KI
