@@ -69,8 +69,13 @@ NUTS2_data <- NUTS2_BNP %>%
 
 
 # Del A: Vekst og Ulikhet
-## Model Estimater
 
+I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
+I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
+Dette kommer av at i rikere land er vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
+I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
+Dette kalles "kuznets" effekten.
+Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets effekten indikere at datasettets inneholder mest regioner med lavere velstand relativt sett.
 
 
 ## Model Diagnostikk
@@ -96,7 +101,7 @@ model1 <- lm(gini ~ vekst, data = Vekst_data)
 modelsummary(
   list("Model 1: GINI ~ Vekst" = model1),
   statistic = "({std.error})",
-  stars = TRUE,
+  stars = FALSE,
   gof_omit = "IC|Log|F",
   output = "markdown",
   title = "Enkel regresjonsmodel. {#tbl-reg1}"
@@ -116,12 +121,12 @@ Modellens konstantledd (β₀ = 0.044) representerer forventet ulikhet i regione
 
 Vider så kan vi se på F statistikken for å finne ut av hvor sannsynlig det for at variablene er signifikante. I vår regresjonsmodell kommer det frem en F-statistikk på 11.3 og en p-verdi på 0.0023. F-statistikk på 11.3 er ganske høyt, noe som betyr at variasjonen forklart av modellen er betydelig større enn det man forventer fra tilfeldigheter. En p-verdi på 0.0023 betyr at det er en 0.23% sannsynlighet for å få et så sterkt resultat dersom det ikke finnes en sammenheng mellom variablene. Dersom vi bruker en vanlig signifikansnivå 5%, så er 0.0023 mye lavere enn 0.05, altså kan vi forkaste nullhypotesen (altså at det ikke er noen effekt eller sammenheng)
 
-I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
-I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
-Dette kommer av at i rikere land er vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
-I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
-Dette kalles "kuznets" effekten.
-Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets effekten indikere at datasettets inneholder mest regioner med lavere velstand relativt sett.
+### OLS-forutsetninger og vurderinger
+Den klassiske OLS-modellen bygger på fem sentrale forutsetninger for at estimatene skal være upartiske og effektive.
+
+Den første forutsetningen er **Lineæritet:** Dette går ut på at forholdet mellom ulikhet (Gini) og de uavhengige variablene antas å være lineært. Residualplott viser ingen klare mønstre, noe som tyder på at antakelsen holder. Ved brudd på denne forutsetningen kan det være nytt å benytte transformasjoner eller ikke-lineære modeller.
+
+Videre 
 
 
 
@@ -136,7 +141,7 @@ Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets eff
 #| warning: false
 #| message: false
 
-ggplot(Model_data_2017, aes(x = vekst, y = gini)) +
+ggplot(Vekst_data, aes(x = vekst, y = gini)) +
   geom_point(color = "blue") +
   geom_smooth(method = "lm", se = TRUE, color = "darkred") +
   labs(
@@ -253,7 +258,6 @@ Dette er en indikator på hvor urbane de ulike regionene er.
 Områder med høy tetthet kan kalles for byområder, mens de med lav faller innenfor forstadene.
 I mange land, for eksempel Norge er det typisk at industriend sentrer seg rundt byområder, hvor det er bedre tilgang på utdanning og et bredere spektrum av arbeidsmuligheter.
 
-
 Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning. I dette datasettet har vi filtrert og definert høyere utdanning ved koden ED5-8. ED5-8 er altså  tertiær utdanning, som omfatter Bachelorgrad (ED5), Mastergrad (ED7) og Doktorgrad (ED8). Et høyt utdanningsnivå bidrar til økt produktivitet, innovasjon og høyere inntekstnivå, som kan redusere ulikhet gjennom bedre arbeidsmuligheter. Samtidig kan forskjeller i utdanning mellom regioner føre til en økende ulikhet dersom utdanning og kompetanse i hovedsak er konsentrert i urbane eller økonomisk sterke områder. Utdanning kan dermed føre til både muligheten for konvergens og risikoen for regional divergens.
 
 
@@ -285,6 +289,22 @@ cat("F-statistic: ", format(round(f_stat, 2), nsmall = 2),
     " on ", f_numdf, " and ", f_dendf, " DF\n")
 cat("Model p-value (F-test): ", format(signif(f_p_value, 4)), "\n")
 ```
+Tabell 2 og 3 viser resultatene fra vår multippel regresjonsmodell hvorregional ulikhet (målt ved Gini-koeffisienten) forklares av økonomisk vekst (BNPPI_vekst), arbeidsledighet, befolkning (bpk) og høyere utdanning.
+
+Konstantleddet (intercept) på 0.107 indikerer at den forventede Gini-verdien i en region er omtrent 0.107 når alle forklaringsvariabler er lik null. 
+
+Koeffisienten til **BNPPI_vekst** (0.0038) er positiv og svakt signifikant (p = 0.068), noe som indikerer at regioner med høyere økonomisk vekst har en tendens til å oppleve økt inntektsulikhet. Dette kan tolkes som at gevinsten av økonomisk vekst i stor grad tilfaller bestemte deler av befolkningen, særlig de med høyere inntekt eller kapital, før fordelene på lengre sikt eventuelt fordeles jevnere.
+
+**Arbeidsledighet** (-0.0024) har en negativ, men ikke-signifikant effekt (p = 0.184). Dette kan tyde på at høyere arbeidsledighet isolert sett ikke er en sterk forklaringsfaktor i denne modellen, men retningen er som forventet – lavere sysselsetting øker normalt ulikhet.
+
+Variabelen **bpk** (0.000022) viser en svært svak og statistisk ubetydelig sammenheng (p = 0.49), noe som indikerer at befolkningsstørrelse eller -tetthet i seg selv ikke forklarer mye av ulikhetsnivået mellom regionene.
+
+Til slutt viser høyere utdanning (-0.0017) en negativ, men ikke-signifikant sammenheng med regional ulikhet (p = 0.114). Dette tyder på at regioner med høyere utdanningsnivå i gjennomsnitt har lavere ulikhet, noe som er i tråd med teorien om at utdanning styrker humankapitalen og bidrar til sosial mobilitet.
+
+**Modellens forklaringskraft**
+R^2 = 0.392 og justert R^2 = 0.291 viser at modellen viser om lag 39% av variasjonen i regional ulikhet. F-testen (p = 0.014) indikerer at modellen samlet sett er signifikant, selv om enkelte variabler ikke er det individuelt. Dette betyr at forklaringsvariablene sammen bidrar til å forklare ulikhetsnivået på tvers av NUTS2-regionene.
+Samlet sett antyder resultatene at økonomisk vekst og utdanningsnivå spiller de viktigste rollene i å forklare ulikhet, mens arbeidsledighet og befolkningstetthet har svakere eller mer indirekte effekter.
+
 
 
 # Del C: Dokumentasjon for bruken av KI
