@@ -265,6 +265,8 @@ Områder med høy tetthet kan kalles for byområder, mens de med lav faller inne
 I mange land, for eksempel Norge er det typisk at industriend sentrer seg rundt byområder, hvor det er bedre tilgang på utdanning og et bredere spektrum av arbeidsmuligheter.
 
 ```{r}
+#Lager et samlet datasett med alle variabler som skal analysers
+
 Sammenstilt <- Model_data_2017 %>%
   inner_join(Arbeidsledighet %>% select(nuts2, arbeidsledighet), by = "nuts2") %>%
   inner_join(Befolkningstethet %>% select(nuts2, bpk), by = "nuts2") %>%
@@ -277,4 +279,57 @@ Sammenstilt <- Model_data_2017 %>%
   filter(!is.na(arbeidsledighet), !is.na(bpk), !is.na(hoyere_utdanning))
 
 
+```
+
+```{r}
+Sammenstilt <- Sammenstilt %>%
+  mutate(
+    arbeidsledighet = as.numeric(arbeidsledighet),
+    bpk = as.numeric(bpk),
+    hoyere_utdanning = as.numeric(hoyere_utdanning)
+  )
+
+# Estimer lineær regresjon
+model_multi <- lm(GINI_BNPPI ~ BNPPI_vekst + arbeidsledighet + bpk + hoyere_utdanning, data = Sammenstilt)
+
+# Hent ut og formater resultater
+regression_results <- tidy(model_multi) %>%
+  mutate(
+    Estimate = format(estimate, digits = 4, scientific = FALSE),
+    `Std. Error` = format(std.error, digits = 4, scientific = FALSE),
+    `t value` = format(statistic, digits = 4, scientific = FALSE),
+    `Pr(>|t|)` = format(p.value, digits = 4, scientific = FALSE)
+  ) %>%
+  select(term, Estimate, `Std. Error`, `t value`, `Pr(>|t|)`)
+
+# Vis tabellen
+kable(regression_results, caption = "Regresjonsresultater")
+```
+
+\
+
+```{r}
+# Estimer lineær regresjon
+model_multi <- lm(GINI_BNPPI ~ BNPPI_vekst + arbeidsledighet + bpk + hoyere_utdanning, data = Sammenstilt)
+
+
+summary_model <- summary(model_multi)
+
+# Hent ut R2 og justert R2
+r_squared <- summary_model$r.squared
+adj_r_squared <- summary_model$adj.r.squared
+
+# Hent ut F-statistikk og frihetsgrader
+f_stat <- summary_model$fstatistic[1]
+f_numdf <- summary_model$fstatistic[2]
+f_dendf <- summary_model$fstatistic[3]
+
+# Beregn p-verdien til F-statistikken
+f_p_value <- pf(f_stat, f_numdf, f_dendf, lower.tail = FALSE)
+
+# Skriv ut resultatene 
+cat("R-squared: ", format(round(r_squared, 4), nsmall = 4), "\n")
+cat("Adjusted R-squared: ", format(round(adj_r_squared, 4), nsmall = 4), "\n")
+cat("F-statistic: ", format(round(f_stat, 2), nsmall = 2), " on ", f_numdf, " and ", f_dendf, " DF\n")
+cat("Model p-value (F-test): ", format(signif(f_p_value, 4)), "\n")
 ```
