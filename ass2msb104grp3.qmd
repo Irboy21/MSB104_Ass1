@@ -135,8 +135,12 @@ som vist i @fig-gini-growth ser vi at
 
 ### Begrunnelse av variabler
 
+
+#### Utdanning - andel av befolkningen med høyere utdanning
+
 Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning. I dette datasettet har vi filtrert og definert høyere utdanning ved koden ED5-8. ED5-8 er altså  tertiær utdanning, som omfatter Bachelorgrad (ED5), Mastergrad (ED7) og Doktorgrad (ED8). Et høyt utdanningsnivå bidrar til økt produktivitet, innovasjon og høyere inntekstnivå, som kan redusere ulikhet gjennom bedre arbeidsmuligheter. Samtidig kan forskjeller i utdanning mellom regioner føre til en økende ulikhet dersom utdanning og kompetanse i hovedsak er konsentrert i urbane eller økonomisk sterke områder. Utdanning kan dermed føre til både muligheten for konvergens og risikoen for regional divergens.
-### Utdanning - andel av befolkningen med høyere utdanning
+
+
 
 
 
@@ -144,6 +148,7 @@ Utdanningsnivå måles som andelen av befolkningen som har en høyere utdanning.
 
 # Del C: Dokumentasjon for bruken av KI
 
+Vi har benyttes oss av Chat-gpt5 og Chat-gpt4. i denne oppgaven vi brukt KI til å først og fremst forstå og tolke hva oppgaven spør etter.
 
 
 
