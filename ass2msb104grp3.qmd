@@ -67,7 +67,7 @@ NUTS2_data <- NUTS2_BNP %>%
 
 ```{r}
 # Beregn BNP per innbygger-vekst for NUTS2
-Vekst_data <- NUTS2_data %>%
+Model_data_2017 <- NUTS2_data %>%
   arrange(nuts2, aar) %>%
   group_by(nuts2) %>%
   mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
@@ -75,7 +75,7 @@ Vekst_data <- NUTS2_data %>%
   select(nuts2, vekst, gini)
 
 # Estimer enkel lineær regresjon
-mod1 <- lm(gini ~ vekst, data = Vekst_data)
+model <- lm(gini ~ vekst, data = Vekst_data)
 
 ```
 
@@ -86,7 +86,7 @@ mod1 <- lm(gini ~ vekst, data = Vekst_data)
 
 
 modelsummary(
-  list("Model 1: GINI ~ Vekst" = mod1),
+  list("Model 1: GINI ~ Vekst" = model),
   statistic = "({std.error})",
   stars = TRUE,
   gof_omit = "IC|Log|F",
@@ -115,7 +115,7 @@ Vider så kan vi se på F statistikken for å finne ut av hvor sannsynlig det fo
 #| warning: false
 #| message: false
 
-ggplot(Vekst_data, aes(x = vekst, y = gini)) +
+ggplot(Model_data_2017, aes(x = vekst, y = gini)) +
   geom_point(color = "blue") +
   geom_smooth(method = "lm", se = TRUE, color = "darkred") +
   labs(
