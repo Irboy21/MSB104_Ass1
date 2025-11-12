@@ -28,6 +28,8 @@ Populasjon <- readRDS("data/Populasjon.rds")
 BNP <- readRDS("data/BNP.rds")
 ```
 
+## Modellestimering 
+
 ```{r}
 NUTS2_bnppi <- NUTS2_data %>%
   mutate(
@@ -106,13 +108,20 @@ model <- lm(GINI_BNPPI ~ BNPPI_vekst, data = Model_data_2017)
 summary(model)
 ```
 
+## Diagnose av modellen
+
+## 
+
+```{)}
+```
+
 Som det kommer frem av regresjonsanalysens ß0 verdi er den forventede GINI verdien 0,0441 når vekst er null.
 I dette datasettet kommer der frem at det er en positiv korelasjon mellom vekst og ulikhet.
-ß1 har en forventing på 0,0053, som vil si at GINI koefisienten forventes å øke med denne verdien for hvert prosentpoeng BNPPI øker med.
+ß1 har en forventing på 0,0053, som vil si at GINI koefisienten forventes å øke med denne verdien for hvert prosentpoeng BNPPI øker.
 
 I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
 I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
 Dette kommer av at i rikere land er vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
 I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
 Dette kalles "kuznets" effekten.
-I den linære regresjonsmodellen vi har laget her kan vi ikke fange opp kuznets effekten, da den utfører regresjon av alle NUTS2 regioner, og vi skiller ikke på NUTS1 region.
+Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets effekten indikere at datasettets inneholder mest regioner med lavere velstand relativt sett.
