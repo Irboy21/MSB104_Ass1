@@ -3,3 +3,52 @@ title: "Untitled"
 format: html
 editor: visual
 ---
+
+```{r}
+library(eurostat)
+library(dplyr)
+
+# Henter datasettet fra eurostat
+edu_raw <- get_eurostat("edat_lfse_04", time_format = "num") 
+
+#Filtrerer bort det vi ikke trenger 
+edu_data <- edu_raw %>%
+  filter(age == "Y25-64",
+         sex == "T",
+         TIME_PERIOD == "2017",
+         isced11 %in% c("ED0-2", "ED3_4", "ED5-8")) %>% 
+  mutate(nuts2 = geo,
+         hoyere_utdanning = values,
+         land = substr(nuts2, 1, 2)) %>%
+  select(nuts2, hoyere_utdanning, isced11, land,) %>%
+   filter(nchar(nuts2) == 4) 
+
+# Filtrerer slik at vi kunn får de landene vi trenger
+valgte_land <- c("IT", "RO", "LT", "FI")
+
+edu <- edu_data %>%
+  filter(substr(nuts2, 1, 2) %in% valgte_land)
+
+# Setter opp utdanningsnivået som kolonner 
+
+edu_clean <- edu %>%
+  select(nuts2, isced11, hoyere_utdanning) %>%
+  mutate(isced11 = gsub("-", "_", isced11)) %>%  # ED0-2 → ED0_2
+  tidyr::pivot_wider(
+    names_from = isced11,
+    values_from = hoyere_utdanning
+  )
+
+
+```
+
+```{r}
+df <- edu_clean %>%
+  mutate(edu_group = case_when(
+    ED0_2 > ED3_4 & ED0_2 > ED5_8 ~ "low_edu",
+    ED3_4 > ED0_2 & ED3_4 > ED5_8 ~ "mid_edu",
+    ED5_8 > ED0_2 & ED5_8 > ED3_4 ~ "high_edu"
+  ))
+
+```
+
