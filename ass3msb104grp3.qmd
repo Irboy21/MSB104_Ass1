@@ -3,6 +3,19 @@ title: "Untitled"
 format: html
 editor: visual
 ---
+```{r}
+NUTS2_data <- readRDS("data/NUTS2_data.rds")
+
+
+# Beregn BNP per innbygger-vekst for NUTS2
+Vekst_data <- NUTS2_data %>%
+  arrange(nuts2, aar) %>%
+  group_by(nuts2) %>%
+  mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
+  filter(aar == 2017) %>%
+  select(nuts2, vekst, gini)
+```
+
 
 ```{r}
 library(eurostat)
