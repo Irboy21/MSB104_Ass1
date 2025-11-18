@@ -296,7 +296,7 @@ bnp_pop <- bnp_pop %>%
 SnittTidLand <- bnp_pop %>%
   group_by(land, aar) %>%
   summarise(
-    gjennomsnitt_bnp = mean(bnp_pi, na.rm = TRUE)
+    gjennomsnitt_bnp = mean(bnp_pi, na.rm = TRUE),
     .groups = "drop"
   )
 

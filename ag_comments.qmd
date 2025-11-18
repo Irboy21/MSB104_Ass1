@@ -5,7 +5,7 @@ editor: visual
 ---
 
 -   Det lureste er å legge `Sys.setlocale("LC_ALL", "Norwegian")` i en fil `.Rprofile` i hjemmeområdet på Windows (C:/Users/YourUsername/Documents/.Rprofile). Da blir dette utført hver gang en starter R. Som dere ser måtte jeg legge den i en if() ellers vil ikke dokumentet kjøre på min mac.
--   Jeg vil anbefale dere å bruke den nye (Quarto) måten å sette chunk-opsjoner på. Den gamle (inne i ´\{r \}`) virker fremdeles, men å sette dem inne i chunk-en er fremtiden.
+-   Jeg vil anbefale dere å bruke den nye (Quarto) måten å sette chunk-opsjoner på. Den gamle (inne i ´{r }\`) virker fremdeles, men å sette dem inne i chunk-en er fremtiden.
 -   Foreslår å bruke `#| message: false` i setup. Tar det meste. `#| include: false` kan være vel hard. Dere har satt message til false i YAML og burde ha undertrykt mye.
 -   na = c(NA, ":") er lurt å bruke i read_excel
 -   Foreslår å bruke navnene gdp_wide, gdp, pop_wide og pop. Dere blir snart lei av å skrive de lange variabelnavnene.
@@ -15,7 +15,7 @@ editor: visual
 -   La inn et forslag til tabellen for deskreptiv statistikk som bruker `vtable::st()` og `flextable()`.
 -   La også inn et forslag for neste tabell der na.rm = TRUE brukes istedenfor å filtrere bort alle med NA. Vil anbefale dere å sjekke ut flextable(). Min erfaring er at den er bedre en `kable()`
 -   Vil anbefale å bruke tidyverse istedenfor classic, dvs str_sub() og ikke substr() og str_trim() istedenfor trimws(). Stort sett finnes det gode grunner til at Hadley har tatt seg bryet med å skrive nye versjoner av disse funksjonene. Samme for str_to_upper().
--   I gini plot Italia la jeg inn et filter på data for gini > 0. gini = 0 skyldes at vi har en NUTS3 i NUTS2 regionen. gini er meningsløs i dette tilfellet. Merk måten å legge inn et filter på data i ggplot(). Nyttig og noe jeg lærte i dag.
+-   I gini plot Italia la jeg inn et filter på data for gini \> 0. gini = 0 skyldes at vi har en NUTS3 i NUTS2 regionen. gini er meningsløs i dette tilfellet. Merk måten å legge inn et filter på data i ggplot(). Nyttig og noe jeg lærte i dag.
 -   Gini_alle blir litt for urolig etter min smak. Hva er informasjonsverdien?
 
 ## Generelle kommentarer
@@ -23,9 +23,9 @@ editor: visual
 -   Jeg liker forklaringen av hvordan eurostat beregner bnp. Flott!
 -   Som dere ser har jeg endret BNP til bnp, Befolkning til pop etc.. Litt irriterende, men dette er ting som vil bli gjentatt mange ganger i koden så det er verdt å tenke litt på. Jeg vil anbefale korte bekrivende navn slik som bnp og pop. Jeg foretrekker også små bokstaver da dette er lettere å skrive enn å måtte fikle med shift tasten.
 -   Jeg vil generelt advare mot å lage en renset variant av datasettet. Det er bedre å luke ut NA verdier i en pipe der det er nødvendig. Ofte holder det også å benytte na.rm = TRUE argumentet.
--   Jeg vil anbefale dere å bruke label: og *-cap: opsjonene til chunks istedenfor labels i ggplot eller kable. Gir en typografisk finere løsning og gir også mulighet for kryssreferanser i teksten.
+-   Jeg vil anbefale dere å bruke label: og \*-cap: opsjonene til chunks istedenfor labels i ggplot eller kable. Gir en typografisk finere løsning og gir også mulighet for kryssreferanser i teksten.
 -   Vil også anbefale flextable over kable siden den gir bedre resultat for ulike output formater.
--   Anbefaler også at dere holder dere til tidyverse funksjoner, dvs. str_sub() istedenfor substr() etc. En stor fordel med string funksjonene i tidyverse er at alle begynner med str_ som gjør dem lett å finne i help. Start med å skrive str_ i søkeboksen og de blir listet.
+-   Anbefaler også at dere holder dere til tidyverse funksjoner, dvs. str_sub() istedenfor substr() etc. En stor fordel med string funksjonene i tidyverse er at alle begynner med str\_ som gjør dem lett å finne i help. Start med å skrive str\_ i søkeboksen og de blir listet.
 -   Jeg liker at dere viser utviklingen i BNP per capita grafisk
 -   I plottet «Utvikling i BNP per innbygger (gjennomsnitt og median)» burde dere ha påpekt de markante endringen første og siste år i en caption. Skyldes dette manglende data for noen land? Ser at dette blir diskutert lengre nede i teksten, men dette er noe leseren vil stusse på med en gang en ser figuren.
 -   For plottet «Beregn gjennomsnitt per land og år» har jeg forsøkt å gjenskape plottet deres vha. en pipe som bruker ulik funksjonalitet fra tidyverse og ggplot2
@@ -35,4 +35,3 @@ editor: visual
 -   Romania: «Gjennomsnittet ligger på 0,11, mens majoriteten av NUTS2 regionene faller innenfor intervallet 0,6 til 0,17» skal nok være «Gjennomsnittet ligger på 0,11, mens majoriteten av NUTS2 regionene faller innenfor intervallet 0,06 til 0,17»
 -   Seidel og Lessmann sier noe om uviklingen av disse gini-koeffisientene i forhold til landenes velstand. Dette er et viktig poeng som dere ikke har med i oppsummeringen. Prøv å finn dette og relater det til de fire landene dere analyserer.
 -   Generelt mye bra. Masse interessant kode, men prøv å bruk mer av tidyverse. Tenk også på navn på tibbles/variabler. Vil bli brukt uttallige ganger så viktig at de er informative, korte og lette å skrive.
-
