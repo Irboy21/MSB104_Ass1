@@ -389,7 +389,7 @@ Log-modellen beskriver spesielt godt de regionene med lav vekst, mens den kvadra
 
 # Del C: Heteroskedastisitet 
 
-
+##
 
 
 
