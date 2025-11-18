@@ -28,6 +28,7 @@ library(knitr)
 library(ggrepel)
 library(modelsummary)
 library(broom)
+library(eurostat)
 ```
 
 ```{r}
@@ -44,10 +45,9 @@ Vekst_data <- NUTS2_data %>%
   select(nuts2, vekst, gini)
 ```
 
-```{r}
-library(eurostat)
-library(dplyr)
+## Undergruppe analyse: Utdanningsnivå
 
+```{r}
 # Henter datasettet fra eurostat
 edu_raw <- get_eurostat("edat_lfse_04", time_format = "num") 
 
@@ -112,9 +112,9 @@ edu_merged <- edu_merged %>%
 For alle regionene som ble definert som høy utdannings, så var gini = 0, noe som vil "ødelegge" resultatet og gi feile svar.
 
 ```{r}
-mod_low <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "low_edu"))
+mod_low_edu <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "low_edu"))
 
-mod_mid <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "mid_edu"))
+mod_mid_edu <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "mid_edu"))
 
 modelsummary(
   list(
@@ -142,3 +142,93 @@ Effekten er imidlertid ikke statistisk signifikant (p = 0.463), og vi kan derfor
 Innen lav utdanningsgruppe er vekst-effekten negativ, men også klart ikke-signifikant (–6.99, p = 0.496).
 For regioner med middels utdanning er den kombinerte vekst-effekten svak positiv (≈0.56), men heller ikke signifikant.
 Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mellom gruppene, men datasettet for 2017 gir ikke tilstrekkelig statistisk grunnlag til å si at utdanningsnivå modererer forholdet mellom økonomisk vekst og ulikhet.
+
+## Undergruppe analyse: Befolkningstetthet
+
+```{r}
+# henter datasettet fra en excel fil som er produsert via eurostat
+
+Befolkningstethet <- read_excel("Befolkningstethet.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+bpk_merged <- Vekst_data %>%
+  left_join(Befolkningstethet, by = "nuts2")
+
+# gjør om til numeriske tall
+bpk_merged <- bpk_merged %>%
+  mutate(
+    bpk_num = as.numeric(gsub(",", ".", bpk))
+  )
+
+```
+
+```{r}
+bpk_merged <- bpk_merged %>%
+  mutate(
+    pop_group = case_when(
+      bpk_num < 100 ~ "Lav tetthet",
+      bpk_num >= 100 & bpk_num < 300 ~ "Middels tetthet",
+      bpk_num >= 300 ~ "Hoy tetthet"
+    )
+  )
+
+```
+
+```{r}
+mod_low_bpk  <- lm(gini ~ vekst, data = bpk_merged %>% filter(pop_group == "Lav tetthet"))
+mod_mid_bpk  <- lm(gini ~ vekst, data = bpk_merged %>% filter(pop_group == "Middels tetthet"))
+mod_high_bpk <- lm(gini ~ vekst, data = bpk_merged %>% filter(pop_group == "Hoy tetthet"))
+
+modelsummary(
+  list(
+    "Lav tetthet" = mod_low_bpk,
+    "Middels tetthet" = mod_mid_bpk,
+    "Hoy tetthet" = mod_high_bpk
+  ),
+  stars = TRUE,
+  gof_omit = "IC|Log"
+)
+
+```
+
+```{r}
+bpk_merged$pop_group <- factor(bpk_merged$pop_group,
+                                  levels = c("Lav tetthet", "Middels tetthet", "Hoy tetthet"))
+
+mod_interaction_bpk <- lm(gini ~ vekst * pop_group, data = bpk_merged)
+summary(mod_interaction_bpk)
+
+```
+
+For å undersøke om sammenhengen mellom økonomisk vekst og inntektsulikhet varierer med befolkningstetthet, delte vi regionene inn i tre grupper: lav, middels og høy tetthet. Resultatene viser tydelige forskjeller mellom gruppene. For regioner med lav tetthet finner vi en positiv og marginalt signifikant sammenheng mellom vekst og ulikhet, noe som kan indikere at økonomisk utvikling i rurale områder tiltar ulikhetene når gevinster samles hos bestemte grupper.
+
+I regioner med middels tetthet finner vi en negativ, men ikke signifikant effekt av vekst på ulikhet. Dette kan skyldes at disse regionene har en mer variert næringsstruktur som fordeler veksten bredere. I de mest tettbefolkede regionene er sammenhengen svak og usikker, noe som kan forklares av få observasjoner og stor intern variasjon.
+
+Interaksjonsmodellen bekrefter at hovedleddet for vekst er positivt og signifikant, men interaksjonsleddene er ikke signifikante. Det betyr at vi ikke statistisk kan fastslå at effekten av vekst skiller seg systematisk mellom gruppene, selv om estimatene peker i ulike retninger. Samlet sett antyder analysen at befolkningstetthet kan påvirke hvordan regional utvikling slår ut på ulikhetsnivået, men at datagrunnlaget er for begrenset til å trekke bastante konklusjoner.
+
+## Undergruppe analyse: arbeidsledighet
+
+```{r}
+# henter datasettet fra en excel fil som er produsert via eurostat
+
+Arbeidsledighett <- read_excel("Arbeidsledighet.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
+arb_merged <- Vekst_data %>%
+  left_join(Arbeidsledighett, by = "nuts2")
+
+arb_merged <- arb_merged %>%
+  mutate(
+    arb_num = as.numeric(gsub(",", ".", arbeidsledighet))
+  )
+```
+
+
+
+
+
+
+
+
+
+
