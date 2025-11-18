@@ -118,8 +118,8 @@ mod_mid_edu <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "mid_e
 
 modelsummary(
   list(
-    "Low education" = mod_low,
-    "Mid education" = mod_mid
+    "Low education" = mod_low_edu,
+    "Mid education" = mod_mid_edu
   ),
   stars = TRUE,
   gof_omit = "IC|Log"
@@ -217,18 +217,86 @@ Arbeidsledighett <- read_excel("Arbeidsledighet.xlsx", sheet = 2, col_types = "t
 arb_merged <- Vekst_data %>%
   left_join(Arbeidsledighett, by = "nuts2")
 
+# gjør om til numerisk
 arb_merged <- arb_merged %>%
   mutate(
     arb_num = as.numeric(gsub(",", ".", arbeidsledighet))
   )
 ```
 
+```{r}
+# deler inn i 3 grupper for arbeidsledighet
+
+arb_merged <- arb_merged %>% 
+  mutate(arb_group = case_when(
+    arb_num < 7 ~ "Lav ledighet",
+    arb_num >= 7 & arb_num < 12 ~ "Middels ledighet",
+    arb_num >= 12 ~ "Hoy ledighet"
+  ))
+
+```
+
+```{r}
+# regresjon for hver gruppe
+
+mod_low_arb  <- lm(gini ~ vekst, data = arb_merged %>% filter(arb_group == "Lav ledighet"))
+mod_mid_arb  <- lm(gini ~ vekst, data = arb_merged %>% filter(arb_group == "Middels ledighet"))
+mod_high_arb <- lm(gini ~ vekst, data = arb_merged %>% filter(arb_group == "Hoy ledighet"))
+
+modelsummary(
+  list(
+    "Lav ledighet" = mod_low_arb,
+    "Middels ledighet" = mod_mid_arb,
+    "Hoy ledighet" = mod_high_arb
+  ),
+  stars = TRUE,
+  gof_omit = "IC|Log"
+)
+
+```
+
+I regioner med lav arbeidsledighet finner vi en positiv sammenheng mellom økonomisk vekst og ulikhet (β = 0.481). Effekten er ikke statistisk signifikant, men størrelsen indikerer at vekst ofte gagner høyinntektsgrupper mest i økonomisk sterke regioner. Dette er konsistent med teorien om at vekst i velfungerende arbeidsmarkeder kan forbedre lønningene for allerede produktive segmenter av arbeidsstyrken, noe som kan øke ulikheten.
+
+For regioner med middels arbeidsledighet er sammenhengen også positiv (β = 0.275), men svakere enn i lav-ledighetsgruppen. Dette antyder at i regioner med “normal” arbeidsmarkedssituasjon fordeles gevinster fra økonomisk vekst mer jevnt. Resultatet støtter hypotesen om at i balanserte arbeidsmarkeder har strukturelle faktorer mindre betydning for ulikhet.
+
+For regioner med høy arbeidsledighet er effekten negativ (β = –4.143), men estimatet er svært usikkert (stor standardfeil). Dette betyr at vi ikke kan konkludere sikkert, men resultatet kan tolkes som:
+
+- I pressede og svake arbeidsmarkeder fører økonomisk vekst ikke nødvendigvis til økt ulikhet.
+
+- Vekst i slike regioner kan komme fra sektorer som ansetter bredt (offentlig sektor, lavkvalifiserte jobber), noe som kan redusere ulikhet.
+
+Siden det bare er 7 observasjoner i denne gruppen, må resultatet tolkes med stor forsiktighet.
 
 
+```{r}
+arb_merged$arb_group <- factor(arb_merged$arb_group,
+                    levels = c("Lav ledighet", "Middels ledighet", "Hoy ledighet"))
 
+mod_interact_arb <- lm(gini ~ vekst * arb_group, data = arb_merged)
+summary(mod_interact_arb)
 
+```
+Vi delte regionene inn i tre grupper basert på arbeidsledighetsnivå for å undersøke om forholdet mellom økonomisk vekst og ulikhet avhenger av styrken i det lokale arbeidsmarkedet. Resultatene viser at regioner med lav og middels arbeidsledighet har en positiv, om enn ikke signifikant, sammenheng mellom økonomisk vekst og ulikhet. Dette antyder at vekst i mer robuste arbeidsmarkeder i større grad tilfaller høyinntektsgrupper, noe som kan øke ulikheten.
 
+I regioner med høy arbeidsledighet er effekten negativ, men svært usikker. Dette kan indikere at vekst i pressede regioner har en mer inkluderende karakter, eller at datagrunnlaget i denne gruppen er for begrenset til å gi stabile estimater.
 
+Interaksjonsmodellen som tester om effekten av vekst er forskjellig mellom gruppene, gir ingen signifikante forskjeller. Det betyr at selv om estimatene varierer i størrelse og retning, finner vi ikke statistisk støtte for at arbeidsledighetsnivået systematisk modererer sammenhengen mellom vekst og ulikhet. Resultatene peker likevel mot at arbeidsmarkedets situasjon kan påvirke hvordan økonomisk vekst fordeler seg i regioner
 
+## Undergruppe analyse diskusjon
+
+**1. Utdanningsnivå**
+
+Regresjonene viser at regioner med lavt utdanningsnivå har en positiv vekst-effekt på ulikhet (β = 0.484, p < 0.1), altså en tendens til økende ulikhet når BNP vokser. I middels utdannede regioner er vekst-effekten negativ (β = –2.257, ikke signifikant), og dette skiftet bekreftes også i interaksjonsmodellen. Dette kan skyldes at vekst i disse regionene skjer i mer inkluderende sektorer. I høyt utdannede regioner er effekten svakt positiv, men svært usikker (β = 0.091). Variasjonen mellom gruppene følger teoretiske forventninger: regioner med høy utdanning har ofte mer diversifiserte økonomier, mens lavt utdannede regioner kan oppleve at vekst forsterker eksisterende forskjeller.
+
+**2. Befolkningstetthet**
+
+For tetthet finner vi et tilsvarende mønster. I regioner med lav tetthet er vekst positivt koblet til ulikhet (β = 0.484, p < 0.1). I middels tetthet snur effekten til negativ (β = –2.257), mens høy tetthet igjen viser en positiv, men svært usikker effekt (β = 0.091). Interaksjonsmodellen viser at ingen av interaksjonsleddene er signifikante, men retningen på koeffisientene indikerer at effekten av vekst avhenger av hvor urban regionen er. At middelstette regioner har negativ effekt kan indikere at disse regionene har arbeidsmarkeder som mer effektivt fordeler gevinster av vekst.
+
+**3. Arbeidsledighet**
+
+Også arbeidsledighet gir forskjeller: lav ledighet gir en positiv sammenheng (β = 0.481), mens middels ledighet har en svak positiv effekt (β = 0.275). I regioner med høy ledighet er effekten derimot klart negativ (β = –4.143), noe som kan bety at vekst i svake regioner i større grad kommer lavinntektsgrupper til gode, eller at vekst skjer i sektorer som øker sysselsettingen for utsatte grupper. Interaksjonsmodellen viser at ingen forskjeller er statistisk signifikante, men retningen på koeffisientene er meningsfull.
+
+**Observerte variasjoner**
+Den observerte variasjonen mellom gruppene kan forklares av strukturelle forskjeller i hvordan økonomisk vekst fordeles i ulike typer regioner. I regioner med lav utdanning, lav tetthet og lav arbeidsledighet ser vi at vekst i større grad øker ulikheten, trolig fordi gevinster tilfaller grupper med høyere produktivitet eller kapitaltilgang. I middels utviklede regioner finner vi ofte motsatt effekt – vekst reduserer ulikheten – noe som kan skyldes at disse regionene har mer balanserte arbeidsmarkeder der nye muligheter fordeles bredere. I svakere eller svært urbane regioner blir effektene mer ustabile, både pga. få observasjoner og fordi vekst kan komme gjennom sektorer som påvirker inntektsfordelingen på svært ulike måter. Dette forklarer hvorfor koeffisientene varierer i både retning og styrke mellom gruppene.
 
 
