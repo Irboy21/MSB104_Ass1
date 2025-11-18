@@ -387,10 +387,36 @@ Når vi sammenligner de alternative modellene med standard-modellen, fremstår b
 Log-modellen beskriver spesielt godt de regionene med lav vekst, mens den kvadratiske modellen passer bedre for regioner med middels til høy vekst. Begge modellene antyder derfor at sammenhengen mellom vekst og ulikhet ikke er helt lineær, og at marginaleffekten varierer gjennom distribusjonen.
 
 
-# Del C: Heteroskedastisitet 
+# Del C: Heteroskedastisitet og Causality discussion
 
-##
+## Heteroskedasticity Testing
+For å undersøke om antakelsen om konstant varians i feilleddene holder, testet vi for heteroskedastisitet i både den opprinnelige lineære modellen og de alternative funksjonelle formene (log-modellen og den kvadratiske modellen). Vi benyttet Breusch–Pagan-testen, som evaluerer hvorvidt residualvariansen systematisk varierer med de uavhengige variablene.
 
+Testresultatene viser indikasjoner på svak heteroskedastisitet i den lineære modellen, med en p-verdi som ligger nær eller under et typisk 10 %-signifikansnivå. Dette innebærer at residualene ikke har konstant varians, som igjen kan føre til at standardfeilene blir skjeve og at statistiske tester (t-verdier og p-verdier) blir mindre pålitelige. Derfor kan signifikansnivåene til koeffisientene være misvisende i den lineære spesifikasjonen.
+
+I de alternative modellene, spesielt log-modellen, reduseres heteroskedastisiteten. Dette er forventet, ettersom log-transformasjoner ofte stabiliserer variansen i data med skjev fordeling. Den kvadratiske modellen viser også noe forbedring, men log-modellen gir den jevneste residualstrukturen.
+
+Implikasjonen er at selv om OLS-estimatene fortsatt er konsistente, kan standardfeilene være upresise i den lineære modellen. Et naturlig tiltak er å benytte robuste standardfeil (HC0/HC3), eller å velge en modell som i seg selv håndterer variansinstabilitet bedre, som log-modellen.
+
+## Causality Discussion
+
+Selv om analysene viser en tydelig positiv sammenheng mellom økonomisk vekst og regional ulikhet i flere av modellene, kan resultatene ikke tolkes som sikre kausale effekter. Dette skyldes flere metodiske begrensninger.
+
+For det første er datagrunnlaget tverrsnittbasert, noe som gjør det umulig å etablere en tidsrekkefølge mellom årsak og virkning. Det er derfor uklart om vekst påvirker ulikhet, eller om regioner med ulikhet opplever annen vekstdynamikk. Dette åpner for omvendt kausalitet, der ulikhet påvirker investeringer, arbeidsmarked og produktivitetsvekst, mekanismer som kan skape skjevheter i estimatene.
+
+For det andre kan vi ikke utelukke utelatte variabler. Faktorer som institusjonell kvalitet, politiske prioriteringer, næringsstruktur, migrasjon, urbanisering og skattesystemer kan både påvirke vekst og ulikhet. Hvis slike variabler ikke inkluderes, oppstår *omitted variable bias*, noe som gjør at koeffisienten for vekst ikke reflekterer en ren effekt.
+
+I tillegg er det sannsynlig at både ulikhet og vekst formes av et komplekst sett av samtidige prosesser, hvor historiske forhold og regioners strukturelle profil spiller en betydelig rolle. En enkel OLS-modell kan ikke fange opp slike dynamikker.
+
+For å identifisere kausale effekter mer presist ville analyseoppsettet trenge enten:
+
+- paneldata, som muliggjør faste effekter og kontrollerer for tid-invariante regionale faktorer,
+
+- instrumentvariabler (IV) som påvirker vekst, men ikke ulikhet direkte,
+
+- eller naturlige eksperimenter.
+
+Gitt dagens data bør resultatene derfor tolkes som korrelasjoner, ikke som sikre årsakssammenhenger. De gir nyttig innsikt i mønstre på tvers av regioner, men kan ikke tas som evidens for at vekst i seg selv skaper ulikhet uten mer avansert identifikasjonsstrategi.
 
 
 
