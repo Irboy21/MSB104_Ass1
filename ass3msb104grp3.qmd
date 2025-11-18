@@ -29,6 +29,8 @@ library(ggrepel)
 library(modelsummary)
 library(broom)
 library(eurostat)
+library(fixest)
+
 ```
 
 ```{r}
@@ -417,6 +419,81 @@ For å identifisere kausale effekter mer presist ville analyseoppsettet trenge e
 - eller naturlige eksperimenter.
 
 Gitt dagens data bør resultatene derfor tolkes som korrelasjoner, ikke som sikre årsakssammenhenger. De gir nyttig innsikt i mønstre på tvers av regioner, men kan ikke tas som evidens for at vekst i seg selv skaper ulikhet uten mer avansert identifikasjonsstrategi.
+
+
+# Del D: Panel Estimates
+
+```{r}
+
+
+panel_data <- NUTS2_data %>%
+  arrange(nuts2, aar) %>%
+  group_by(nuts2) %>%
+  mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
+  ungroup() %>%
+  filter(!is.na(vekst))
+
+```
+
+## Panel Estimation Task:
+
+```{r}
+mod_fe_region <- feols(gini ~ vekst | nuts2, data = panel_data,
+                       cluster = ~ nuts2)
+
+mod_fe_region_year <- feols(gini ~ vekst | nuts2 + aar, data = panel_data,
+                            cluster = ~ nuts2)
+
+mod_fe_full <- feols(gini ~ vekst | nuts2 + aar + land, data = panel_data,
+                     cluster = ~ nuts2)
+
+
+etable(mod_fe_region, mod_fe_region_year, mod_fe_full,
+       dict = c(vekst = "BNP-vekst"),
+       se.below = TRUE)
+
+```
+
+## Panel Estimation Analysis:
+Panelestimatene gir et mer robust og dynamisk bilde av forholdet mellom økonomisk vekst og ulikhet enn de tidligere tverrsnittsanalysemodellene. Ved å benytte faste effekter (fixed effects) kontrollerer modellene for tidsinvariante faktorer som er spesifikke for regioner, land og år. Dette gjør det mulig å isolere hvordan endringer innenfor hver region over tid påvirker ulikhetsnivået, uavhengig av vedvarende strukturelle forhold.
+
+I modellen med kun NUTS2-faste effekter (region-FE) finner vi en negativ og svakt signifikant sammenheng mellom vekst og ulikhet (–0.0143). Dette indikerer at når en region opplever høyere vekst enn sitt eget langtidsnivå, er dette marginalt forbundet med lavere ulikhet. Samtidig er "within R²" svært lav (0.0046), noe som avslører at modellen forklarer svært lite av variasjonen over tid i ulikhet innenfor regionene. Med andre ord: selv om effekten er statistisk tydelig i denne modellen, er den økonomisk nesten irrelevant.
+
+Når vi inkluderer årsfaste effekter (for å fange opp felles økonomiske sjokk som finanskrisen, EU-politikk, inflasjonstrender osv.), faller koeffisienten kraftig i størrelse til –0.0058 og blir ikke signifikant. Dette antyder at mye av variasjonen i ulikhet i Europa styres av overordnede makroøkonomiske trender som påvirker alle regioner samtidig. Å legge til land-faste effekter endrer ikke resultatet ytterligere, noe som viser at nasjonale forhold (som skattepolitikk eller velferdssystemer) i stor grad påvirker nivået av ulikhet, men ikke endrer forholdet mellom vekst og ulikhet over tid når årstrender også kontrolleres for.
+
+Sammenlignet med tverrsnittsanalyser i tidligere deler av oppgaven er forskjellen slående. Der fant vi at sammenhengen mellom vekst og ulikhet varierte betydelig mellom regiongrupper, og at enkelte grupper viste sterke positive eller negative relasjoner. Panelanalysene viser imidlertid at disse forskjellene i stor grad skyldtes nivåforskjeller mellom regioner og ikke endringer over tid. Dette understreker styrken ved panelmetoder: de avdekker at økonomisk vekst ikke er en viktig driver for endringer i ulikhet på regionnivå.
+
+Tverrsnitt er godt egnet til å beskrive forskjeller mellom regioner, men panelestimater viser tydelig at ulikhet i Europa er bemerkelsesverdig stabil over tid og i liten grad påvirket av kortsiktig variasjon i vekst. Dette gir en mer nyansert og langt mer konservativ tolkning av forholdet mellom vekst og ulikhet.
+
+## Panel Estimation Discussion:
+
+Panelanalysen avslører flere metodiske og substansielle innsikter som må vurderes nøye for å forstå begrensningene i estimatene. Først og fremst viser de svært lave within R²-verdiene at ulikhet endrer seg lite fra år til år på regionnivå. Dette innebærer at variasjonen som panelmodellen forsøker å forklare er minimal, noe som reduserer modellens evne til å identifisere klare årsakssammenhenger. I praksis betyr dette at selv en perfekt spesifisert modell ville slite med å forklare endringer i ulikhet, fordi svært lite faktisk endres innen regionene over tid.
+
+En annen viktig begrensning er muligheten for simultanitet og omvendt kausalitet. Selv om panelmodellen kontrollerer for faste effekter, kan det fortsatt være slik at endringer i ulikhet påvirker vekst, snarere enn omvendt. For eksempel kan regioner med økende ulikhet tiltrekke kapital eller arbeidskraft på måter som påvirker produktivitetsutviklingen. Modellen skiller ikke mellom slike mekanismer. Endogeniteten kan dermed fortsatt skape bias, selv om faste effekter eliminerer mye av confounding fra tid-invariante forhold.
+
+Et tredje poeng er at målefeil i vekstvariabelen kan være problematisk i panelsettinger. Når variasjonen innen regioner er liten, kan selv moderat målefeil føre til at estimatene trekker mot null (attenuation bias). Dette kan bidra til å forklare hvorfor vekstkoeffisienten faller dramatisk når vi legger til flere faste effekter.
+
+Videre kan det diskuteres om effekten av vekst faktisk varierer over tid på måter modellen ikke fanger opp. Strukturelle endringer, som økt teknologisk intensitet eller endringer i arbeidsmarkedet, kan gjøre forholdet mellom vekst og ulikhet ikke-lineært eller tidsvarierende. En fixedeffektsmodell med lineær form fanger ikke opp slike variasjoner.
+
+Til tross for disse begrensningene har panelmetoden betydelige styrker: den eliminerer systematiske nivåforskjeller mellom regioner og land, og gir dermed en renere identifikasjon av tidsvariasjon. Samlet sett viser funnene at på kort sikt har BNP-vekst lite eller ingen påvirkning på endringer i ulikhet, mens langsiktige nivåforskjeller mellom regioner fortsatt kan være betydelige. Dette tyder på at strukturelle forhold – som utdanningsnivå, arbeidsmarked og regional økonomisk spesialisering – er viktigere enn vekst i å forklare ulikhetsmønstre over tid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
