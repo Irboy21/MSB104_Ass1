@@ -201,3 +201,35 @@ kable(
 model_interaction <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
 summary(model_interaction)
 ```
+
+```{r}
+# Lag tertiler for befolkningstetthet
+Fordelt_Befolkning <- Befolkningstethet %>%
+  mutate(
+    bpk = as.numeric(bpk)  # Gjør om til numerisk hvis nødvendig
+  ) %>%
+  filter(!is.na(bpk)) %>%
+  mutate(
+    Bpk_tertile = ntile(bpk, 3),
+    Bpk_group = case_when(
+      Bpk_tertile == 1 ~ "low",
+      Bpk_tertile == 2 ~ "mid",
+      Bpk_tertile == 3 ~ "high"
+    ),
+    Bpk_group = factor(Bpk_group, levels = c("low", "mid", "high"))
+  )
+```
+
+```{r}
+# Slå sammen med resten av datasettet (hvis ikke allerede gjort)
+Sammenstilt_Befolkning <- Sammenstilt %>%
+  left_join(Fordelt_Befolkning %>% select(nuts2, Bpk_group), by = c("nuts2"))
+```
+
+```{r}
+# Kjør regresjonsmodell med interaksjon
+model_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Sjekk resultater
+summary(model_befolkning)
+```
