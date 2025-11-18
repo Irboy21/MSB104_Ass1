@@ -142,3 +142,62 @@ Effekten er imidlertid ikke statistisk signifikant (p = 0.463), og vi kan derfor
 Innen lav utdanningsgruppe er vekst-effekten negativ, men også klart ikke-signifikant (–6.99, p = 0.496).
 For regioner med middels utdanning er den kombinerte vekst-effekten svak positiv (≈0.56), men heller ikke signifikant.
 Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mellom gruppene, men datasettet for 2017 gir ikke tilstrekkelig statistisk grunnlag til å si at utdanningsnivå modererer forholdet mellom økonomisk vekst og ulikhet.
+
+```{r}
+Fordelt_Arbeidsledighet <- Arbeidsledighet %>%
+  mutate(
+    arbeidsledighet = as.numeric(arbeidsledighet)   
+  ) %>%
+  filter(!is.na(arbeidsledighet)) %>%               
+  mutate(
+    Arb_tertile = ntile(arbeidsledighet, 3),
+    Arb_group = case_when(
+      Arb_tertile == 1 ~ "low",
+      Arb_tertile == 2 ~ "mid",
+      Arb_tertile == 3 ~ "high"
+    ),
+    Arb_group = factor(Arb_group, levels = c("low", "mid", "high"))
+  )
+```
+
+```{r}
+Sammenstilt_Arbeidsledighet <- Sammenstilt %>%
+  left_join(Fordelt_Arbeidsledighet %>% select(nuts2, Arb_group), by = "nuts2") %>%
+  filter(!is.na(Arb_group))  # bare regioner med arbeidsledighetsgruppe
+```
+
+```{r}
+resultater <- Sammenstilt_Arbeidsledighet %>%
+  group_by(Arb_group) %>%
+  do({
+    mod <- lm(gini ~ vekst, data = .)
+    tidy(mod)
+  }) %>%
+  filter(term == "vekst") %>%
+  select(Arb_group, estimate, std.error, statistic, p.value) %>%
+  mutate(
+    estimate = round(estimate, 4),
+    std.error = round(std.error, 4),
+    statistic = round(statistic, 4),
+    p.value = round(p.value, 4),
+    Significance = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      p.value < 0.1   ~ ".",
+      TRUE            ~ ""
+    )
+  )
+
+# Presenter resultatene som tabell
+kable(
+  resultater,
+  col.names = c("Arbeidsledighet", "Estimert koeffisient", "Standardfeil", "t-verdi", "p-verdi", "Signifikans"),
+  caption = "Effekt av vekst på ulikhet (Gini) innen arbeidsledighetsgrupper"
+) %>%
+  kable_styling(full_width = FALSE)
+
+# Estimer interaksjonsmodell for å teste om effektene er signifikant forskjellige
+model_interaction <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+summary(model_interaction)
+```
