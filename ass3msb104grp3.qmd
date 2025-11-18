@@ -1,7 +1,13 @@
 ---
-title: "Untitled"
-format: html
-editor: visual
+title: "Assignment 3 — MSB104 — Group 3"
+author: "Irjan & Magnus"
+format:
+  html: default
+  pdf: default
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
 ```{r, include=FALSE}
@@ -27,7 +33,6 @@ library(broom)
 ```{r}
 NUTS2_data <- readRDS("data/NUTS2_data.rds")
 ```
-
 
 ```{r}
 # Beregn BNP per innbygger-vekst for NUTS2
@@ -104,7 +109,7 @@ edu_merged <- edu_merged %>%
   filter(!is.na(edu_group))
 ```
 
-For alle regionene som ble definert som høy utdannings, så var gini = 0, noe som vil "ødelegge" resultatet og gi feile svar. 
+For alle regionene som ble definert som høy utdannings, så var gini = 0, noe som vil "ødelegge" resultatet og gi feile svar.
 
 ```{r}
 mod_low <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "low_edu"))
@@ -128,65 +133,12 @@ summary(mod_interaction)
 
 ```
 
-For å undersøke om effekten av økonomisk vekst på regional ulikhet varierer med utdanningsnivå, estimerer vi en interaksjonsmodell der middels utdanningsnivå sammenlignes med lav utdanning (referansegruppe). Interaksjonsleddet måler hvorvidt sammenhengen mellom vekst og ulikhet endrer seg mellom gruppene.
+For å undersøke om effekten av økonomisk vekst på regional ulikhet varierer med utdanningsnivå, estimerer vi en interaksjonsmodell der middels utdanningsnivå sammenlignes med lav utdanning (referansegruppe).
+Interaksjonsleddet måler hvorvidt sammenhengen mellom vekst og ulikhet endrer seg mellom gruppene.
 
-Interaksjonskoeffisienten er positiv (7.55), noe som indikerer at regioner med middels utdanning har en mer positiv vekst–ulikhet-sammenheng enn regioner med lav utdanning. Effekten er imidlertid ikke statistisk signifikant (p = 0.463), og vi kan derfor ikke konkludere med at forskjellen mellom gruppene er reell.
+Interaksjonskoeffisienten er positiv (7.55), noe som indikerer at regioner med middels utdanning har en mer positiv vekst–ulikhet-sammenheng enn regioner med lav utdanning.
+Effekten er imidlertid ikke statistisk signifikant (p = 0.463), og vi kan derfor ikke konkludere med at forskjellen mellom gruppene er reell.
 
-Innen lav utdanningsgruppe er vekst-effekten negativ, men også klart ikke-signifikant (–6.99, p = 0.496). For regioner med middels utdanning er den kombinerte vekst-effekten svak positiv (≈0.56), men heller ikke signifikant. Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mellom gruppene, men datasettet for 2017 gir ikke tilstrekkelig statistisk grunnlag til å si at utdanningsnivå modererer forholdet mellom økonomisk vekst og ulikhet.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Innen lav utdanningsgruppe er vekst-effekten negativ, men også klart ikke-signifikant (–6.99, p = 0.496).
+For regioner med middels utdanning er den kombinerte vekst-effekten svak positiv (≈0.56), men heller ikke signifikant.
+Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mellom gruppene, men datasettet for 2017 gir ikke tilstrekkelig statistisk grunnlag til å si at utdanningsnivå modererer forholdet mellom økonomisk vekst og ulikhet.
