@@ -3,10 +3,33 @@ title: "Untitled"
 format: html
 editor: visual
 ---
+
+```{r, include=FALSE}
+library(modelr)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(vtable)
+library(flextable)
+library(scales)
+library(tinytex)
+library(readxl)
+library(stringr)
+library(janitor)
+library(tidyr)
+library(dineq) 
+library(knitr)
+library(ggrepel)
+library(modelsummary)
+library(broom)
+```
+
 ```{r}
 NUTS2_data <- readRDS("data/NUTS2_data.rds")
+```
 
 
+```{r}
 # Beregn BNP per innbygger-vekst for NUTS2
 Vekst_data <- NUTS2_data %>%
   arrange(nuts2, aar) %>%
@@ -15,7 +38,6 @@ Vekst_data <- NUTS2_data %>%
   filter(aar == 2017) %>%
   select(nuts2, vekst, gini)
 ```
-
 
 ```{r}
 library(eurostat)
@@ -52,16 +74,110 @@ edu_clean <- edu %>%
     values_from = hoyere_utdanning
   )
 
+# Beregn BNP per innbygger-vekst for NUTS2
+Vekst_data <- NUTS2_data %>%
+  arrange(nuts2, aar) %>%
+  group_by(nuts2) %>%
+  mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
+  filter(aar == 2017, !gini == 0, !is.na(gini)) %>%
+  select(nuts2, vekst, gini)
+
+# slår sammen alt
+
+edu_merged <- Vekst_data %>%
+  left_join(edu_clean, by = "nuts2")
 
 ```
 
 ```{r}
-df <- edu_clean %>%
-  mutate(edu_group = case_when(
-    ED0_2 > ED3_4 & ED0_2 > ED5_8 ~ "low_edu",
-    ED3_4 > ED0_2 & ED3_4 > ED5_8 ~ "mid_edu",
-    ED5_8 > ED0_2 & ED5_8 > ED3_4 ~ "high_edu"
-  ))
+# deler inn utdanningsnivået i tre grupper
+
+edu_merged <- edu_merged %>%
+  mutate(
+    edu_group = case_when(
+      ED0_2 > ED3_4 & ED0_2 > ED5_8 ~ "low_edu",
+      ED3_4 > ED0_2 & ED3_4 > ED5_8 ~ "mid_edu",
+      ED5_8 > ED0_2 & ED5_8 > ED3_4 ~ "high_edu",
+      TRUE ~ NA_character_
+    )
+  ) %>%
+  filter(!is.na(edu_group))
+```
+
+For alle regionene som ble definert som høy utdannings, så var gini = 0, noe som vil "ødelegge" resultatet og gi feile svar. 
+
+```{r}
+mod_low <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "low_edu"))
+
+mod_mid <- lm(gini ~ vekst, data = edu_merged %>% filter(edu_group == "mid_edu"))
+
+modelsummary(
+  list(
+    "Low education" = mod_low,
+    "Mid education" = mod_mid
+  ),
+  stars = TRUE,
+  gof_omit = "IC|Log"
+)
 
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
