@@ -255,3 +255,73 @@ model_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
 # Sjekk resultater
 summary(model_befolkning)
 ```
+
+I modellen over undersøkes hvordan økonomisk vekst påvirker ulikhet, basert på hvor tettbefolket regionen er.
+I gruppen med lav befolkningstetthet viser regresjonskoeffisienten for effekten av økonomisk vekst på GINI ca 0,38, med en standardfeil på ca 0,29.
+Dette vil si at det i disse regionene er en positiv sammenheng mellom økonomisk vekst og ulikhet.
+Ettersom P-verdien er realtivt høy på ca 0,21, er funn ikke statistisk signifikant, og det kan ikke trekkes en sikker konklusjon om at denne positive sammenhengen faktisk eksisterer.
+
+I gruppen for middel befolkningstetthet er den estimerte koefisienten av økonomisk vekst på ulikhet ca 0,88 (0,376 + 0,502), også her foreligger det er relativt stor standardfeil (p er omtrent 0,21).
+Det kan derfor her trekkes samme konklusjon som i den lave gruppen.
+
+Gruppen med regioner av høy befolkningstetthet viser er lavere positiv sammenheng enn de tidligere gruppene (0,376-0,120= 0,26).
+Det er her også en veldig høy p verdi på 0,83.
+
+Samlet sett indikerer analysen at befolkningstett ikke er en signifikant faktor som påvirker hvordan økonomisk vekst vil påvirke ulikhet.
+Høye P verdier i alle undergruppene tyder på at nullhypotese ikke kan avises, og at variasjonene skyldes andre forhold.
+
+Oppsumert finner denne analysen bare signigikant effekt for arbeidsledighet.
+Spesielt i regioner med høy arbeidsledighet ser vi at øknomisk vekst med stor sansynlighet fører til reduksjon i ulikhet.
+For utdanning og befolkningstetthet forekommer det ikke statestitiske ulikheter mellom gruppene.
+
+## Del B
+
+```{r}
+
+# Lager en ny variabel for logaritmisk vekst (naturlig log)
+Sammenstilt_Arbeidsledighet1 <- Sammenstilt_Arbeidsledighet %>%
+  mutate(log_vekst = log(vekst))
+
+# Estimer lineær modell med interaksjon mellom log_vekst og Ledighetsgrad
+model_log_interaction <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet1)
+
+# Oppsummer resultatene
+summary(model_log_interaction)
+```
+
+```{r}
+# Kjøre regresjonsmodell med interaksjon mellom log_vekst og befolkningstetthet grupper
+Sammenstilt_Befolkning <- Sammenstilt_Befolkning %>%
+  mutate(log_vekst = log(vekst))
+
+# Kjøre regresjonsmodell med interaksjon mellom log_vekst og befolkningstetthet grupper
+model_log_befolkning <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Sjekk oppsummering av modellen
+summary(model_log_befolkning)
+```
+
+I modellene over er det gjort en regresjon hvor logaritmen av vekstvaraibelen brukes istedenfor den direkte veksten som i del A.
+Denne typen modell er bedre til å fange opp ikke linære sammenhenger.
+Dette innebærer at modellen har en større følsomhjet for variasjoner ved lave verdier av vekst, hvor små prosentive endringer kan ha relativt stor betydning.
+Ved høyere vekstnivåer vil effekten av vekstøkning påvirke ulikhet i mindre grad sammenlignet ved en linær modell.
+Modellen kan derfor gi et mer nyansert bilde av økonomisk vekst effekt på ulikhet, spesielt i regioner med lavere vekst.
+
+Sammenlignet med den linære modellen, hvor koeffisientene for vekst og interaskjonene ikke var signifikante og p-verdiene relativt høye, viser den logaritmiske modellen en noe annderledes dynamikk.
+
+I den logartimiske modellen er den estimerte hoved effekten av vekst på ulikhet fortsatt positv, men mindre presis (koeffisient 0,020 og p verdi 0,25).
+Gruppen med middels befolkningstetthet viser i den logaritmiske modellen en større forskjell fra gruppen med lav tetthet.
+Den logaritmiske modellen tyder på at de to gruppenes ulikhet reagere forskjellig på øknomisk vekst i større grad enn den linære modellen gjorde.
+
+## Kvadratisk form
+
+```{r}
+# Lag en kvadratisk variabel for vekst
+Sammenstilt_Arbeidsledighet$vekst2 <- Sammenstilt_Arbeidsledighet$vekst^2
+
+# Estimer modell med kvadratisk funksjon og interaksjon med arbeidsledighetsgruppe
+model_kvadratisk <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Sjekk resultatene
+summary(model_kvadratisk)
+```
