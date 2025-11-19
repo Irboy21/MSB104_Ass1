@@ -145,88 +145,409 @@ Innen lav utdanningsgruppe er vekst-effekten negativ, men også klart ikke-signi
 For regioner med middels utdanning er den kombinerte vekst-effekten svak positiv (≈0.56), men heller ikke signifikant.
 Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mellom gruppene, men datasettet for 2017 gir ikke tilstrekkelig statistisk grunnlag til å si at utdanningsnivå modererer forholdet mellom økonomisk vekst og ulikhet.
 
-## Undergruppe analyse: Befolkningstetthet
+## Arbeidsledighet
 
 ```{r}
-# henter datasettet fra en excel fil som er produsert via eurostat
-
-Befolkningstethet <- read_excel("Befolkningstethet.xlsx", sheet = 2, col_types = "text") %>%
-  clean_names()
-
-bpk_merged <- Vekst_data %>%
-  left_join(Befolkningstethet, by = "nuts2")
-
-# gjør om til numeriske tall
-bpk_merged <- bpk_merged %>%
+#Fordeler arbeidsledigheten etter territial rangering
+Fordelt_Arbeidsledighet <- Arbeidsledighet %>%
   mutate(
-    bpk_num = as.numeric(gsub(",", ".", bpk))
+    arbeidsledighet = as.numeric(arbeidsledighet)   
+  ) %>%
+  filter(!is.na(arbeidsledighet)) %>%               
+  mutate(
+    Arb_tertile = ntile(arbeidsledighet, 3),
+    Arb_group = case_when(
+      Arb_tertile == 1 ~ "low",
+      Arb_tertile == 2 ~ "mid",
+      Arb_tertile == 3 ~ "high"
+    ),
+    Arb_group = factor(Arb_group, levels = c("low", "mid", "high"))
   )
-
 ```
 
 ```{r}
-bpk_merged <- bpk_merged %>%
+#Sammenstiller arbeidsledighets teritial med GINI koefisient
+Sammenstilt_Arbeidsledighet <- Sammenstilt %>%
+  left_join(Fordelt_Arbeidsledighet %>% select(nuts2, Arb_group), by = "nuts2") %>%
+  filter(!is.na(Arb_group))  # bare regioner med arbeidsledighetsgruppe
+```
+
+```{r}
+#Linær regresjon av GINI koefisienten fordelt på arbeidsledighets gruppering
+#Gruppe 1 med lavest arbeidsledighet settes som refferanse gruppe
+
+resultater <- Sammenstilt_Arbeidsledighet %>%
+  group_by(Arb_group) %>%
+  do({
+    mod <- lm(gini ~ vekst, data = .)
+    tidy(mod)
+  }) %>%
+  filter(term == "vekst") %>%
+  select(Arb_group, estimate, std.error, statistic, p.value) %>%
   mutate(
-    pop_group = case_when(
-      bpk_num < 100 ~ "Lav tetthet",
-      bpk_num >= 100 & bpk_num < 300 ~ "Middels tetthet",
-      bpk_num >= 300 ~ "Hoy tetthet"
+    estimate = round(estimate, 4),
+    std.error = round(std.error, 4),
+    statistic = round(statistic, 4),
+    p.value = round(p.value, 4),
+    Significance = case_when(
+      p.value < 0.001 ~ "***",
+      p.value < 0.01  ~ "**",
+      p.value < 0.05  ~ "*",
+      p.value < 0.1   ~ ".",
+      TRUE            ~ ""
     )
   )
 
+# Presenter resultatene som tabell
+kable(
+  resultater,
+  col.names = c("Arbeidsledighet", "Estimert koeffisient", "Standardfeil", "t-verdi", "p-verdi", "Signifikans"),
+  caption = "Effekt av vekst på ulikhet (Gini) innen arbeidsledighetsgrupper"
+) %>%
+  kable_styling(full_width = FALSE)
+
+# Estimer interaksjonsmodell for å teste om effektene er signifikant forskjellige
+model_interaction <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+summary(model_interaction)
 ```
 
-```{r}
-mod_low_bpk  <- lm(gini ~ vekst, data = bpk_merged %>% filter(pop_group == "Lav tetthet"))
-mod_mid_bpk  <- lm(gini ~ vekst, data = bpk_merged %>% filter(pop_group == "Middels tetthet"))
-mod_high_bpk <- lm(gini ~ vekst, data = bpk_merged %>% filter(pop_group == "Hoy tetthet"))
+I denne modellen undersøkes om sammenhengen mellom vekst i BNPI og Gini varierer avhengi av nivået på arbeidsledighet i regionen.
+Datasettet for arbeidsledighet er delt inn i regionene som faller innenfor low, som inneholder 33% av observasjonene med lavest arbeidsledighet.
+High som inneholder 33% av observasjonene med høyest arbeidsledighet.
+Og mid som inneholder regionene som faller mellom low og high.
 
-modelsummary(
-  list(
-    "Lav tetthet" = mod_low_bpk,
-    "Middels tetthet" = mod_mid_bpk,
-    "Hoy tetthet" = mod_high_bpk
-  ),
-  stars = TRUE,
-  gof_omit = "IC|Log"
-)
+Resultatene viser at det er kun i regioner med høy arbeidsledighet at det forekommer en statistisk forskjell i hvordan øknomisk vekst påvirker ulikhet.
+Det er her en P verdi på 0,035, som indikerer at forskjellen i veksteffekt mellom regioner med høy og lav arbeidsledighet er signifikante.
+Den totalte effektev av vekst estimeres til ca -4,48 (0,373-4,853) Dette tilsier at regioner med høy arbeidsledighet vil oppleve reduskjon i ulikhet som resultat av øknomisk vekst, og effekten er signifikant.
 
-```
+Regionene innenfor lav og høy arbeidsledighet viser på den andre siden ingen signifikante effekter.
+De viser P verdier på henholdsvis 0,14 og 0,98, som indikerer at vekst ikke viser en systematisk sammenheng med ulikhet for gruppene.
+Forskjellene kan ikke statistisk sikkert sier å skyldes grad av arbeidsliegihet og kan med stor sansynlighet skyldes tilfeldigheter.
+
+## Befolkningstetthet
 
 ```{r}
-bpk_merged$pop_group <- factor(bpk_merged$pop_group,
-                                  levels = c("Lav tetthet", "Middels tetthet", "Hoy tetthet"))
-
-mod_interaction_bpk <- lm(gini ~ vekst * pop_group, data = bpk_merged)
-summary(mod_interaction_bpk)
-
-```
-
-For å undersøke om sammenhengen mellom økonomisk vekst og inntektsulikhet varierer med befolkningstetthet, delte vi regionene inn i tre grupper: lav, middels og høy tetthet. Resultatene viser tydelige forskjeller mellom gruppene. For regioner med lav tetthet finner vi en positiv og marginalt signifikant sammenheng mellom vekst og ulikhet, noe som kan indikere at økonomisk utvikling i rurale områder tiltar ulikhetene når gevinster samles hos bestemte grupper.
-
-I regioner med middels tetthet finner vi en negativ, men ikke signifikant effekt av vekst på ulikhet. Dette kan skyldes at disse regionene har en mer variert næringsstruktur som fordeler veksten bredere. I de mest tettbefolkede regionene er sammenhengen svak og usikker, noe som kan forklares av få observasjoner og stor intern variasjon.
-
-Interaksjonsmodellen bekrefter at hovedleddet for vekst er positivt og signifikant, men interaksjonsleddene er ikke signifikante. Det betyr at vi ikke statistisk kan fastslå at effekten av vekst skiller seg systematisk mellom gruppene, selv om estimatene peker i ulike retninger. Samlet sett antyder analysen at befolkningstetthet kan påvirke hvordan regional utvikling slår ut på ulikhetsnivået, men at datagrunnlaget er for begrenset til å trekke bastante konklusjoner.
-
-## Undergruppe analyse: arbeidsledighet
-
-```{r}
-# henter datasettet fra en excel fil som er produsert via eurostat
-
-Arbeidsledighett <- read_excel("Arbeidsledighet.xlsx", sheet = 2, col_types = "text") %>%
-  clean_names()
-
-arb_merged <- Vekst_data %>%
-  left_join(Arbeidsledighett, by = "nuts2")
-
-# gjør om til numerisk
-arb_merged <- arb_merged %>%
+# Lag tertiler for befolkningstetthet
+Fordelt_Befolkning <- Befolkningstethet %>%
   mutate(
-    arb_num = as.numeric(gsub(",", ".", arbeidsledighet))
+    bpk = as.numeric(bpk)  
+  ) %>%
+  filter(!is.na(bpk)) %>%
+  mutate(
+    Bpk_tertile = ntile(bpk, 3),
+    Bpk_group = case_when(
+      Bpk_tertile == 1 ~ "low",
+      Bpk_tertile == 2 ~ "mid",
+      Bpk_tertile == 3 ~ "high"
+    ),
+    Bpk_group = factor(Bpk_group, levels = c("low", "mid", "high"))
   )
 ```
 
 ```{r}
+# Slå sammen med resten av datasettet 
+Sammenstilt_Befolkning <- Sammenstilt %>%
+  left_join(Fordelt_Befolkning %>% select(nuts2, Bpk_group), by = c("nuts2"))
+```
+
+```{r}
+# Kjør regresjonsmodell med interaksjon
+model_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Sjekk resultater
+summary(model_befolkning)
+```
+
+I modellen over undersøkes hvordan økonomisk vekst påvirker ulikhet, basert på hvor tettbefolket regionen er.
+I gruppen med lav befolkningstetthet viser regresjonskoeffisienten for effekten av økonomisk vekst på GINI ca 0,38, med en standardfeil på ca 0,29.
+Dette vil si at det i disse regionene er en positiv sammenheng mellom økonomisk vekst og ulikhet.
+Ettersom P-verdien er realtivt høy på ca 0,21, er funn ikke statistisk signifikant, og det kan ikke trekkes en sikker konklusjon om at denne positive sammenhengen faktisk eksisterer.
+
+I gruppen for middel befolkningstetthet er den estimerte koefisienten av økonomisk vekst på ulikhet ca 0,88 (0,376 + 0,502), også her foreligger det er relativt stor standardfeil (p er omtrent 0,21).
+Det kan derfor her trekkes samme konklusjon som i den lave gruppen.
+
+Gruppen med regioner av høy befolkningstetthet viser er lavere positiv sammenheng enn de tidligere gruppene (0,376-0,120= 0,26).
+Det er her også en veldig høy p verdi på 0,83.
+
+Samlet sett indikerer analysen at befolkningstett ikke er en signifikant faktor som påvirker hvordan økonomisk vekst vil påvirke ulikhet.
+Høye P verdier i alle undergruppene tyder på at nullhypotese ikke kan avises, og at variasjonene skyldes andre forhold.
+
+Oppsumert finner denne analysen bare signigikant effekt for arbeidsledighet.
+Spesielt i regioner med høy arbeidsledighet ser vi at øknomisk vekst med stor sansynlighet fører til reduksjon i ulikhet.
+For utdanning og befolkningstetthet forekommer det ikke statestitiske ulikheter mellom gruppene.
+
+## Del B
+
+```{r}
+
+# Lager en ny variabel for logaritmisk vekst 
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
+  mutate(log_vekst = log(vekst))
+
+# Estimer lineær modell med interaksjon mellom log_vekst og Ledighetsgrad
+model_log_interaction <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Oppsummer resultatene
+summary(model_log_interaction)
+```
+
+```{r}
+# Kjøre regresjonsmodell med interaksjon mellom log_vekst og befolkningstetthet grupper
+Sammenstilt_Befolkning <- Sammenstilt_Befolkning %>%
+  mutate(log_vekst = log(vekst))
+
+# Kjøre regresjonsmodell med interaksjon mellom log_vekst og befolkningstetthet grupper
+model_log_befolkning <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Sjekk oppsummering av modellen
+summary(model_log_befolkning)
+```
+
+I modellene over er det gjort en regresjon hvor logaritmen av vekstvaraibelen brukes istedenfor den direkte veksten som i del A.
+Denne typen modell er bedre til å fange opp ikke linære sammenhenger.
+Dette innebærer at modellen har en større følsomhjet for variasjoner ved lave verdier av vekst, hvor små prosentive endringer kan ha relativt stor betydning.
+Ved høyere vekstnivåer vil effekten av vekstøkning påvirke ulikhet i mindre grad sammenlignet ved en linær modell.
+Modellen kan derfor gi et mer nyansert bilde av økonomisk vekst effekt på ulikhet, spesielt i regioner med lavere vekst.
+
+Sammenlignet med den linære modellen, hvor koeffisientene for vekst og interaskjonene ikke var signifikante og p-verdiene relativt høye, viser den logaritmiske modellen en noe annderledes dynamikk.
+
+I den logartimiske modellen er den estimerte hoved effekten av vekst på ulikhet fortsatt positv, men mindre presis (koeffisient 0,020 og p verdi 0,25).
+Gruppen med middels befolkningstetthet viser i den logaritmiske modellen en større forskjell fra gruppen med lav tetthet.
+Den logaritmiske modellen tyder på at de to gruppenes ulikhet reagere forskjellig på øknomisk vekst i større grad enn den linære modellen gjorde.
+
+## Kvadratisk form
+
+```{r}
+# Lag en kvadratisk variabel for vekst
+Sammenstilt_Arbeidsledighet$vekst2 <- Sammenstilt_Arbeidsledighet$vekst^2
+
+# Estimer modell med kvadratisk funksjon og interaksjon med arbeidsledighetsgruppe
+model_kvadratisk <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Sjekk resultatene
+summary(model_kvadratisk)
+```
+
+```{r}
+# Lag kvadratisk variabel for vekst
+Sammenstilt_Befolkning$vekst2 <- Sammenstilt_Befolkning$vekst^2
+
+# Estimer kvadratisk modell med interaksjon mot befolkningstetthet
+model_kvadratisk_befolkning <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Sjekk resultatene
+summary(model_kvadratisk_befolkning)
+```
+
+Modellene over et utarbeidet etter en kvadratisk form.
+Dette kan argumenteres å være en av de beste modellene for å fange opp økmomiske sammenhenger.
+Dette kommer av at øknomiske sammenher ofte ikke er linære.
+For eksempel kan en øknomisk vekst vise en negativ sammenheng, og så vise en positiv sammenheng ved et vist innslangspunkt, eller vice versa.
+Linære modeller kan ha vanskeligheter med å fange opp effekten av avtakende eller økende marginaleffekter.
+Kvadratisk form er godt egnet for å analysere slike U eller inverterte U formede relasjoner, som for eksempel Kurznets-kurven.
+
+Arbeidsledighet: Ved å sammenligne forklaringsgradene ser vi at den kvadratiske er mer forklaringsdyktig enn de to tidligere modellene.
+Den kvadratiske modellen har en R2 verdi på 0,514 og en justert R2 på ca 0,3814, sammenlignet med de tidligere modellene som viste en R2 på va 0,49.
+Den høyere R2 verdien indikerer at den kvadratiske modellen fanger opp mer av de underliggende variasjonene i datasettet og gir en bedre forklaring på hvordan økonomisk vekst og grad av arbeidsledighet påvirker ulikhet.
+
+```{r}
+# Log-variabel
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
+  mutate(log_vekst = log(vekst))
+
+# Modell
+model_log <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Prediksjoner
+new_log <- expand.grid(
+  log_vekst = seq(min(Sammenstilt_Arbeidsledighet$log_vekst),
+                  max(Sammenstilt_Arbeidsledighet$log_vekst),
+                  length.out = 100),
+  Arb_group = unique(Sammenstilt_Arbeidsledighet$Arb_group)
+)
+
+new_log$pred <- predict(model_log, new_log)
+
+# Plot
+ggplot() +
+  geom_point(data = Sammenstilt_Arbeidsledighet,
+             aes(x = log_vekst, y = gini, color = Arb_group)) +
+  geom_line(data = new_log,
+            aes(x = log_vekst, y = pred, color = Arb_group), size = 1.2) +
+  theme_minimal() +
+  labs(title = "Logaritmisk modell: gini ~ log(vekst) * Arbeidsledighet",
+       x = "log(vekst)",
+       y = "Gini-koeffisient")
+```
+
+```{r}
+# 1) Lag vekst2 i hoveddata (dersom ikke allerede gjort)
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
+  mutate(vekst2 = vekst^2)
+
+# 2) Estimer modellen (hvis ikke gjort)
+model_quad <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# 3) Lag prediksjonsgrid
+new_quad <- expand.grid(
+  vekst = seq(min(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
+              max(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
+              length.out = 200),
+  Arb_group = levels(Sammenstilt_Arbeidsledighet$Arb_group)   # bruk samme nivåer
+)
+
+# 4) Legg til vekst2 i prediksjonsgridet
+new_quad <- new_quad %>%
+  mutate(vekst2 = vekst^2)
+
+# 5) Sørg for at Arb_group er faktor med samme nivåer som i treningsdata
+new_quad$Arb_group <- factor(new_quad$Arb_group, levels = levels(Sammenstilt_Arbeidsledighet$Arb_group))
+
+# 6) Beregn prediksjoner (utenfor mutate)
+new_quad$pred <- predict(model_quad, newdata = new_quad)
+
+# 7) Plot
+library(ggplot2)
+ggplot() +
+  geom_point(data = Sammenstilt_Arbeidsledighet,
+             aes(x = vekst, y = gini, color = Arb_group)) +
+  geom_line(data = new_quad,
+            aes(x = vekst, y = pred, color = Arb_group), size = 1.1) +
+  theme_minimal() +
+  labs(title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Arb_group",
+       x = "Vekst",
+       y = "Gini")
+```
+
+```{r}
+# Lag logaritmisk vekst-variabel (naturlig logaritme)
+Sammenstilt_Befolkning <- Sammenstilt_Befolkning %>%
+  mutate(log_vekst = log(vekst))
+
+# Estimer lineær modell med interaksjon mellom log_vekst og befolkningstetthet
+model_log_bpk <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+summary(model_log_bpk)
+
+# Lag prediksjonsgrid
+new_log_bpk <- expand.grid(
+  log_vekst = seq(min(Sammenstilt_Befolkning$log_vekst, na.rm = TRUE),
+                  max(Sammenstilt_Befolkning$log_vekst, na.rm = TRUE),
+                  length.out = 200),
+  Bpk_group = levels(Sammenstilt_Befolkning$Bpk_group)
+)
+
+# Sørg for at faktor-nivåene stemmer
+new_log_bpk$Bpk_group <- factor(new_log_bpk$Bpk_group, levels = levels(Sammenstilt_Befolkning$Bpk_group))
+
+# Prediksjoner
+new_log_bpk$pred <- predict(model_log_bpk, newdata = new_log_bpk)
+
+# Plot med ggplot2
+ggplot() +
+  geom_point(data = Sammenstilt_Befolkning,
+             aes(x = log_vekst, y = gini, color = Bpk_group)) +
+  geom_line(data = new_log_bpk,
+            aes(x = log_vekst, y = pred, color = Bpk_group), size = 1.2) +
+  theme_minimal() +
+  labs(
+    title = "Logaritmisk modell: gini ~ log_vekst * Befolkningstetthet",
+    x = "Logaritmisk økonomisk vekst",
+    y = "Gini-koeffisient",
+    color = "Befolkningstetthet"
+  )
+```
+
+```{r}
+### 1) Lag kvadratisk variabel i datasettet
+Sammenstilt_Befolkning <- Sammenstilt_Befolkning %>%
+  mutate(vekst2 = vekst^2)
+
+### 2) Estimer kvadratisk modell med interaksjon
+model_quad_bpk <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sammenstilt_Befolkning)
+
+summary(model_quad_bpk)
+
+
+### 3) Lag prediksjonsgrid
+new_quad_bpk <- expand.grid(
+  vekst = seq(min(Sammenstilt_Befolkning$vekst, na.rm = TRUE),
+              max(Sammenstilt_Befolkning$vekst, na.rm = TRUE),
+              length.out = 200),
+  Bpk_group = levels(Sammenstilt_Befolkning$Bpk_group)
+)
+
+### 4) Legg til vekst2 i prediksjonsgridet
+new_quad_bpk <- new_quad_bpk %>%
+  mutate(vekst2 = vekst^2)
+
+### 5) Sørg for at faktor-nivåene er identiske
+new_quad_bpk$Bpk_group <- factor(new_quad_bpk$Bpk_group,
+                                 levels = levels(Sammenstilt_Befolkning$Bpk_group))
+
+### 6) Prediksjoner
+new_quad_bpk$pred <- predict(model_quad_bpk, newdata = new_quad_bpk)
+
+### 7) Plot
+library(ggplot2)
+
+ggplot() +
+  geom_point(data = Sammenstilt_Befolkning,
+             aes(x = vekst, y = gini, color = Bpk_group)) +
+  geom_line(data = new_quad_bpk,
+            aes(x = vekst, y = pred, color = Bpk_group), size = 1.1) +
+  theme_minimal() +
+  labs(
+    title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Befolkningstetthet",
+    x = "Økonomisk vekst",
+    y = "Gini-koeffisient",
+    color = "Befolkningstetthet"
+  )
+```
+
+## Del C
+
+```{r}
+# Lineær modell med interaksjon
+modell_lineær_arbeidsledighet <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Logaritmisk modell med interaksjon
+modell_log_arbeidsledighet <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Kvadratisk modell med interaksjon
+modell_kvadratisk_arbeidsledighet <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+```
+
+```{r}
+# Breusch-Pagan-test for de ulike modellene
+bptest(modell_lineær_arbeidsledighet)
+bptest(modell_log_arbeidsledighet)
+bptest(modell_kvadratisk_arbeidsledighet)
+```
+
+```{r}
+# Lineær modell med interaksjon
+modell_lineær_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Logaritmisk modell med interaksjon
+modell_log_befolkning <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Kvadratisk modell med interaksjon
+modell_kvadratisk_befolkning <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sammenstilt_Befolkning)
+```
+
+```{r}
+#Breusch-Pagan-test etter befolkningstetthet
+bptest(modell_lineær_befolkning)
+bptest(modell_log_befolkning)
+bptest(modell_kvadratisk_befolkning)
+```
+
+For å teste modellenes Heteroskedasticity benyttes breusch pagan testen.
+Den undersøker om variablene i residualene er konstant eller systematisk avhengi av de forklarende variablene.
+Dersom man i en slik test får en P verdi høyere enn signifikant nivået på 5 prosent, kan man ikke forkaste nullhypotesen om homoskedasitet
+
+## Del D
 # deler inn i 3 grupper for arbeidsledighet
 
 arb_merged <- arb_merged %>% 
