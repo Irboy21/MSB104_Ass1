@@ -838,15 +838,10 @@ summary(model_land)
 
 
 
+
+
 ```{r}
 
-
-panel_data <- NUTS2_data %>%
-  arrange(nuts2, aar) %>%
-  group_by(nuts2) %>%
-  mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
-  ungroup() %>%
-  filter(!is.na(vekst))
 
 ```
 
