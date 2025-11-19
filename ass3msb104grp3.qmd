@@ -28,6 +28,7 @@ library(knitr)
 library(ggrepel)
 library(modelsummary)
 library(broom)
+library(lmtest)
 ```
 
 ```{r}
@@ -504,3 +505,39 @@ ggplot() +
 ```
 
 ## Del C
+
+```{r}
+# Lineær modell med interaksjon
+modell_lineær_arbeidsledighet <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Logaritmisk modell med interaksjon
+modell_log_arbeidsledighet <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet1)
+
+# Kvadratisk modell med interaksjon
+modell_kvadratisk_arbeidsledighet <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+```
+
+```{r}
+# Breusch-Pagan-test for de ulike modellene
+bptest(modell_lineær_arbeidsledighet)
+bptest(modell_log_arbeidsledighet)
+bptest(modell_kvadratisk_arbeidsledighet)
+```
+
+```{r}
+# Lineær modell med interaksjon
+modell_lineær_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Logaritmisk modell med interaksjon
+modell_log_befolkning <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Kvadratisk modell med interaksjon
+modell_kvadratisk_befolkning <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sammenstilt_Befolkning)
+```
+
+```{r}
+#Breusch-Pagan-test etter befolkningstetthet
+bptest(modell_lineær_befolkning)
+bptest(modell_log_befolkning)
+bptest(modell_kvadratisk_befolkning)
+```
