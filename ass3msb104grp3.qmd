@@ -742,10 +742,46 @@ Gitt dagens data bør resultatene derfor tolkes som korrelasjoner, ikke som sikr
  
 # Del D: Panel Estimates
 
+```{r}
+#Henter datasett fra ass1 som skal transformeres til grunnlag for panel estimat
+GINI <- readRDS("data/GINI_alle.rds")
+bnppi_nuts3 <- readRDS("data/Kombinert.rds")
+```
 
 
+```{r}
+# Sammenslår NUTS3 regionene til NUTS2 regioner
+bnppi_nuts2 <- bnppi_nuts3 %>%
+  mutate(nuts2 = substr(geo, 1, 4)) %>%
+  group_by(nuts2, aar) %>%
+  summarise(
+    BNPPI = mean(BNPPI, na.rm = TRUE),      # gjennomsnitt av BNP per innbygger
+    befolkning = sum(befolkning, na.rm = TRUE), 
+    BNP = sum(BNP, na.rm = TRUE),           
+    .groups = "drop"
+  )
 
+```
 
+```{r}
+# Slå sammen GINI og BNPPI på nuts2 og år
+gini_bnppi <- GINI %>%
+  inner_join(bnppi_nuts2, by = c("nuts2", "aar"))
+```
+
+```{r}
+#Beregner årlig vekstfaktor for BNPPI, som burukes som mål på regional vekst
+gini_bnppi <- gini_bnppi %>%
+  group_by(nuts2) %>%
+  arrange(aar) %>%
+  mutate(vekst = (BNPPI - lag(BNPPI)) / lag(BNPPI))
+```
+
+```{r}
+#Definer paneldata med nuts2 som individ og aar som tid
+
+pdata <- pdata.frame(gini_bnppi, index = c("nuts2", "aar"))
+```
 
 
 # Del E: Bruken av KI
