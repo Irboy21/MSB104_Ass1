@@ -545,10 +545,6 @@ bptest(modell_kvadratisk_befolkning)
 
 For å teste modellenes Heteroskedasticity benyttes breusch pagan testen.
 Den undersøker om variablene i residualene er konstant eller systematisk avhengi av de forklarende variablene.
-De
+Dersom man i en slik test får en P verdi høyere enn signifikant nivået på 5 prosent, kan man ikke forkaste nullhypotesen om homoskedasitet
 
 ## Del D
-
-```{r}
-
-```
