@@ -148,6 +148,9 @@ Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mel
 ## Arbeidsledighet
 
 ```{r}
+Arbeidsledighet <- read_excel("Arbeidsledighet.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
+
 #Fordeler arbeidsledigheten etter territial rangering
 Fordelt_Arbeidsledighet <- Arbeidsledighet %>%
   mutate(
@@ -227,6 +230,8 @@ Forskjellene kan ikke statistisk sikkert sier å skyldes grad av arbeidsliegihet
 ## Befolkningstetthet
 
 ```{r}
+Befolkningstethet <- read_excel("Befolkningstethet.xlsx", sheet = 2, col_types = "text") %>%
+  clean_names()
 # Lag tertiler for befolkningstetthet
 Fordelt_Befolkning <- Befolkningstethet %>%
   mutate(
