@@ -749,7 +749,7 @@ De gir nyttig innsikt i mønstre på tvers av regioner, men kan ikke tas som evi
 # Del D: Panel Estimates
 
 ```{r}
-paneldata <- readRDS("data/GINI_alle.rds")
+GINI <- readRDS("data/GINI_alle.rds")
 ```
 
 
