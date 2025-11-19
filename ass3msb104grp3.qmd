@@ -748,7 +748,9 @@ Gitt dagens data bør resultatene derfor tolkes som korrelasjoner, ikke som sikr
 
 
 
+# Del C: Bruken av KI
 
+Vi har benyttes oss av Chat-gpt5.1 og Chat-gpt3. I denne oppgaven vi brukt KI til å først og fremst forstå og tolke hva oppgaven spør etter. Når vi har hatt knote feil med kode har vi benytt chat-gpt for å få hjelpende hånd i riktig retning. Vi har også brukt det til hjelp for å analysere dataene og til å formulere teori delen på en bedre måte.
 
 
 
