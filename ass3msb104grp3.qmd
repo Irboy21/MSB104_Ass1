@@ -230,7 +230,7 @@ Forskjellene kan ikke statistisk sikkert sier å skyldes grad av arbeidsliegihet
 # Lag tertiler for befolkningstetthet
 Fordelt_Befolkning <- Befolkningstethet %>%
   mutate(
-    bpk = as.numeric(bpk)  # Gjør om til numerisk hvis nødvendig
+    bpk = as.numeric(bpk)  
   ) %>%
   filter(!is.na(bpk)) %>%
   mutate(
@@ -245,7 +245,7 @@ Fordelt_Befolkning <- Befolkningstethet %>%
 ```
 
 ```{r}
-# Slå sammen med resten av datasettet (hvis ikke allerede gjort)
+# Slå sammen med resten av datasettet 
 Sammenstilt_Befolkning <- Sammenstilt %>%
   left_join(Fordelt_Befolkning %>% select(nuts2, Bpk_group), by = c("nuts2"))
 ```
@@ -280,7 +280,7 @@ For utdanning og befolkningstetthet forekommer det ikke statestitiske ulikheter 
 
 ```{r}
 
-# Lager en ny variabel for logaritmisk vekst (naturlig log)
+# Lager en ny variabel for logaritmisk vekst 
 Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
   mutate(log_vekst = log(vekst))
 
@@ -512,7 +512,7 @@ ggplot() +
 modell_lineær_arbeidsledighet <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
 
 # Logaritmisk modell med interaksjon
-modell_log_arbeidsledighet <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet1)
+modell_log_arbeidsledighet <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
 
 # Kvadratisk modell med interaksjon
 modell_kvadratisk_arbeidsledighet <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
@@ -542,6 +542,10 @@ bptest(modell_lineær_befolkning)
 bptest(modell_log_befolkning)
 bptest(modell_kvadratisk_befolkning)
 ```
+
+For å teste modellenes Heteroskedasticity benyttes breusch pagan testen.
+Den undersøker om variablene i residualene er konstant eller systematisk avhengi av de forklarende variablene.
+De
 
 ## Del D
 
