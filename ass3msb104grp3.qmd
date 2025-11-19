@@ -170,6 +170,7 @@ Fordelt_Arbeidsledighet <- Arbeidsledighet %>%
 
 ```{r}
 #Sammenstiller arbeidsledighets teritial med GINI koefisient
+Sammenstilt <- readRDS("data/Sammenstilt.rds")
 Sammenstilt_Arbeidsledighet <- Sammenstilt %>%
   left_join(Fordelt_Arbeidsledighet %>% select(nuts2, Arb_group), by = "nuts2") %>%
   filter(!is.na(Arb_group))  # bare regioner med arbeidsledighetsgruppe
@@ -205,7 +206,7 @@ resultater <- Sammenstilt_Arbeidsledighet %>%
 kable(
   resultater,
   col.names = c("Arbeidsledighet", "Estimert koeffisient", "Standardfeil", "t-verdi", "p-verdi", "Signifikans"),
-  caption = "Effekt av vekst på ulikhet (Gini) innen arbeidsledighetsgrupper"
+  caption = "Effekt av vekst pa ulikhet (Gini) innen arbeidsledighetsgrupper"
 ) %>%
   kable_styling(full_width = FALSE)
 
@@ -284,6 +285,12 @@ For utdanning og befolkningstetthet forekommer det ikke statestitiske ulikheter 
 ## Del B
 
 ```{r}
+# kombinerer alle variablene til en tabell
+
+combined_data <- Vekst_data %>%
+  left_join(edu_merged %>% select(nuts2, ED0_2, ED3_4, ED5_8), by = "nuts2") %>%
+  left_join(bpk_merged %>% select(nuts2, bpk_num, pop_group), by = "nuts2") %>%
+  left_join(arb_merged %>% select(nuts2, arb_num, arb_group), by = "nuts2")
 
 # Lager en ny variabel for logaritmisk vekst 
 Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
@@ -457,7 +464,7 @@ ggplot() +
   theme_minimal() +
   labs(
     title = "Logaritmisk modell: gini ~ log_vekst * Befolkningstetthet",
-    x = "Logaritmisk økonomisk vekst",
+    x = "Logaritmisk okonomisk vekst",
     y = "Gini-koeffisient",
     color = "Befolkningstetthet"
   )
@@ -504,7 +511,7 @@ ggplot() +
   theme_minimal() +
   labs(
     title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Befolkningstetthet",
-    x = "Økonomisk vekst",
+    x = "Okonomisk vekst",
     y = "Gini-koeffisient",
     color = "Befolkningstetthet"
   )
@@ -514,7 +521,7 @@ ggplot() +
 
 ```{r}
 # Lineær modell med interaksjon
-modell_lineær_arbeidsledighet <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+modell_linear_arbeidsledighet <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
 
 # Logaritmisk modell med interaksjon
 modell_log_arbeidsledighet <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
@@ -525,7 +532,7 @@ modell_kvadratisk_arbeidsledighet <- lm(gini ~ vekst + vekst2 * Arb_group, data 
 
 ```{r}
 # Breusch-Pagan-test for de ulike modellene
-bptest(modell_lineær_arbeidsledighet)
+bptest(modell_linear_arbeidsledighet)
 bptest(modell_log_arbeidsledighet)
 bptest(modell_kvadratisk_arbeidsledighet)
 ```
@@ -543,7 +550,7 @@ modell_kvadratisk_befolkning <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sam
 
 ```{r}
 #Breusch-Pagan-test etter befolkningstetthet
-bptest(modell_lineær_befolkning)
+bptest(modell_linear_befolkning)
 bptest(modell_log_befolkning)
 bptest(modell_kvadratisk_befolkning)
 ```
@@ -649,12 +656,7 @@ Selv om cubic varianten kan være en nyttig modell, er den ikke ideell som en av
 ## Estimation and Visualization:
 
 ```{r}
-# kombinerer alle variablene til en tabell
 
-combined_data <- Vekst_data %>%
-  left_join(edu_merged %>% select(nuts2, ED0_2, ED3_4, ED5_8), by = "nuts2") %>%
-  left_join(bpk_merged %>% select(nuts2, bpk_num, pop_group), by = "nuts2") %>%
-  left_join(arb_merged %>% select(nuts2, arb_num, arb_group), by = "nuts2")
 
 
 # modell for den lineære modellen som er standardmodellen som er brukt til nå
