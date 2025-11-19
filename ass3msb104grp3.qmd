@@ -31,6 +31,7 @@ library(broom)
 library(eurostat)
 library(fixest)
 library(lmtest)
+library(plm)
 
 ```
 
@@ -781,6 +782,21 @@ gini_bnppi <- gini_bnppi %>%
 #Definer paneldata med nuts2 som individ og aar som tid
 
 pdata <- pdata.frame(gini_bnppi, index = c("nuts2", "aar"))
+```
+
+
+```{r}
+#NUTS2 regioner som fixed effects
+model_nuts2 <- plm(gini ~ vekst, data = pdata, model = "within", effect = "individual")
+summary(model_nuts2)
+```
+
+I denne modellen beregnes effekten av BNPPI på GINI kontrollert for tids invariante tidsforskjellem mellom NUTS2 regionene. BNPPI estimatet viser en negativ korelasjon på -0,022. Dette indikerer at når vi analyserer effekten innenfor samme regioner over tid vil øknomisk vekst føre til reduksjon i ulikhet. R2 viser at kun ca 1,1% av GINI variasjonene forventes å kunne forklare med endring i BNPPI,
+
+
+
+```{r}
+
 ```
 
 
