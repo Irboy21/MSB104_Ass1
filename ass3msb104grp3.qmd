@@ -143,7 +143,10 @@ Innen lav utdanningsgruppe er vekst-effekten negativ, men også klart ikke-signi
 For regioner med middels utdanning er den kombinerte vekst-effekten svak positiv (≈0.56), men heller ikke signifikant.
 Samlet sett antyder resultatene at det kan eksistere kvalitative forskjeller mellom gruppene, men datasettet for 2017 gir ikke tilstrekkelig statistisk grunnlag til å si at utdanningsnivå modererer forholdet mellom økonomisk vekst og ulikhet.
 
+## Arbeidsledighet
+
 ```{r}
+#Fordeler arbeidsledigheten etter territial rangering
 Fordelt_Arbeidsledighet <- Arbeidsledighet %>%
   mutate(
     arbeidsledighet = as.numeric(arbeidsledighet)   
@@ -161,12 +164,16 @@ Fordelt_Arbeidsledighet <- Arbeidsledighet %>%
 ```
 
 ```{r}
+#Sammenstiller arbeidsledighets teritial med GINI koefisient
 Sammenstilt_Arbeidsledighet <- Sammenstilt %>%
   left_join(Fordelt_Arbeidsledighet %>% select(nuts2, Arb_group), by = "nuts2") %>%
   filter(!is.na(Arb_group))  # bare regioner med arbeidsledighetsgruppe
 ```
 
 ```{r}
+#Linær regresjon av GINI koefisienten fordelt på arbeidsledighets gruppering
+#Gruppe 1 med lavest arbeidsledighet settes som refferanse gruppe
+
 resultater <- Sammenstilt_Arbeidsledighet %>%
   group_by(Arb_group) %>%
   do({
@@ -201,6 +208,21 @@ kable(
 model_interaction <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
 summary(model_interaction)
 ```
+
+I denne modellen undersøkes om sammenhengen mellom vekst i BNPI og Gini varierer avhengi av nivået på arbeidsledighet i regionen.
+Datasettet for arbeidsledighet er delt inn i regionene som faller innenfor low, som inneholder 33% av observasjonene med lavest arbeidsledighet.
+High som inneholder 33% av observasjonene med høyest arbeidsledighet.
+Og mid som inneholder regionene som faller mellom low og high.
+
+Resultatene viser at det er kun i regioner med høy arbeidsledighet at det forekommer en statistisk forskjell i hvordan øknomisk vekst påvirker ulikhet.
+Det er her en P verdi på 0,035, som indikerer at forskjellen i veksteffekt mellom regioner med høy og lav arbeidsledighet er signifikante.
+Den totalte effektev av vekst estimeres til ca -4,48 (0,373-4,853) Dette tilsier at regioner med høy arbeidsledighet vil oppleve reduskjon i ulikhet som resultat av øknomisk vekst, og effekten er signifikant.
+
+Regionene innenfor lav og høy arbeidsledighet viser på den andre siden ingen signifikante effekter.
+De viser P verdier på henholdsvis 0,14 og 0,98, som indikerer at vekst ikke viser en systematisk sammenheng med ulikhet for gruppene.
+Forskjellene kan ikke statistisk sikkert sier å skyldes grad av arbeidsliegihet og kan med stor sansynlighet skyldes tilfeldigheter.
+
+## Befolkningstetthet 
 
 ```{r}
 # Lag tertiler for befolkningstetthet
