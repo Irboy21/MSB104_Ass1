@@ -30,6 +30,7 @@ library(modelsummary)
 library(broom)
 library(eurostat)
 library(fixest)
+library(lmtest)
 
 ```
 
@@ -284,14 +285,34 @@ For utdanning og befolkningstetthet forekommer det ikke statestitiske ulikheter 
 
 ## Del B
 
+I utgangspunktet spesifiserte vi en lineær sammenheng mellom økonomisk vekst (vekst i BNP per innbygger) og regional ulikhet (Gini). En ren lineær modell impliserer at én ekstra prosentenhet høyere vekst alltid endrer ulikheten med det samme beløpet, uavhengig av om regionen allerede har lav eller høy vekst. Både teori og de empiriske resultatene fra de tidligere analysene antyder at dette kan være en for sterk antakelse.
+
+Fra økonomisk teori finnes det flere grunner til å forvente ikke-lineære sammenhenger. Kuznets-hypotesen peker på at ulikheten kan falle i tidlig utviklingsfase og deretter øke når økonomien blir mer avansert, noe som tilsvarer en kurvet (konveks) sammenheng snarere enn en rett linje. I tillegg kan marginaleffekten av vekst være avtagende: litt ekstra vekst i en svak region kan ha større betydning for ulikheten enn den samme vekstøkingen i en allerede velutviklet region.
+
+Også de empiriske funnene våre peker i retning av ikke-linearitet. Subset-analysene viste at effekten av vekst endrer fortegn mellom grupper med ulik utdanning, tetthet og arbeidsledighet. Det tyder på at sammenhengen mellom vekst og ulikhet kan skifte karakter når regioner passerer visse terskler – noe en lineær modell ikke kan fange opp.
+
+På denne bakgrunn valgte vi å undersøke to alternative funksjonsformer:
+
+- **Logaritmisk modell** (gini ~ log(vekst)), som fanger opp avtagende marginaleffekt av vekst og reduserer innflytelsen fra enkeltregioner med svært høy vekst.
+
+- **Kvadratisk modell** (gini ~ vekst + vekst²), som eksplisitt tillater at sammenhengen kan være bue-formet (for eksempel Kuznets-kurven), og dermed gir rom for at vekst kan ha ulik effekt på ulikhet ved lave og høye vekstrater.
+
+Disse to formene er derfor både teoretisk begrunnet og empirisk motiverte av mønstrene vi observerer i dataene.
+
+Selv om cubic varianten kan være en nyttig modell, er den ikke ideell som en av de to hovedformen. Grunnen til dette er fordi datamaterialet er for lite og en cubic-spesifikasjon krever flere parametere, noe som øker risikoen for overfitting. I tillegg finnes det lite teoretisk grunnlag for at forholdet mellom økonomisk vekst og ulikhet skulle følge en S-formet (cubic) kurve. Derfor fremstår den logaritmiske og kvadratiske modellen som mer hensiktsmessige alternative funksjonsformer.
+### Logaritmisk form
 ```{r}
-# kombinerer alle variablene til en tabell
+Sammenstilt_Utdanningsniva <- Sammenstilt_Utdanningsniva %>%
+  mutate(log_vekst = log(vekst))
 
-combined_data <- Vekst_data %>%
-  left_join(edu_merged %>% select(nuts2, ED0_2, ED3_4, ED5_8), by = "nuts2") %>%
-  left_join(bpk_merged %>% select(nuts2, bpk_num, pop_group), by = "nuts2") %>%
-  left_join(arb_merged %>% select(nuts2, arb_num, arb_group), by = "nuts2")
+model_log_edu <- lm(gini ~ log_vekst * edu_group, data = Sammenstilt_Utdanningsniva)
 
+# Sjekk oppsummering av modellen
+summary(model_log_edu)
+```
+
+
+```{r}
 # Lager en ny variabel for logaritmisk vekst 
 Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
   mutate(log_vekst = log(vekst))
@@ -315,6 +336,9 @@ model_log_befolkning <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befo
 summary(model_log_befolkning)
 ```
 
+
+
+
 I modellene over er det gjort en regresjon hvor logaritmen av vekstvaraibelen brukes istedenfor den direkte veksten som i del A.
 Denne typen modell er bedre til å fange opp ikke linære sammenhenger.
 Dette innebærer at modellen har en større følsomhjet for variasjoner ved lave verdier av vekst, hvor små prosentive endringer kan ha relativt stor betydning.
@@ -328,6 +352,18 @@ Gruppen med middels befolkningstetthet viser i den logaritmiske modellen en stø
 Den logaritmiske modellen tyder på at de to gruppenes ulikhet reagere forskjellig på øknomisk vekst i større grad enn den linære modellen gjorde.
 
 ## Kvadratisk form
+
+```{r}
+# Lag en kvadratisk variabel for vekst
+Sammenstilt_Utdanningsniva$vekst2 <- Sammenstilt_Utdanningsniva$vekst^2
+
+# Estimer modell med kvadratisk funksjon og interaksjon med arbeidsledighetsgruppe
+model_kvadratisk_edu <- lm(gini ~ vekst + vekst2 * edu_group, data = Sammenstilt_Utdanningsniva)
+
+# Sjekk resultatene
+summary(model_kvadratisk_edu)
+
+```
 
 ```{r}
 # Lag en kvadratisk variabel for vekst
@@ -362,6 +398,45 @@ Arbeidsledighet: Ved å sammenligne forklaringsgradene ser vi at den kvadratiske
 Den kvadratiske modellen har en R2 verdi på 0,514 og en justert R2 på ca 0,3814, sammenlignet med de tidligere modellene som viste en R2 på va 0,49.
 Den høyere R2 verdien indikerer at den kvadratiske modellen fanger opp mer av de underliggende variasjonene i datasettet og gir en bedre forklaring på hvordan økonomisk vekst og grad av arbeidsledighet påvirker ulikhet.
 
+
+### Loaritmisk visualisering
+```{r}
+# Log-variabel
+Sammenstilt_Utdanningsniva <- edu_merged %>%
+  mutate(log_vekst = log(vekst))
+
+# Modell
+model_log <- lm(gini ~ log_vekst * edu_group, data = Sammenstilt_Utdanningsniva)
+
+# Prediksjoner
+
+new_log <- expand.grid(
+  log_vekst = seq(min(Sammenstilt_Utdanningsniva$log_vekst),
+                  max(Sammenstilt_Utdanningsniva$log_vekst),
+                  length.out = 100),
+  edu_group = unique(Sammenstilt_Utdanningsniva$edu_group)
+)
+
+new_log$pred <- predict(model_log, new_log)
+
+# Plot
+ggplot() +
+  geom_point(data = Sammenstilt_Utdanningsniva,
+             aes(x = log_vekst, y = gini, color = edu_group)) +
+  geom_line(data = new_log,
+            aes(x = log_vekst, y = pred, color = edu_group), size = 1.2) +
+  theme_minimal() +
+  labs(title = "Logaritmisk modell: gini ~ log(vekst) * Utdanningsniva",
+       x = "log(vekst)",
+       y = "Gini-koeffisient")
+```
+Log-modellen gir en tydelig konkav sammenheng: økninger i vekst har størst effekt på ulikhet i regioner med svært lav vekst, mens marginaleffekten avtar etter hvert som veksten øker. Dette er synlig i visualiseringen, der kurven stiger bratt ved lave verdier og flater ut for høyere vekstnivåer.
+
+Teoretisk er dette plausibelt. I regioner som starter på et lavt nivå, vil små vekstimpulser ofte påvirke enkelte sektorer svært sterkt, og dermed øke ulikheten midlertidig. Når veksten blir mer robust og bredt fordelt, dempes effekten. Modellen passer også intuitivt godt med Kuznets-hypotesen, som hevder at ulikhet ofte øker i tidlige vekstfaser før den stabiliseres.
+
+Selv om log-modellen gir en bedre visuell beskrivelse av datapunktene i nedre del av vekstfordelingen enn den lineære modellen, gir den ingen dramatisk endring i helheten. Dette antyder at relasjonen er svak ikke-linearitet, ikke en fundamental strukturell kurveendring.
+
+
 ```{r}
 # Log-variabel
 Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
@@ -392,44 +467,6 @@ ggplot() +
        y = "Gini-koeffisient")
 ```
 
-```{r}
-# 1) Lag vekst2 i hoveddata (dersom ikke allerede gjort)
-Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
-  mutate(vekst2 = vekst^2)
-
-# 2) Estimer modellen (hvis ikke gjort)
-model_quad <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
-
-# 3) Lag prediksjonsgrid
-new_quad <- expand.grid(
-  vekst = seq(min(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
-              max(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
-              length.out = 200),
-  Arb_group = levels(Sammenstilt_Arbeidsledighet$Arb_group)   # bruk samme nivåer
-)
-
-# 4) Legg til vekst2 i prediksjonsgridet
-new_quad <- new_quad %>%
-  mutate(vekst2 = vekst^2)
-
-# 5) Sørg for at Arb_group er faktor med samme nivåer som i treningsdata
-new_quad$Arb_group <- factor(new_quad$Arb_group, levels = levels(Sammenstilt_Arbeidsledighet$Arb_group))
-
-# 6) Beregn prediksjoner (utenfor mutate)
-new_quad$pred <- predict(model_quad, newdata = new_quad)
-
-# 7) Plot
-library(ggplot2)
-ggplot() +
-  geom_point(data = Sammenstilt_Arbeidsledighet,
-             aes(x = vekst, y = gini, color = Arb_group)) +
-  geom_line(data = new_quad,
-            aes(x = vekst, y = pred, color = Arb_group), size = 1.1) +
-  theme_minimal() +
-  labs(title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Arb_group",
-       x = "Vekst",
-       y = "Gini")
-```
 
 ```{r}
 # Lag logaritmisk vekst-variabel (naturlig logaritme)
@@ -468,6 +505,87 @@ ggplot() +
     y = "Gini-koeffisient",
     color = "Befolkningstetthet"
   )
+```
+
+
+### kvadratisk visualisering
+```{r}
+# 1) Lag vekst2 i hoveddata (dersom ikke allerede gjort)
+Sammenstilt_Utdanningsniva <- Sammenstilt_Utdanningsniva %>%
+  mutate(vekst2 = vekst^2)
+
+# 2) Estimer modellen (hvis ikke gjort)
+model_quad_edu <- lm(gini ~ vekst + vekst2 * edu_group, data = Sammenstilt_Utdanningsniva)
+
+# 3) Lag prediksjonsgrid
+new_quad_edu <- expand.grid(
+  vekst = seq(min(Sammenstilt_Utdanningsniva$vekst, na.rm = TRUE),
+              max(Sammenstilt_Utdanningsniva$vekst, na.rm = TRUE),
+              length.out = 200),
+  edu_group = levels(Sammenstilt_Utdanningsniva$edu_group)   # bruk samme nivåer
+)
+
+# 4) Legg til vekst2 i prediksjonsgridet
+new_quad_edu <- new_quad_edu %>%
+  mutate(vekst2 = vekst^2)
+
+# 5) Sørg for at Arb_group er faktor med samme nivåer som i treningsdata
+new_quad_edu$edu_group <- factor(new_quad_edu$edu_group, levels = levels(Sammenstilt_Utdanningsniva$edu_group))
+
+# 6) Beregn prediksjoner (utenfor mutate)
+new_quad_edu$pred <- predict(model_quad_edu, newdata = new_quad_edu)
+
+# 7) Plot
+
+ggplot() +
+  geom_point(data = Sammenstilt_Utdanningsniva,
+             aes(x = vekst, y = gini, color = edu_group)) +
+  geom_line(data = new_quad_edu,
+            aes(x = vekst, y = pred, color = edu_group), size = 1.1) +
+  theme_minimal() +
+  labs(title = "Kvadratisk modell: gini ~ vekst + vekst^2 * edu_group",
+       x = "Vekst",
+       y = "Gini")
+```
+
+```{r}
+
+# 1) Lag vekst2 i hoveddata (dersom ikke allerede gjort)
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
+  mutate(vekst2 = vekst^2)
+
+# 2) Estimer modellen (hvis ikke gjort)
+model_quad <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# 3) Lag prediksjonsgrid
+new_quad <- expand.grid(
+  vekst = seq(min(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
+              max(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
+              length.out = 200),
+  Arb_group = levels(Sammenstilt_Arbeidsledighet$Arb_group)   # bruk samme nivåer
+)
+
+# 4) Legg til vekst2 i prediksjonsgridet
+new_quad <- new_quad %>%
+  mutate(vekst2 = vekst^2)
+
+# 5) Sørg for at Arb_group er faktor med samme nivåer som i treningsdata
+new_quad$Arb_group <- factor(new_quad$Arb_group, levels = levels(Sammenstilt_Arbeidsledighet$Arb_group))
+
+# 6) Beregn prediksjoner (utenfor mutate)
+new_quad$pred <- predict(model_quad, newdata = new_quad)
+
+# 7) Plot
+
+ggplot() +
+  geom_point(data = Sammenstilt_Arbeidsledighet,
+             aes(x = vekst, y = gini, color = Arb_group)) +
+  geom_line(data = new_quad,
+            aes(x = vekst, y = pred, color = Arb_group), size = 1.1) +
+  theme_minimal() +
+  labs(title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Arb_group",
+       x = "Vekst",
+       y = "Gini")
 ```
 
 ```{r}
@@ -518,7 +636,26 @@ ggplot() +
 ```
 
 ## Del C
+### Utdannningsnivå
+```{r}
+# Lineær modell med interaksjon
+modell_linear_edu <- lm(gini ~ vekst *edu_group, data = Sammenstilt_Utdanningsniva)
 
+# Logaritmisk modell med interaksjon
+modell_log_edu <- lm(gini ~ log_vekst * edu_group, data = Sammenstilt_Utdanningsniva)
+
+# Kvadratisk modell med interaksjon
+modell_kvadratisk_edu <- lm(gini ~ vekst + vekst2 * edu_group, data = Sammenstilt_Utdanningsniva)
+```
+
+```{r}
+# Breusch-Pagan-test for de ulike modellene
+bptest(modell_linear_edu)
+bptest(modell_log_edu)
+bptest(modell_kvadratisk_edu)
+```
+
+### Arbeidsledighet
 ```{r}
 # Lineær modell med interaksjon
 modell_linear_arbeidsledighet <- lm(gini ~ vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
@@ -537,9 +674,10 @@ bptest(modell_log_arbeidsledighet)
 bptest(modell_kvadratisk_arbeidsledighet)
 ```
 
+### Befolkningstethet
 ```{r}
 # Lineær modell med interaksjon
-modell_lineær_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
+modell_linear_befolkning <- lm(gini ~ vekst * Bpk_group, data = Sammenstilt_Befolkning)
 
 # Logaritmisk modell med interaksjon
 modell_log_befolkning <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
@@ -558,175 +696,12 @@ bptest(modell_kvadratisk_befolkning)
 For å teste modellenes Heteroskedasticity benyttes breusch pagan testen.
 Den undersøker om variablene i residualene er konstant eller systematisk avhengi av de forklarende variablene.
 Dersom man i en slik test får en P verdi høyere enn signifikant nivået på 5 prosent, kan man ikke forkaste nullhypotesen om homoskedasitet
-
-## Del D
-# deler inn i 3 grupper for arbeidsledighet
-
-arb_merged <- arb_merged %>% 
-  mutate(arb_group = case_when(
-    arb_num < 7 ~ "Lav ledighet",
-    arb_num >= 7 & arb_num < 12 ~ "Middels ledighet",
-    arb_num >= 12 ~ "Hoy ledighet"
-  ))
-
-```
-
-```{r}
-# regresjon for hver gruppe
-
-mod_low_arb  <- lm(gini ~ vekst, data = arb_merged %>% filter(arb_group == "Lav ledighet"))
-mod_mid_arb  <- lm(gini ~ vekst, data = arb_merged %>% filter(arb_group == "Middels ledighet"))
-mod_high_arb <- lm(gini ~ vekst, data = arb_merged %>% filter(arb_group == "Hoy ledighet"))
-
-modelsummary(
-  list(
-    "Lav ledighet" = mod_low_arb,
-    "Middels ledighet" = mod_mid_arb,
-    "Hoy ledighet" = mod_high_arb
-  ),
-  stars = TRUE,
-  gof_omit = "IC|Log"
-)
-
-```
-
-I regioner med lav arbeidsledighet finner vi en positiv sammenheng mellom økonomisk vekst og ulikhet (β = 0.481). Effekten er ikke statistisk signifikant, men størrelsen indikerer at vekst ofte gagner høyinntektsgrupper mest i økonomisk sterke regioner. Dette er konsistent med teorien om at vekst i velfungerende arbeidsmarkeder kan forbedre lønningene for allerede produktive segmenter av arbeidsstyrken, noe som kan øke ulikheten.
-
-For regioner med middels arbeidsledighet er sammenhengen også positiv (β = 0.275), men svakere enn i lav-ledighetsgruppen. Dette antyder at i regioner med “normal” arbeidsmarkedssituasjon fordeles gevinster fra økonomisk vekst mer jevnt. Resultatet støtter hypotesen om at i balanserte arbeidsmarkeder har strukturelle faktorer mindre betydning for ulikhet.
-
-For regioner med høy arbeidsledighet er effekten negativ (β = –4.143), men estimatet er svært usikkert (stor standardfeil). Dette betyr at vi ikke kan konkludere sikkert, men resultatet kan tolkes som:
-
-- I pressede og svake arbeidsmarkeder fører økonomisk vekst ikke nødvendigvis til økt ulikhet.
-
-- Vekst i slike regioner kan komme fra sektorer som ansetter bredt (offentlig sektor, lavkvalifiserte jobber), noe som kan redusere ulikhet.
-
-Siden det bare er 7 observasjoner i denne gruppen, må resultatet tolkes med stor forsiktighet.
-
-
-```{r}
-arb_merged$arb_group <- factor(arb_merged$arb_group,
-                    levels = c("Lav ledighet", "Middels ledighet", "Hoy ledighet"))
-
-mod_interact_arb <- lm(gini ~ vekst * arb_group, data = arb_merged)
-summary(mod_interact_arb)
-
-```
-Vi delte regionene inn i tre grupper basert på arbeidsledighetsnivå for å undersøke om forholdet mellom økonomisk vekst og ulikhet avhenger av styrken i det lokale arbeidsmarkedet. Resultatene viser at regioner med lav og middels arbeidsledighet har en positiv, om enn ikke signifikant, sammenheng mellom økonomisk vekst og ulikhet. Dette antyder at vekst i mer robuste arbeidsmarkeder i større grad tilfaller høyinntektsgrupper, noe som kan øke ulikheten.
-
-I regioner med høy arbeidsledighet er effekten negativ, men svært usikker. Dette kan indikere at vekst i pressede regioner har en mer inkluderende karakter, eller at datagrunnlaget i denne gruppen er for begrenset til å gi stabile estimater.
-
-Interaksjonsmodellen som tester om effekten av vekst er forskjellig mellom gruppene, gir ingen signifikante forskjeller. Det betyr at selv om estimatene varierer i størrelse og retning, finner vi ikke statistisk støtte for at arbeidsledighetsnivået systematisk modererer sammenhengen mellom vekst og ulikhet. Resultatene peker likevel mot at arbeidsmarkedets situasjon kan påvirke hvordan økonomisk vekst fordeler seg i regioner
-
-## Undergruppe analyse diskusjon
-
-**1. Utdanningsnivå**
-
-Regresjonene viser at regioner med lavt utdanningsnivå har en positiv vekst-effekt på ulikhet (β = 0.484, p < 0.1), altså en tendens til økende ulikhet når BNP vokser. I middels utdannede regioner er vekst-effekten negativ (β = –2.257, ikke signifikant), og dette skiftet bekreftes også i interaksjonsmodellen. Dette kan skyldes at vekst i disse regionene skjer i mer inkluderende sektorer. I høyt utdannede regioner er effekten svakt positiv, men svært usikker (β = 0.091). Variasjonen mellom gruppene følger teoretiske forventninger: regioner med høy utdanning har ofte mer diversifiserte økonomier, mens lavt utdannede regioner kan oppleve at vekst forsterker eksisterende forskjeller.
-
-**2. Befolkningstetthet**
-
-For tetthet finner vi et tilsvarende mønster. I regioner med lav tetthet er vekst positivt koblet til ulikhet (β = 0.484, p < 0.1). I middels tetthet snur effekten til negativ (β = –2.257), mens høy tetthet igjen viser en positiv, men svært usikker effekt (β = 0.091). Interaksjonsmodellen viser at ingen av interaksjonsleddene er signifikante, men retningen på koeffisientene indikerer at effekten av vekst avhenger av hvor urban regionen er. At middelstette regioner har negativ effekt kan indikere at disse regionene har arbeidsmarkeder som mer effektivt fordeler gevinster av vekst.
-
-**3. Arbeidsledighet**
-
-Også arbeidsledighet gir forskjeller: lav ledighet gir en positiv sammenheng (β = 0.481), mens middels ledighet har en svak positiv effekt (β = 0.275). I regioner med høy ledighet er effekten derimot klart negativ (β = –4.143), noe som kan bety at vekst i svake regioner i større grad kommer lavinntektsgrupper til gode, eller at vekst skjer i sektorer som øker sysselsettingen for utsatte grupper. Interaksjonsmodellen viser at ingen forskjeller er statistisk signifikante, men retningen på koeffisientene er meningsfull.
-
-**Observerte variasjoner**
-Den observerte variasjonen mellom gruppene kan forklares av strukturelle forskjeller i hvordan økonomisk vekst fordeles i ulike typer regioner. I regioner med lav utdanning, lav tetthet og lav arbeidsledighet ser vi at vekst i større grad øker ulikheten, trolig fordi gevinster tilfaller grupper med høyere produktivitet eller kapitaltilgang. I middels utviklede regioner finner vi ofte motsatt effekt – vekst reduserer ulikheten – noe som kan skyldes at disse regionene har mer balanserte arbeidsmarkeder der nye muligheter fordeles bredere. I svakere eller svært urbane regioner blir effektene mer ustabile, både pga. få observasjoner og fordi vekst kan komme gjennom sektorer som påvirker inntektsfordelingen på svært ulike måter. Dette forklarer hvorfor koeffisientene varierer i både retning og styrke mellom gruppene.
-
-
-# Del B: Utforsker alternative funksjonelle former
-## Functional Form Exploration:
-I utgangspunktet spesifiserte vi en lineær sammenheng mellom økonomisk vekst (vekst i BNP per innbygger) og regional ulikhet (Gini). En ren lineær modell impliserer at én ekstra prosentenhet høyere vekst alltid endrer ulikheten med det samme beløpet, uavhengig av om regionen allerede har lav eller høy vekst. Både teori og de empiriske resultatene fra de tidligere analysene antyder at dette kan være en for sterk antakelse.
-
-Fra økonomisk teori finnes det flere grunner til å forvente ikke-lineære sammenhenger. Kuznets-hypotesen peker på at ulikheten kan falle i tidlig utviklingsfase og deretter øke når økonomien blir mer avansert, noe som tilsvarer en kurvet (konveks) sammenheng snarere enn en rett linje. I tillegg kan marginaleffekten av vekst være avtagende: litt ekstra vekst i en svak region kan ha større betydning for ulikheten enn den samme vekstøkingen i en allerede velutviklet region.
-
-Også de empiriske funnene våre peker i retning av ikke-linearitet. Subset-analysene viste at effekten av vekst endrer fortegn mellom grupper med ulik utdanning, tetthet og arbeidsledighet. Det tyder på at sammenhengen mellom vekst og ulikhet kan skifte karakter når regioner passerer visse terskler – noe en lineær modell ikke kan fange opp.
-
-På denne bakgrunn valgte vi å undersøke to alternative funksjonsformer:
-
-- **Logaritmisk modell** (gini ~ log(vekst)), som fanger opp avtagende marginaleffekt av vekst og reduserer innflytelsen fra enkeltregioner med svært høy vekst.
-
-- **Kvadratisk modell** (gini ~ vekst + vekst²), som eksplisitt tillater at sammenhengen kan være bue-formet (for eksempel Kuznets-kurven), og dermed gir rom for at vekst kan ha ulik effekt på ulikhet ved lave og høye vekstrater.
-
-Disse to formene er derfor både teoretisk begrunnet og empirisk motiverte av mønstrene vi observerer i dataene.
-
-Selv om cubic varianten kan være en nyttig modell, er den ikke ideell som en av de to hovedformen. Grunnen til dette er fordi datamaterialet er for lite og en cubic-spesifikasjon krever flere parametere, noe som øker risikoen for overfitting. I tillegg finnes det lite teoretisk grunnlag for at forholdet mellom økonomisk vekst og ulikhet skulle følge en S-formet (cubic) kurve. Derfor fremstår den logaritmiske og kvadratiske modellen som mer hensiktsmessige alternative funksjonsformer.
-
-## Estimation and Visualization:
-
-```{r}
-
-
-
-# modell for den lineære modellen som er standardmodellen som er brukt til nå
-
-ggplot(combined_data, aes(x = vekst, y = gini)) +
-  geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, se = TRUE, color = "blue") +
-  labs(
-    title = "Linear modell: gini ~ vekst",
-    x = "Okonomisk vekst",
-    y = "Gini-koeffisient"
-  ) +
-  theme_minimal()
-
-
-```
-
-### Log-modellen
-
-```{r}
-data_log <- combined_data %>% filter(vekst > 0)
-
-mod_log <- lm(gini ~ log(vekst), data = data_log)
-
-ggplot(data_log, aes(x = vekst, y = gini)) +
-  geom_point() +
-  stat_smooth(method = "lm", formula = y ~ log(x)) +
-  labs(title = "Log-modell: gini ~ log(vekst)")
-
-```
-Log-modellen gir en tydelig konkav sammenheng: økninger i vekst har størst effekt på ulikhet i regioner med svært lav vekst, mens marginaleffekten avtar etter hvert som veksten øker. Dette er synlig i visualiseringen, der kurven stiger bratt ved lave verdier og flater ut for høyere vekstnivåer.
-
-Teoretisk er dette plausibelt. I regioner som starter på et lavt nivå, vil små vekstimpulser ofte påvirke enkelte sektorer svært sterkt, og dermed øke ulikheten midlertidig. Når veksten blir mer robust og bredt fordelt, dempes effekten. Modellen passer også intuitivt godt med Kuznets-hypotesen, som hevder at ulikhet ofte øker i tidlige vekstfaser før den stabiliseres.
-
-Selv om log-modellen gir en bedre visuell beskrivelse av datapunktene i nedre del av vekstfordelingen enn den lineære modellen, gir den ingen dramatisk endring i helheten. Dette antyder at relasjonen er svak ikke-linearitet, ikke en fundamental strukturell kurveendring.
-
-### Kvadratisk modell
-
-```{r}
-mod_quad <- lm(gini ~ vekst + I(vekst^2), data = combined_data)
-
-ggplot(combined_data, aes(x = vekst, y = gini)) +
-  geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x + I(x^2)) +
-  labs(title = "Kvadratisk modell: gini ~ vekst + vekst^2")
-
-```
-Den kvadratiske modellen etablerer en mer fleksibel funksjonsform og fanger opp en svak konveks struktur: ulikheten øker moderat ved lave til middels vekstrater, og stiger noe raskere ved høyere vekstnivåer. Visualiseringen viser en glatt stigende kurve som følger datapunktene bedre enn den lineære modellen i midtre del av distribusjonen.
-
-Empirisk gir denne formen mening: regioner med høy vekst er ofte storbyområder eller industrialiserte regioner hvor vekst konsentreres i kapital-intensive sektorer, noe som kan føre til at høyinntektsgrupper drar fra resten av befolkningen. Den kvadratiske modellen virker derfor spesielt relevant i et europeisk regionalperspektiv.
-
-I forhold til log-modellen gir den kvadratiske formen en mer lineær tilnærming ved lave vekstrater, men gir større fleksibilitet når vekstnivået er høyt. Dette gjør den til et godt alternativ dersom formålet er å fange strukturelle forskjeller mellom storbyregioner og mer moderate regioner.
-
-## Results Interpretation:
-
-Når vi sammenligner de alternative modellene med standard-modellen, fremstår begge ikke-lineære spesifikasjonene som bedre beskrivende av mønsteret i data. Ingen av modellene endrer den kvalitative konklusjonen som viser at vekst er moderat positivt relatert til ulikhet, men de fanger dynamikken på ulike vekstnivåer mer presist.
-
-Log-modellen beskriver spesielt godt de regionene med lav vekst, mens den kvadratiske modellen passer bedre for regioner med middels til høy vekst. Begge modellene antyder derfor at sammenhengen mellom vekst og ulikhet ikke er helt lineær, og at marginaleffekten varierer gjennom distribusjonen.
-
-
-# Del C: Heteroskedastisitet og Causality discussion
-
-## Heteroskedasticity Testing
 For å undersøke om antakelsen om konstant varians i feilleddene holder, testet vi for heteroskedastisitet i både den opprinnelige lineære modellen og de alternative funksjonelle formene (log-modellen og den kvadratiske modellen). Vi benyttet Breusch–Pagan-testen, som evaluerer hvorvidt residualvariansen systematisk varierer med de uavhengige variablene.
-
-Testresultatene viser indikasjoner på svak heteroskedastisitet i den lineære modellen, med en p-verdi som ligger nær eller under et typisk 10 %-signifikansnivå. Dette innebærer at residualene ikke har konstant varians, som igjen kan føre til at standardfeilene blir skjeve og at statistiske tester (t-verdier og p-verdier) blir mindre pålitelige. Derfor kan signifikansnivåene til koeffisientene være misvisende i den lineære spesifikasjonen.
 
 I de alternative modellene, spesielt log-modellen, reduseres heteroskedastisiteten. Dette er forventet, ettersom log-transformasjoner ofte stabiliserer variansen i data med skjev fordeling. Den kvadratiske modellen viser også noe forbedring, men log-modellen gir den jevneste residualstrukturen.
 
 Implikasjonen er at selv om OLS-estimatene fortsatt er konsistente, kan standardfeilene være upresise i den lineære modellen. Et naturlig tiltak er å benytte robuste standardfeil (HC0/HC3), eller å velge en modell som i seg selv håndterer variansinstabilitet bedre, som log-modellen.
+
 
 ## Causality Discussion
 
@@ -748,7 +723,7 @@ For å identifisere kausale effekter mer presist ville analyseoppsettet trenge e
 
 Gitt dagens data bør resultatene derfor tolkes som korrelasjoner, ikke som sikre årsakssammenhenger. De gir nyttig innsikt i mønstre på tvers av regioner, men kan ikke tas som evidens for at vekst i seg selv skaper ulikhet uten mer avansert identifikasjonsstrategi.
 
-
+ 
 # Del D: Panel Estimates
 
 ```{r}
