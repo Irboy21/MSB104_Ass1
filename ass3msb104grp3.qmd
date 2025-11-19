@@ -222,7 +222,7 @@ Regionene innenfor lav og høy arbeidsledighet viser på den andre siden ingen s
 De viser P verdier på henholdsvis 0,14 og 0,98, som indikerer at vekst ikke viser en systematisk sammenheng med ulikhet for gruppene.
 Forskjellene kan ikke statistisk sikkert sier å skyldes grad av arbeidsliegihet og kan med stor sansynlighet skyldes tilfeldigheter.
 
-## Befolkningstetthet 
+## Befolkningstetthet
 
 ```{r}
 # Lag tertiler for befolkningstetthet
@@ -279,11 +279,11 @@ For utdanning og befolkningstetthet forekommer det ikke statestitiske ulikheter 
 ```{r}
 
 # Lager en ny variabel for logaritmisk vekst (naturlig log)
-Sammenstilt_Arbeidsledighet1 <- Sammenstilt_Arbeidsledighet %>%
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
   mutate(log_vekst = log(vekst))
 
 # Estimer lineær modell med interaksjon mellom log_vekst og Ledighetsgrad
-model_log_interaction <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet1)
+model_log_interaction <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
 
 # Oppsummer resultatene
 summary(model_log_interaction)
@@ -325,3 +325,182 @@ model_kvadratisk <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arb
 # Sjekk resultatene
 summary(model_kvadratisk)
 ```
+
+```{r}
+# Lag kvadratisk variabel for vekst
+Sammenstilt_Befolkning$vekst2 <- Sammenstilt_Befolkning$vekst^2
+
+# Estimer kvadratisk modell med interaksjon mot befolkningstetthet
+model_kvadratisk_befolkning <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sammenstilt_Befolkning)
+
+# Sjekk resultatene
+summary(model_kvadratisk_befolkning)
+```
+
+Modellene over et utarbeidet etter en kvadratisk form.
+Dette kan argumenteres å være en av de beste modellene for å fange opp økmomiske sammenhenger.
+Dette kommer av at øknomiske sammenher ofte ikke er linære.
+For eksempel kan en øknomisk vekst vise en negativ sammenheng, og så vise en positiv sammenheng ved et vist innslangspunkt, eller vice versa.
+Linære modeller kan ha vanskeligheter med å fange opp effekten av avtakende eller økende marginaleffekter.
+Kvadratisk form er godt egnet for å analysere slike U eller inverterte U formede relasjoner, som for eksempel Kurznets-kurven.
+
+Arbeidsledighet: Ved å sammenligne forklaringsgradene ser vi at den kvadratiske er mer forklaringsdyktig enn de to tidligere modellene.
+Den kvadratiske modellen har en R2 verdi på 0,514 og en justert R2 på ca 0,3814, sammenlignet med de tidligere modellene som viste en R2 på va 0,49.
+Den høyere R2 verdien indikerer at den kvadratiske modellen fanger opp mer av de underliggende variasjonene i datasettet og gir en bedre forklaring på hvordan økonomisk vekst og grad av arbeidsledighet påvirker ulikhet.
+
+```{r}
+# Log-variabel
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
+  mutate(log_vekst = log(vekst))
+
+# Modell
+model_log <- lm(gini ~ log_vekst * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# Prediksjoner
+new_log <- expand.grid(
+  log_vekst = seq(min(Sammenstilt_Arbeidsledighet$log_vekst),
+                  max(Sammenstilt_Arbeidsledighet$log_vekst),
+                  length.out = 100),
+  Arb_group = unique(Sammenstilt_Arbeidsledighet$Arb_group)
+)
+
+new_log$pred <- predict(model_log, new_log)
+
+# Plot
+ggplot() +
+  geom_point(data = Sammenstilt_Arbeidsledighet,
+             aes(x = log_vekst, y = gini, color = Arb_group)) +
+  geom_line(data = new_log,
+            aes(x = log_vekst, y = pred, color = Arb_group), size = 1.2) +
+  theme_minimal() +
+  labs(title = "Logaritmisk modell: gini ~ log(vekst) * Arbeidsledighet",
+       x = "log(vekst)",
+       y = "Gini-koeffisient")
+```
+
+```{r}
+# 1) Lag vekst2 i hoveddata (dersom ikke allerede gjort)
+Sammenstilt_Arbeidsledighet <- Sammenstilt_Arbeidsledighet %>%
+  mutate(vekst2 = vekst^2)
+
+# 2) Estimer modellen (hvis ikke gjort)
+model_quad <- lm(gini ~ vekst + vekst2 * Arb_group, data = Sammenstilt_Arbeidsledighet)
+
+# 3) Lag prediksjonsgrid
+new_quad <- expand.grid(
+  vekst = seq(min(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
+              max(Sammenstilt_Arbeidsledighet$vekst, na.rm = TRUE),
+              length.out = 200),
+  Arb_group = levels(Sammenstilt_Arbeidsledighet$Arb_group)   # bruk samme nivåer
+)
+
+# 4) Legg til vekst2 i prediksjonsgridet
+new_quad <- new_quad %>%
+  mutate(vekst2 = vekst^2)
+
+# 5) Sørg for at Arb_group er faktor med samme nivåer som i treningsdata
+new_quad$Arb_group <- factor(new_quad$Arb_group, levels = levels(Sammenstilt_Arbeidsledighet$Arb_group))
+
+# 6) Beregn prediksjoner (utenfor mutate)
+new_quad$pred <- predict(model_quad, newdata = new_quad)
+
+# 7) Plot
+library(ggplot2)
+ggplot() +
+  geom_point(data = Sammenstilt_Arbeidsledighet,
+             aes(x = vekst, y = gini, color = Arb_group)) +
+  geom_line(data = new_quad,
+            aes(x = vekst, y = pred, color = Arb_group), size = 1.1) +
+  theme_minimal() +
+  labs(title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Arb_group",
+       x = "Vekst",
+       y = "Gini")
+```
+
+```{r}
+# Lag logaritmisk vekst-variabel (naturlig logaritme)
+Sammenstilt_Befolkning <- Sammenstilt_Befolkning %>%
+  mutate(log_vekst = log(vekst))
+
+# Estimer lineær modell med interaksjon mellom log_vekst og befolkningstetthet
+model_log_bpk <- lm(gini ~ log_vekst * Bpk_group, data = Sammenstilt_Befolkning)
+
+summary(model_log_bpk)
+
+# Lag prediksjonsgrid
+new_log_bpk <- expand.grid(
+  log_vekst = seq(min(Sammenstilt_Befolkning$log_vekst, na.rm = TRUE),
+                  max(Sammenstilt_Befolkning$log_vekst, na.rm = TRUE),
+                  length.out = 200),
+  Bpk_group = levels(Sammenstilt_Befolkning$Bpk_group)
+)
+
+# Sørg for at faktor-nivåene stemmer
+new_log_bpk$Bpk_group <- factor(new_log_bpk$Bpk_group, levels = levels(Sammenstilt_Befolkning$Bpk_group))
+
+# Prediksjoner
+new_log_bpk$pred <- predict(model_log_bpk, newdata = new_log_bpk)
+
+# Plot med ggplot2
+ggplot() +
+  geom_point(data = Sammenstilt_Befolkning,
+             aes(x = log_vekst, y = gini, color = Bpk_group)) +
+  geom_line(data = new_log_bpk,
+            aes(x = log_vekst, y = pred, color = Bpk_group), size = 1.2) +
+  theme_minimal() +
+  labs(
+    title = "Logaritmisk modell: gini ~ log_vekst * Befolkningstetthet",
+    x = "Logaritmisk økonomisk vekst",
+    y = "Gini-koeffisient",
+    color = "Befolkningstetthet"
+  )
+```
+
+```{r}
+### 1) Lag kvadratisk variabel i datasettet
+Sammenstilt_Befolkning <- Sammenstilt_Befolkning %>%
+  mutate(vekst2 = vekst^2)
+
+### 2) Estimer kvadratisk modell med interaksjon
+model_quad_bpk <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sammenstilt_Befolkning)
+
+summary(model_quad_bpk)
+
+
+### 3) Lag prediksjonsgrid
+new_quad_bpk <- expand.grid(
+  vekst = seq(min(Sammenstilt_Befolkning$vekst, na.rm = TRUE),
+              max(Sammenstilt_Befolkning$vekst, na.rm = TRUE),
+              length.out = 200),
+  Bpk_group = levels(Sammenstilt_Befolkning$Bpk_group)
+)
+
+### 4) Legg til vekst2 i prediksjonsgridet
+new_quad_bpk <- new_quad_bpk %>%
+  mutate(vekst2 = vekst^2)
+
+### 5) Sørg for at faktor-nivåene er identiske
+new_quad_bpk$Bpk_group <- factor(new_quad_bpk$Bpk_group,
+                                 levels = levels(Sammenstilt_Befolkning$Bpk_group))
+
+### 6) Prediksjoner
+new_quad_bpk$pred <- predict(model_quad_bpk, newdata = new_quad_bpk)
+
+### 7) Plot
+library(ggplot2)
+
+ggplot() +
+  geom_point(data = Sammenstilt_Befolkning,
+             aes(x = vekst, y = gini, color = Bpk_group)) +
+  geom_line(data = new_quad_bpk,
+            aes(x = vekst, y = pred, color = Bpk_group), size = 1.1) +
+  theme_minimal() +
+  labs(
+    title = "Kvadratisk modell: gini ~ vekst + vekst^2 * Befolkningstetthet",
+    x = "Økonomisk vekst",
+    y = "Gini-koeffisient",
+    color = "Befolkningstetthet"
+  )
+```
+
+## Del C
