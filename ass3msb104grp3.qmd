@@ -31,6 +31,7 @@ library(broom)
 library(eurostat)
 library(fixest)
 library(lmtest)
+library(plm)
 
 ```
 
@@ -750,7 +751,83 @@ De gir nyttig innsikt i mønstre på tvers av regioner, men kan ikke tas som evi
 
 ```{r}
 GINI <- readRDS("data/GINI_alle.rds")
+bnppi_nuts3 <- readRDS("data/Kombinert.rds")
 ```
+
+
+```{r}
+# Lag variabel for NUTS2 (første fire symboler)
+bnppi_nuts2 <- bnppi_nuts3 %>%
+  mutate(nuts2 = substr(geo, 1, 4)) %>%
+  group_by(nuts2, aar) %>%
+  summarise(
+    BNPPI = mean(BNPPI, na.rm = TRUE),      # gjennomsnitt av BNP per innbygger
+    befolkning = sum(befolkning, na.rm = TRUE), # SUM befolkning (som gir korrekt total)
+    BNP = sum(BNP, na.rm = TRUE),           
+    .groups = "drop"
+  )
+```
+
+
+```{r}
+# Slå sammen GINI og BNPPI på nuts2 og år
+gini_bnppi <- GINI %>%
+  inner_join(bnppi_nuts2, by = c("nuts2", "aar"))
+```
+
+
+```{r}
+gini_bnppi <- gini_bnppi %>%
+  group_by(nuts2) %>%
+  arrange(aar) %>%
+  mutate(vekst = (BNPPI - lag(BNPPI)) / lag(BNPPI))
+```
+
+```{r}
+# Definer paneldata med nuts2 som individ og aar som tid
+pdata <- pdata.frame(gini_bnppi, index = c("nuts2", "aar"))
+```
+
+```{r}
+model_nuts2 <- plm(gini ~ BNPPI, data = pdata, model = "within", effect = "individual")
+summary(model_nuts2)
+
+```
+
+```{r}
+model_aar <- plm(gini ~ BNPPI, data = pdata, model = "within", effect = "time")
+summary(model_aar)
+```
+
+```{r}
+model_tw <- plm(gini ~ BNPPI, data = pdata, model = "within", effect = "twoways")
+summary(model_tw)
+```
+
+
+
+```{r}
+pdata$land <- factor(pdata$land)
+
+model_land <- plm(gini ~ BNPPI + factor(land), data = pdata, model = "within", effect = "individual")
+summary(model_land)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
