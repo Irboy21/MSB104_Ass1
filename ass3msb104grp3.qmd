@@ -29,6 +29,7 @@ library(ggrepel)
 library(modelsummary)
 library(broom)
 library(lmtest)
+library(plm)
 ```
 
 ```{r}
@@ -540,4 +541,10 @@ modell_kvadratisk_befolkning <- lm(gini ~ vekst + vekst2 * Bpk_group, data = Sam
 bptest(modell_lineær_befolkning)
 bptest(modell_log_befolkning)
 bptest(modell_kvadratisk_befolkning)
+```
+
+## Del D
+
+```{r}
+
 ```
