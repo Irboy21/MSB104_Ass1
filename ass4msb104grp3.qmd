@@ -4,25 +4,59 @@ format: pdf
 editor: visual
 ---
 
-## Quarto
+## 
 
-Quarto enables you to weave together content and executable code into a finished document.
-To learn more about Quarto see <https://quarto.org>.
+## Objective
 
-## Running Code
+## Synthesize and consolidate the critical findings from Assignments 1, 2, and 3 into a coherent
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code.
-You can embed code like this:
+academic paper.
+Max size 20 pages.
 
-```{r}
-1 + 1
-```
+## 0. Short abstract
 
-You can add options to executable code like this
+## I. Introduction
 
-```{r}
-#| echo: false
-2 * 2
-```
+• Background:  Provide a brief background on the topics of regional development and inequality.
 
-The `echo: false` option disables the printing of code (only output is displayed).
+Objectives: Outline the main objectives and research questions addressed in Assignments 1, 2, and 3.
+• Significance: Highlight the importance and relevance of the research undertaken.
+
+## II.Literature Review
+
+Previous Work: Summarize key literature related to regional development and inequality.
+‣ Utilize the RStudio citation tools in your summary of the literature.
+• Research Gap: Identify the research gap your assignments aim to address.
+
+## III Data and Methodology
+
+• Data Sources: Briefly describe the primary data sources used in the previous assignments, noting any limitations.
+• Methodological Approach: Summarize the methodologies applied in Assignments 1, 2, and 3, highlighting the rationale behind choosing each method.
+
+## IV.Empirical Findings
+
+• Cross-sectional Estimates: Summarize essential results obtained from the cross-sectional analysis in Assignment 2.
+• Alternative Functional Forms and Panel Estimates: Present the key insights derived from exploring alternative functional forms and panel estimates in Assignment 3.
+
+## V.Discussion
+
+• Key Insights: Synthesize and discuss the central insights emerging from the empirical findings.
+• Policy Implications: Deliberate on the potential implications of your results for policymaking and practice in the realm of regional development and inequality.
+
+## VI.Limitations and Future Research
+
+• Research Limitations: Acknowledge any constraints or limitations encountered during your analysis.
+
+## VII.Conclusion
+
+• Summary: Provide a summary of the main findings and their significance.
+• Final Reflection: Briefly reflect on the research process and the contributions of your study to the field of regional development and inequality.
+
+## VIII.References •
+
+Include a list of all references cited in the paper, formatted according to a standard academic style.
+Use APA7, you will find apa7.csl under Filer at the Canvas site of the course.
+Include it with csl: apa7.csl in your YAML header.
+Appendix
+
+## Document your use of AI tools
