@@ -6,6 +6,13 @@ editor: visual
 
 ## 
 
+Irjan tar oddetall.
+Magnum opus tar partall
+
+```{r}
+Sys.getlocale()
+```
+
 ## Objective
 
 ## Synthesize and consolidate the critical findings from Assignments 1, 2, and 3 into a coherent
