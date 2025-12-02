@@ -53,6 +53,10 @@ pop_wide <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text", na = c(N
 # Henter inn regional BNP datasett fra excell
 bnp_wide<- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text", na = c(NA, ":")) %>%
   clean_names()
+
+saveRDS(Populasjon, "data/Populasjon.rds")
+saveRDS(BNP, "data/BNP.rds")
+
 ```
 
 ```{r}
@@ -86,6 +90,9 @@ bnp <- bnp_wide %>%
     aar = as.integer(str_remove(aar, "^x")),
     bnp = as.numeric(str_replace_all(bnp, " ", ""))
   )
+
+saveRDS(PopulasjonLang, "data/PopulasjonLang.rds")
+saveRDS(BNPLang, "data/BNPLang.rds")
 ```
 
 ### Kort gjennomgang av datasett og variabler
@@ -108,19 +115,24 @@ Etter inntektsmetoden regnes BNP på følgende måte: Lønn som utbetales til an
 #| paged.print: false
 # Beregne BNP per innbygger(BNPPI) og ganger ut BNP som er oppgitt i millioner 
 
-bnp_pop <- pop %>% 
-left_join(bnp, by = join_by(region, aar)) |> 
-mutate(
-  bnp_pi = (bnp * 1e6) / pop
-  )
+Kombinert <- PopulasjonLang %>% 
+left_join(BNPLang, by = join_by(region, aar)) %>%
+mutate( befolkning = as.numeric(befolkning), 
+BNP = as.numeric(BNP), 
+BNPPI = (BNP * 1e6) / befolkning, )
+
+saveRDS(Kombinert, "data/Kombinert.rds")
+
 ```
 
 ```{r}
 # Fjerner alle regioner med NA verdier
 # Trenger dere denne. Kanskje like greit å bare filtrere ut NA når nødvendig?
 
-bnp_pop_ren <- bnp_pop %>%
-  filter(!is.na(bnp_pi))
+KombinertRen <- Kombinert %>%
+  filter(!is.na(BNPPI))
+
+saveRDS(KombinertRen, "data/KombinertRen.rds")
 ```
 
 ```{r}
@@ -348,6 +360,9 @@ ggplot(SnittTidLand, aes(x = aar, y = gjennomsnitt_bnp, color = land_navn)) +
     legend.position = "none",
   )
 
+saveRDS(SnittTidLand, "data/SnittTidLand.rds")
+
+
 ```
 
 ```{r}
@@ -479,6 +494,8 @@ NUTS2_data <- bnp_pop %>%
     pop = sum(pop, na.rm = TRUE),
     .groups = "drop"
   )
+
+saveRDS(NUTS2_data, "data/NUTS2_data.rds")
 ```
 
 ```{r}
@@ -529,6 +546,8 @@ ggplot(
     plot.subtitle = element_text(size = 10),
     panel.grid.minor = element_blank()
   )
+
+saveRDS(Gini_IT, "data/Gini_IT.rds")
 ```
 
 Regionene ITC 4 og ITG2 skiller seg ut her da de gjennom hele rekken har en koeffisient mellom 0,10 og 0,17.
@@ -560,6 +579,8 @@ ggplot(
   theme_minimal(base_size = 10) +
   theme(plot.title = element_text(face = "bold", size = 12))
 
+saveRDS(Gini_FI, "data/Gini_FI.rds")
+
 ```
 
 Tabellen over viser Gini-koeffisienten for regionene i Finland.
@@ -589,6 +610,8 @@ ggplot(Gini_RO, aes(x = aar, y = gini, color = nuts2, group = nuts2)) +
   ) +
   theme_minimal(base_size = 10) +
   theme(plot.title = element_text(face = "bold", size = 12))
+
+saveRDS(Gini_RO, "data/Gini_RO.rds")
 
 ```
 
@@ -621,6 +644,8 @@ ggplot(
   theme_minimal(base_size = 10) +
   theme(plot.title = element_text(face = "bold", size = 12))
 
+
+saveRDS(Gini_LT, "data/Gini_LT.rds")
 ```
 
 Litauen består av to NUTS 2 regioner.
@@ -659,6 +684,8 @@ ggplot(
   theme_minimal(base_size = 13) +
   theme(plot.title = element_text(face = "bold", size = 15))
 
+
+saveRDS(Gini_alle, "data/Gini_alle.rds")
 ```
 
 Grafen viser utviklingen i Gini-koeffisienten på NUTS2-nivå for Italia, Finland, Romania og Litauen.
@@ -686,6 +713,8 @@ kable(
   align = "lcccc",
   digits = 4
 )
+
+saveRDS(Gini_gjennomsnitt, "data/Gini_gjennomsnitt.rds")
 ```
 
 ```{r}
@@ -739,6 +768,8 @@ ggplot(Gini_total, aes(x = aar, y = gjennomsnitt_gini)) +
     plot.title = element_text(face = "bold", size = 12),
     panel.grid.minor = element_blank()
   )
+
+saveRDS(Gini_total, "data/Gini_total.rds")
 ```
 
 I tabellen over ser vi GINI koeffisienten for alle NUTS2 regionene som tilhører vårt datasett.
@@ -761,6 +792,8 @@ NUTS1_data <- bnp_pop %>%
     pop = sum(pop, na.rm = TRUE),
     .groups = "drop"
   )
+
+saveRDS(NUTS1_data, "data/NUTS1_data.rds")
 ```
 
 ```{r}
@@ -833,6 +866,12 @@ ggplot(Gini_alle_NUTS1, aes(x = aar, y = gini, color = land, group = nuts1)) +
   ) +
   theme_minimal(base_size = 13) +
   theme(plot.title = element_text(face = "bold", size = 15))
+
+saveRDS(Gini_FI_NUTS1, "data/Gini_FI_NUTS1.rds")
+saveRDS(Gini_IT_NUTS1, "data/Gini_IT_NUTS1.rds")
+saveRDS(Gini_LT_NUTS1, "data/Gini_LT_NUTS1.rds")
+saveRDS(Gini_RO_NUTS1, "data/Gini_RO_NUTS1.rds")
+saveRDS(Gini_alle_NUTS1, "data/Gini_FI_NUTS1.rds")
 ```
 
 Her er det laget et linjediagram som viser utviklingen av GINI koeffisient på NUTS1-nivå (Land) basert på fordelingen av BNPPI i NUTS2 regionene.
