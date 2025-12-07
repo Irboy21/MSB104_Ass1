@@ -24,10 +24,19 @@ Max size 20 pages.
 
 ## I. Introduction
 
-• Background:  Provide a brief background on the topics of regional development and inequality.
+Gjennom oppgavene i dette emnet har vi sett på regional utvikling satt opp mot utvikling på ulike nivåer.
 
-Objectives: Outline the main objectives and research questions addressed in Assignments 1, 2, and 3.
-• Significance: Highlight the importance and relevance of the research undertaken.
+Regional utvikling handler om hvordan økonomisk vekst, utdanningsnivå, arbeidsmarked, generell velferd og andre sosioøkonomiske mål fordeler seg mellom ulike regioner.
+EUs statistiske kontor (Eurostat) har delt regioner i et «Nuts system».
+Her er det laget 3 nivåer av regioner på nasjonalt, mellom regionalt, og lokalt nivå.
+Dette gjør det mulig å undersøke hvordan endringer i de sosioøkonomiske faktorene kan forventes å påvirke ulikhet mellom ulike land, i mellomstore regioner i gitte land og mellom mindre lokale regioner.
+
+Gjennom arbeidskrav 1, 2 og 3 har vi benyttet ulike fremgangsmetoder og modeller for å analysere hovedtemaet på ulike regionale nivåer.
+
+I arbeidskrav 1 utarbeidet vi paneldatasett for europeiske NUTS2- regioner ved å kombinere informasjon om BNP per innbygger og ulikhet på NUTS 3 nivå.
+Med denne informasjonen beregnet vi GINI koeffisienter på NUTS 2 nivå.
+
+Formålet var å analysere hvordan økonomisk utvikling hadde utviklet seg i perioden fra år 2000 til 2022, og hvordan den hadde påvirket regional ulikhet.
 
 ## II.Literature Review
 
