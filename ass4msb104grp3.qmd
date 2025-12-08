@@ -24,19 +24,39 @@ Max size 20 pages.
 
 ## I. Introduction
 
-Gjennom oppgavene i dette emnet har vi sett på regional utvikling satt opp mot utvikling på ulike nivåer.
+Gjennom oppgavene i dette emnet har vi sett på regional utvikling satt opp mot ulikhet på 3 regionale nivåer.
 
-Regional utvikling handler om hvordan økonomisk vekst, utdanningsnivå, arbeidsmarked, generell velferd og andre sosioøkonomiske mål fordeler seg mellom ulike regioner.
+Regional utvikling handler om hvordan økonomisk vekst, utdanningsnivå, arbeidsmarked, og andre sosioøkonomiske mål endrer seg over tid.
 EUs statistiske kontor (Eurostat) har delt regioner i et «Nuts system».
-Her er det laget 3 nivåer av regioner på nasjonalt, mellom regionalt, og lokalt nivå.
-Dette gjør det mulig å undersøke hvordan endringer i de sosioøkonomiske faktorene kan forventes å påvirke ulikhet mellom ulike land, i mellomstore regioner i gitte land og mellom mindre lokale regioner.
+ Her er det laget 3 nivåer av regioner på nasjonalt, mellom regionalt, og lokalt nivå.
+Ved å lage analyser på flere nivåer har vi undersøkt hvordan utvikling i de sosioøkonomiske faktorene kan forventes å påvirke ulikhet på regionale nivå.
+ Ulikheten forekommer når en økning av velferd i et land er ujevnt fordelt mellom regioner, dvs at noen regioner drar større nytte av endringene.
 
-Gjennom arbeidskrav 1, 2 og 3 har vi benyttet ulike fremgangsmetoder og modeller for å analysere hovedtemaet på ulike regionale nivåer.
+Gjennom arbeidskrav 1, 2 og 3 er det benyttet ulike fremgangsmetoder, modeller og datasett for å analysere hovedtemaet.
+I datasettet var det hentet regionale tall fra 4 ulike EU land, Finland, Italia, Romania og Litauen.
 
-I arbeidskrav 1 utarbeidet vi paneldatasett for europeiske NUTS2- regioner ved å kombinere informasjon om BNP per innbygger og ulikhet på NUTS 3 nivå.
-Med denne informasjonen beregnet vi GINI koeffisienter på NUTS 2 nivå.
+I arbeidskrav 1 var hovedformålet å utarbeide et paneldatasett egnet til å analysere GINI koeffisienten i de fire EU-landene på NUTS 2 nivå.
+Datasettene ble hentet fra Eurostat på NUTS 3 nivå, og omarbeidet til datasett egnet til å beregne GINI koeffisienter på NUTS 2 nivå.
+Formålet var å analysere hvordan økonomisk utvikling hadde utviklet seg i perioden fra år 2000 til 2022, og hvordan vekst påvirket ulikhet på tvers av regionene.
+  
 
-Formålet var å analysere hvordan økonomisk utvikling hadde utviklet seg i perioden fra år 2000 til 2022, og hvordan den hadde påvirket regional ulikhet.
+Gjennom denne analysen ble det undersøkt hvilken region som har hatt en stabil, negativ eller positiv utvikling i ulikhet.
+
+I arbeidskrav 2 var det overordnede målet å bruke regresjonsmodeller til å analysere sammenhengen mellom regional utvikling og ulikhet.
+Formålet var å lage kausale modeller hvor GINI ble testet opp mot diverse indikatorer for regional ulikhet.
+Dette innebar at datasettet ble supplementært med ytterligere indikatorer på regional utvikling utover de brukt i arbeidskrav 1.
+ 
+
+Med de utarbeidede regresjonsmodellene var et sentralt formål med oppgaven å estimere hvor gode predikater de nye variablene var for utvikling av regional ulikhet, samt om de samme sammenhengene forekom på tvers av regioner.
+
+Arbeidskrav 3 sitt formål var å knytte sammen de metodiske tilnærmingene brukt i arbeidskrav 1 og 2.
+Her ble variablene utvalgt i arbeidskrav 3 delt i nye under-sett og testet for sammenheng med ulikhet.
+Et sentralt poeng i arbeidskrav 3 var å teste ulike regresjonsmodeller, for å undersøke om det var noe bedre egnet enn lineære regresjonsmodeller som ble benyttet først.
+
+Å studere regional utvikling slik som i disse oppgavene er sentralt for å forstå hvordan ressurser, muligheter og vekst fordeles i Europa.
+Ved å kombinere data på tvers av regionale nivåer (Nuts1,2 og 3), oppnår man et helhetlig bilde over hvor de regionale ulikhetene ligger.
+ Dette kan være et viktig verktøy for politikere og andre påvirkningskyndige aktører i utformingen av fremtidige tiltak.
+Hvilken faktor som fører til ulikhet mellom regioner kan brukes som en pekepinn mot hvilken tiltak som kan innføres for å skape en jevnere fordeling, og gi en oversikt over hvilket regioner man bør rette tiltakene mot.
 
 ## II.Literature Review
 
