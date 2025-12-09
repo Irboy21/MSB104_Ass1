@@ -101,14 +101,92 @@ Ingen av disse variablene var statistisk signifikante, men retningene på koeffi
 
 Modellen som helhet hadde en moderat forklaringskraft, og resultatene antydet at vekst fortsatt spiller en rolle, men at ulikhet sannsynligvis påvirkes av flere strukturelle forhold som ikke fanges opp av de tilgjengelige variablene.
 
+### **4.2 Alternative Functional Forms and Panel Estimates (Assignment 3)**
+
+Assignment 3 bygde videre på resultatene fra Assignment 2 ved å undersøke om forholdet mellom vekst og ulikhet varierer mellom regioner med ulike strukturelle egenskaper, og om alternative funksjonelle former gir bedre innsikt i modellens dynamikk.
+
+#### **4.2.1 Utdanningsnivå som modererende faktor**
+
+Interaksjonsmodellen viste at vekst påvirker regioner ulikt avhengig av utdanningsnivå.
+Regionen med lavt utdanningsnivå hadde en negativ veksteffekt på **–6.992**, mens regioner med middels utdanningsnivå fikk en positiv tilleggseffekt gjennom interaksjonsleddet på **7.547**, noe som ga en samlet veksteffekt på om lag **0.56** for disse regionene.
+Effektene var imidlertid ikke statistisk signifikante, og resultatene gir derfor ikke grunnlag for å konkludere med at utdanningsnivå modererer forholdet mellom vekst og ulikhet i denne analysen.
+
+#### **4.2.2 Arbeidsledighet som modererende faktor**
+
+Arbeidsledighet viste de mest tydelige og robuste mønstrene.
+I regioner med lav arbeidsledighet var veksteffekten positiv, rundt **0.37**, men ikke signifikant.
+I regioner med middels arbeidsledighet var effekten omtrent den samme (ca. **0.38**), men heller ikke signifikant.
+
+Regioner med **høy arbeidsledighet** skilte seg derimot klart ut.
+Her var effekten av vekst **negativ og statistisk signifikant**, med en koeffisient på **–4.48**.
+Interaksjonsleddet i modellen bekreftet dette med en verdi på **–4.85**.
+Dette funnet var konsistent på tvers av spesifikasjoner og antyder at vekst i regioner med svak arbeidsmarkedssituasjon kan virke utjevnende, i motsetning til området trenden i tverrsnittet.
+
+#### **4.2.3 Befolkningstetthet som modererende faktor**
+
+Modellen for befolkningstetthet viste ingen statistisk robuste effekter, men gir interessante mønstre.
+I regioner med **lav tetthet** var veksteffekten om lag **0.376**, i regioner med **middels tetthet** økte den til rundt **0.88**, mens regioner med **høy tetthet** hadde en svakere positiv sammenheng på rundt **0.26**.
+Ingen av disse effektene var signifikante, og både hovedleddet og interaksjonsleddene hadde høye p-verdier.
+Resultatene indikerer at befolkningstetthet ikke er en viktig moderator for vekst–ulikhet-sammenhengen i dette datasettet.
+
+#### **4.2.4 Ikke-lineære spesifikasjoner: log og kvadratisk modell**
+
+Assignment 3 inkluderte også analyser med logaritmiske og kvadratiske funksjonsformer for å undersøke om forholdet mellom vekst og ulikhet følger et ikke-lineært mønster.
+Disse modellene gir et viktig supplement til de lineære spesifikasjonene, særlig i regioner hvor økonomiske mekanismer kan endre karakter ved ulike vekstnivåer.
+
+Den logaritmiske modellen viste en tydelig negativ og statistisk signifikant interaksjon mellom log(vekst) og høy arbeidsledighet **(–0.115)**.
+Dette innebærer at når vekst øker i et miljø preget av høy arbeidsledighet, faller ulikheten raskere enn hva den lineære modellen fanger opp.
+Log-transformasjonen gjør modellen mindre følsom for ekstreme vekstverdier og gir derfor et mer stabilt anslag på marginaleffekten i disse regionene.
+
+Den kvadratiske modellen hadde den høyeste forklaringskraften av alle spesifikasjonene **(R² rundt 0.51)**, og indikerte at effekten av vekst på ulikhet ikke er konstant, men avhenger av vekstnivået selv.
+Interaksjonsleddet mellom vekst² og høy arbeidsledighet **(–124.74)** var både stort og signifikant, noe som viser at marginaleffekten av vekst blir stadig mer negativ når veksten øker i regioner med høy ledighet.
+Dette gir et tydelig signal om at slike regioner kan oppleve en fordelingsmessig «innhentingseffekt», hvor vekst gir sterkere reduksjon i ulikhet jo høyere veksttakten er.
+
+For utdanning og befolkningstetthet ga de ikke-lineære modellene ingen tilsvarende mønstre, og ingen av interaksjonsleddene var signifikante.
+Dermed ser det ikke ut til at ikke-linearitet spiller en stor rolle for disse variablene i dette datasettet.
+
 ## V.Discussion
 
 • Key Insights: Synthesize and discuss the central insights emerging from the empirical findings.
 • Policy Implications: Deliberate on the potential implications of your results for policymaking and practice in the realm of regional development and inequality.
 
-## VI.Limitations and Future Research
+## VI. Begrensninger og videre forskning
 
-• Research Limitations: Acknowledge any constraints or limitations encountered during your analysis.
+#### **Forskningsmessige begrensninger**
+
+Det er flere begrensninger som bør tas i betraktning når funnene fra denne studien vurderes.
+For det første er datagrunnlaget relativt lite, med kun 29 europeiske regioner inkludert i analysen.
+Et så begrenset utvalg reduserer den statistiske styrken i modellene og øker risikoen for at reelle sammenhenger ikke fanges opp.
+Dette gjelder særlig for undergruppeanalysene, der datasettet deles opp, og antallet observasjoner i hver gruppe blir enda mindre.
+
+For det andre bygger hovedanalysene på tverrsnittsdata fra ett enkelt år.
+Slike data gir et øyeblikksbilde av sammenhengen mellom vekst og ulikhet, men gjør det vanskelig å identifisere kausale mekanismer eller undersøke hvordan forholdet utvikler seg over tid.
+Selv om Assignment 3 benyttet enkelte panel-lignende modeller, var tidsdimensjonen for begrenset til å trekke sterke konklusjoner om dynamiske prosesser.
+
+En tredje begrensning er knyttet til måleproblemer og datakvalitet.
+Variabler som arbeidsledighet, utdanningsnivå og befolkningstetthet fanger ikke nødvendigvis opp alle regionale forskjeller som påvirker ulikhet.
+Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller skatt- og overføringssystemer – er ikke inkludert i analysen, men kan spille en viktig rolle.
+
+Til slutt kan modellvalgene i seg selv utgjøre en begrensning.
+Selv om både lineære, logaritmiske og kvadratiske spesifikasjoner ble testet, kan mer avanserte modeller – for eksempel ikke-parametriske tilnærminger, maskinlæringsmetoder eller instrumentvariabelanalyser – gi et rikere bilde av sammenhengen mellom vekst og ulikhet.
+
+#### **Forslag til videre forskning**
+
+Fremtidig forskning bør søke å inkludere **flere land og flere regioner**, for å bedre fange den institusjonelle og økonomiske variasjonen som finnes i Europa.
+Et bredere regionalt datasett ville gjøre det mulig å trekke sterkere slutninger om hvordan nasjonale rammebetingelser påvirker vekst–ulikhet-sammenhengen.
+
+Et annet viktig steg vil være å benytte **lengre tidsserier**, som muliggjør mer avanserte panelanalyser og bedre identifikasjon av kausale forhold.
+Med flere år tilgjengelig kan man undersøke om vekst påvirker ulikhet i regioner som følger ulike utviklingsbaner, og om effektene er midlertidige eller varige.
+
+Videre forskning bør også inkludere et bredere sett av regionale indikatorer.
+Variabler som næringsstruktur, teknologisk utvikling, migrasjonsstrømmer, inntekts-mobilitet og institusjonelle kvalitetsmål kan gi en dypere forståelse av mekanismene som knytter vekst til ulikhet.
+Særlig kan forskjeller mellom nord- og sør-europeiske regioner, eller mellom post-sosialistiske og vestlige økonomier, gi viktige innsikter.
+
+Et lovende spor er også bruk av **spatial econometrics**,som tar hensyn til geografisk avhengighet mellom observasjoner, ettersom regioner ofte påvirker hverandre.
+For eksempel kan økonomisk vekst i en region ha fordelingsmessige konsekvenser i omkringliggende regioner.
+
+Til slutt kan videre forskning utforske hvilke politiske tiltak som bidrar til at økonomisk vekst blir mer inkluderende.
+Siden resultatene i denne studien viser at arbeidsledighet er en nøkkelfaktor i hvordan vekst påvirker ulikhet, kan framtidige analyser vurdere sammenhengen mellom aktiv arbeidsmarkedspolitikk, kompetanseprogrammer og fordelingsutfall.
 
 ## VII.Conclusion
 
