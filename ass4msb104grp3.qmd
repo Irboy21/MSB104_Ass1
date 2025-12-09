@@ -1,7 +1,14 @@
 ---
-title: "ass4msb104grp3"
-format: pdf
-editor: visual
+title: "Økonomisk vekst og regional ulikhet: En empirisk analyse av sammenhengen mellom vekst og Gini-koeffisient på tvers av regioner"
+author: "Irjan & Magnus"
+date: "2025"
+format:
+  pdf:
+    toc: true
+    number-sections: true
+    citeproc: true
+csl: apa7.csl
+bibliography: references.bib
 ---
 
 ## 
@@ -29,11 +36,12 @@ Max size 20 pages.
 Objectives: Outline the main objectives and research questions addressed in Assignments 1, 2, and 3.
 • Significance: Highlight the importance and relevance of the research undertaken.
 
-## II.Literature Review
+## II.Literaturgjennomgang
 
 Previous Work: Summarize key literature related to regional development and inequality.
 ‣ Utilize the RStudio citation tools in your summary of the literature.
 • Research Gap: Identify the research gap your assignments aim to address.
+
 
 ## III Data and Methodology
 
@@ -65,5 +73,6 @@ Include a list of all references cited in the paper, formatted according to a st
 Use APA7, you will find apa7.csl under Filer at the Canvas site of the course.
 Include it with csl: apa7.csl in your YAML header.
 Appendix
+[@kuznets1955]
 
 ## Document your use of AI tools
