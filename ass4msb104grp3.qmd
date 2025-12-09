@@ -85,21 +85,21 @@ Dermed mangler det forskning som undersøker både den generelle sammenhengen og
 
 ## IV.Empirical Findings
 
-Dette kapitlet presenterer de sentrale empiriske funnene fra Assignment 2 og 3.
-Først oppsummeres resultatene fra tverrsnittsanalyse (cross-sectional estimates), og deretter presenteres innsikter fra alternative funksjonelle former og paneltilnærminger.
+### **4.1 Cross-sectional Estimates (Assignment 2)**
 
-### IV.1 Tverrsnitsanalyse
+Assignment 2 analyserte først forholdet mellom økonomisk vekst og ulikhet ved hjelp av en enkel lineær modell.
+Resultatet viste en positiv effekt av vekst på Gini-koeffisienten, med en koeffisient på **0.538**, som var statistisk signifikant (p \< 0.01).
+Dette indikerer at regioner med høyere vekst generelt hadde høyere ulikhet.
+Forklaringskraften var moderat (**R² = 0.295**), noe som betyr at vekst forklarte rundt 30 prosent av variasjonen i ulikhet mellom regionene.
 
-I Assignment 2 ble sammenhengen mellom økonomisk vekst og inntektsulikhet estimert ved hjelp av en enkel tverrsnittsmodell der Gini-koeffisienten var avhengig variabel, og økonomisk vekstrate var forklaringsvariabel.
+I den neste delen av Assignment 2 ble modellen utvidet til å inkludere tre sentrale regionale kjennetegn: **arbeidsledighet**, **befolkningstetthet** og **utdanningsnivå**.
+Formålet var å undersøke om sammenhengen mellom vekst og ulikhet holdt når flere relevante faktorer ble kontrollert for.
 
-**Hovedresultater fra tverrsnittanalyse:**
+I denne multivariate modellen var effekten av vekst fortsatt positiv, med en koeffisient på **0.379**, men den var ikke signifikant på tradisjonelt nivå **(p = 0.068)**.
+Arbeidsledigheten hadde en svak negativ effekt på ulikhet **(–0.0024)**, befolkningstetthet en svært svak positiv effekt **(0.000022)**, og andelen med høyere utdanning en moderat negativ effekt **(–0.0017)**.
+Ingen av disse variablene var statistisk signifikante, men retningene på koeffisientene er teorikonsistente: lavere utdanning og press i arbeidsmarkedet er ofte knyttet til høyere ulikhet.
 
--   Intercept: **0.044**
--   Vekst: **0.538** (p \< 0.01)
--   R² = **0.295**
-
-Dette viser en klar, positiv og statistisk signifikant sammenheng mellom økonomisk vekst og ulikhet: regioner med høyere vekst har høyere Gini-koeffisient.
-Effektens størrelse er også økonomisk meningsfull, ettersom en økning i vekstraten på én enhet er assosiert med en økning i ulikhet på omtrent 0.54 poeng.
+Modellen som helhet hadde en moderat forklaringskraft, og resultatene antydet at vekst fortsatt spiller en rolle, men at ulikhet sannsynligvis påvirkes av flere strukturelle forhold som ikke fanges opp av de tilgjengelige variablene.
 
 ## V.Discussion
 
