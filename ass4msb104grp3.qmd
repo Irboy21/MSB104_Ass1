@@ -3,22 +3,15 @@ title: "Økonomisk vekst og regional ulikhet: En empirisk analyse av sammenhenge
 author: "Irjan & Magnus"
 date: "2025"
 format:
-  pdf:
-    toc: true
-    number-sections: true
-    citeproc: true
+  html: default
 csl: apa7.csl
-bibliography: references.bib
+bibliography: Okonometri_arbeidskrav.bib
 ---
 
 ## 
 
 Irjan tar oddetall.
 Magnum opus tar partall
-
-```{r}
-Sys.getlocale()
-```
 
 ## Objective
 
@@ -38,10 +31,52 @@ Objectives: Outline the main objectives and research questions addressed in Ass
 
 ## II.Literaturgjennomgang
 
-Previous Work: Summarize key literature related to regional development and inequality.
+[@piketty2017] Previous Work: Summarize key literature related to regional development and inequality.
 ‣ Utilize the RStudio citation tools in your summary of the literature.
 • Research Gap: Identify the research gap your assignments aim to address.
 
+Forholdet mellom økonomisk vekst og inntektsulikhet har lenge vært et sentralt og omdiskutert tema i økonomisk teori.
+Den klassiske Kuznets-hypotesen [@kuznets1955] foreslår en omvendt U-formet kurve hvor ulikheten stiger i tidlige utviklingsfaser for så å falle når økonomien modnes.
+Selv om dette rammeverket har sterk historisk innflytelse, har senere forskning vist at mekanismene bak vekst og ulikhet er langt mer komplekse, og at sammenhengen varierer betydelig mellom regioner og tidsperioder [@piketty2017].
+
+En viktig utvidelse kommer fra moderne regionaløkonomisk teori, særlig forskning på konvergens og regional divergens.
+@barro2004 argumenterer for at regioner kan nærme seg hverandre økonomisk (konvergere) dersom kapital og arbeidskraft flyter fritt, men at ulikheter kan vedvare når særtrekk som utdanningsnivå, innovasjonsevne eller næringsstruktur skiller regionene.
+
+Et sentralt bidrag til denne litteraturen er @lessmann2017, som undersøker regional ulikhet og konvergens i et globalt perspektiv ved hjelp av satellittdata.
+Denne studien viser at regional ulikhet ikke nødvendigvis avtar i takt med økonomisk utvikling, og at forskjeller i institusjoner, politisk stabilitet og geografiske forhold spiller en langt større rolle enn tidligere antatt.
+Lessmann finner også at regioner med svakere styringskvalitet og lavere humankapitalutvikling har en tendens til å oppleve mer vedvarende eller økende ulikhet.
+Dette støtter tanken om at vekst alene ikke er tilstrekkelig for å redusere ulikhet uten at underliggende strukturelle faktorer tas i betraktning.
+
+I nyere litteratur samler @mdingi2021 et bredt spekter av studier om sammenhengen mellom inntektsulikhet og økonomisk vekst.
+Deres gjennomgang understreker at relasjonen mellom vekst og ulikhet ikke er entydig: enkelte studier finner at ulikhet hemmer vekst, andre at vekst øker ulikhet, og mange at sammenhengen varierer med landets utviklingsnivå, institusjoner og kredittmarkedets funksjon.
+
+Det finnes også gode teoretiske argumenter for at økonomisk vekst kan bidra til økt ulikhet.
+Dette gjelder særlig i regioner der avkastningen på kapital er høy, mens investeringer i kompetanse og humankapital henger etter.
+I slike områder vil gevinster fra vekst lettere tilfalle dem som allerede er økonomisk sterke.
+Nettopp derfor er det viktig å analysere sammenhengen mellom vekst og ulikhet med et empirisk opplegg som tar hensyn til både økonomiske forskjeller, utdanningsnivå og institusjonelle forhold.
+
+Samlet sett peker litteraturen mot tre sentrale innsikter:
+
+-   **Vekst kan både øke og redusere ulikhet**, avhengig av regionens utviklingsnivå og institusjonelle rammeverk.
+
+-   **Utdanning, arbeidsledighet og styringskvalitet** er viktige modererende faktorer som påvirker hvordan vekst omsettes i økonomiske gevinster.
+
+-   **Regionale forskjeller er avgjørende**, og moderne empirisk forskning (som Lessmann, 2017) viser at ulikhet ofte vedvarer selv under økonomisk vekst — særlig i regioner med svakere institusjoner eller lavere humankapital.
+
+Denne teorien gir et solid grunnlag for å tolke resultatene i den empiriske delen av oppgaven.
+
+### Reaserchgap
+
+Til tross for omfattende forskning gjenstår flere viktige kunnskapshull.
+For det første undersøker mange studier sammenhengen mellom økonomisk vekst og ulikhet på nasjonalt nivå, mens det finnes færre analyser som fokuserer på regioner innenfor samme land, der forskjeller i demografi, kompetansenivå og arbeidsmarked kan ha stor betydning.
+Dette er en viktig mangel, ettersom nasjonale gjennomsnittstall ofte skjuler interne forskjeller.
+
+For det andre er det begrenset med forskning som analyserer hvordan regionale kjennetegn modererer effekten av vekst på ulikhet.
+Teorier peker på at utdanningsnivå, arbeidsledighet og institusjonelle forhold kan påvirke hvordan vekst omsettes i inntektsfordeling, men empiriske tester av slike mekanismer er relativt få, spesielt på subnasjonalt nivå.
+
+For det tredje er det stor variasjon i metodiske tilnærminger.
+Mange studier analyserer kun en enkelt modell, uten å kombinere enkel regresjon, undergruppeanalyser og interaksjonsmodeller i samme studie.
+Dermed mangler det forskning som undersøker både den generelle sammenhengen og hvordan den varierer mellom regioner med ulike strukturelle egenskaper.
 
 ## III Data and Methodology
 
@@ -50,8 +85,21 @@ Previous Work: Summarize key literature related to regional development and ine
 
 ## IV.Empirical Findings
 
-• Cross-sectional Estimates: Summarize essential results obtained from the cross-sectional analysis in Assignment 2.
-• Alternative Functional Forms and Panel Estimates: Present the key insights derived from exploring alternative functional forms and panel estimates in Assignment 3.
+Dette kapitlet presenterer de sentrale empiriske funnene fra Assignment 2 og 3.
+Først oppsummeres resultatene fra tverrsnittsanalyse (cross-sectional estimates), og deretter presenteres innsikter fra alternative funksjonelle former og paneltilnærminger.
+
+### IV.1 Tverrsnitsanalyse
+
+I Assignment 2 ble sammenhengen mellom økonomisk vekst og inntektsulikhet estimert ved hjelp av en enkel tverrsnittsmodell der Gini-koeffisienten var avhengig variabel, og økonomisk vekstrate var forklaringsvariabel.
+
+**Hovedresultater fra tverrsnittanalyse:**
+
+-   Intercept: **0.044**
+-   Vekst: **0.538** (p \< 0.01)
+-   R² = **0.295**
+
+Dette viser en klar, positiv og statistisk signifikant sammenheng mellom økonomisk vekst og ulikhet: regioner med høyere vekst har høyere Gini-koeffisient.
+Effektens størrelse er også økonomisk meningsfull, ettersom en økning i vekstraten på én enhet er assosiert med en økning i ulikhet på omtrent 0.54 poeng.
 
 ## V.Discussion
 
@@ -67,12 +115,9 @@ Previous Work: Summarize key literature related to regional development and ine
 • Summary: Provide a summary of the main findings and their significance.
 • Final Reflection: Briefly reflect on the research process and the contributions of your study to the field of regional development and inequality.
 
-## VIII.References •
+## VIII.References
 
-Include a list of all references cited in the paper, formatted according to a standard academic style.
-Use APA7, you will find apa7.csl under Filer at the Canvas site of the course.
-Include it with csl: apa7.csl in your YAML header.
-Appendix
-[@kuznets1955]
+::: {#refs}
+:::
 
 ## Document your use of AI tools
