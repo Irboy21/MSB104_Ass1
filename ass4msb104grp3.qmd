@@ -224,7 +224,7 @@ Selv om Assignment 3 benyttet enkelte panel-lignende modeller, var tidsdimensjon
 
 En tredje begrensning er knyttet til måleproblemer og datakvalitet.
 Variabler som arbeidsledighet, utdanningsnivå og befolkningstetthet fanger ikke nødvendigvis opp alle regionale forskjeller som påvirker ulikhet.
-Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller skatt- og overføringssystemer – er ikke inkludert i analysen, men kan spille en viktig rolle. 
+Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller skatt- og overføringssystemer – er ikke inkludert i analysen, men kan spille en viktig rolle.
 
 Til slutt kan modellvalgene i seg selv utgjøre en begrensning.
 Selv om både lineære, logaritmiske og kvadratiske spesifikasjoner ble testet, kan mer avanserte modeller – for eksempel ikke-parametriske tilnærminger, maskinlæringsmetoder eller instrumentvariabelanalyser – gi et rikere bilde av sammenhengen mellom vekst og ulikhet.
@@ -251,6 +251,17 @@ Siden resultatene i denne studien viser at arbeidsledighet er en nøkkelfaktor i
 
 • Summary: Provide a summary of the main findings and their significance.
 • Final Reflection: Briefly reflect on the research process and the contributions of your study to the field of regional development and inequality.
+
+Studien har undersøkt hvordan økonomisk vekst henger sammen med inntektsulikhet i europeiske regioner, og hvordan denne relasjonen påvirkes av regionale kjennetegn.
+Analysene viser at vekst i gjennomsnitt er positivt assosiert med ulikhet, men at sammenhengen varierer betydelig på tvers av regioner.
+Arbeidsledighet peker seg ut som den eneste faktoren som systematisk modererer effekten av vekst: i regioner med høy arbeidsledighet har vekst en tydelig negativ og statistisk signifikant effekt på ulikhet, mens effektene i regioner med lav eller middels arbeidsledighet er svake og ikke signifikante.
+Ingen av modellene viste robuste effekter av utdanningsnivå eller befolkningstetthet, og de ikke-lineære spesifikasjonene understøttet hovedfunnene ved å vise at vekstens fordelingsvirkninger blir sterkere i regioner preget av arbeidsmarkedspress.
+Funnene indikerer at vekst ikke kan forventes å ha samme fordelingsmessige betydning i alle regioner, men at effekten avhenger av strukturelle forhold som varierer mellom land og regionstyper.
+
+Arbeidet med denne studien har vist hvor viktig det er å benytte ulike metodiske tilnærminger når man analyserer komplekse sammenhenger i regionaløkonomien.
+Prosessen har også synliggjort begrensningene ved små og ufullstendige datasett, og hvor avgjørende datakvalitet er for å trekke solide slutninger.
+Likevel gir analysene et nyttig bidrag til forskningsfeltet ved å fremheve at arbeidsmarkedets situasjon er en sentral mekanisme i hvordan vekst påvirker ulikhet, og ved å demonstrere at regionale kontekster må tas i betraktning når man vurderer økonomiske utviklingsmønstre.
+Studien understreker behovet for regionalt tilpasset politikk og peker på at videre forskning bør benytte større datasett, lengre tidsserier og mer avanserte modeller for å bedre forstå dynamikken mellom vekst og ulikhet.
 
 ## VIII.References
 
