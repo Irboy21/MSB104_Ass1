@@ -35,6 +35,8 @@ Ved å lage analyser på flere nivåer har vi undersøkt hvordan utvikling i de 
 Gjennom arbeidskrav 1, 2 og 3 er det benyttet ulike fremgangsmetoder, modeller og datasett for å analysere hovedtemaet.
 I datasettet var det hentet regionale tall fra 4 ulike EU land, Finland, Italia, Romania og Litauen.
 
+**Arbeidskrav 1**
+
 I arbeidskrav 1 var hovedformålet å utarbeide et paneldatasett egnet til å analysere GINI koeffisienten i de fire EU-landene på NUTS 2 nivå.
 Datasettene ble hentet fra Eurostat på NUTS 3 nivå, og omarbeidet til datasett egnet til å beregne GINI koeffisienter på NUTS 2 nivå.
 Formålet var å analysere hvordan økonomisk utvikling hadde utviklet seg i perioden fra år 2000 til 2022, og hvordan vekst påvirket ulikhet på tvers av regionene.
@@ -42,12 +44,16 @@ Formålet var å analysere hvordan økonomisk utvikling hadde utviklet seg i per
 
 Gjennom denne analysen ble det undersøkt hvilken region som har hatt en stabil, negativ eller positiv utvikling i ulikhet.
 
+**Arbeidskrav 2**
+
 I arbeidskrav 2 var det overordnede målet å bruke regresjonsmodeller til å analysere sammenhengen mellom regional utvikling og ulikhet.
 Formålet var å lage kausale modeller hvor GINI ble testet opp mot diverse indikatorer for regional ulikhet.
 Dette innebar at datasettet ble supplementært med ytterligere indikatorer på regional utvikling utover de brukt i arbeidskrav 1.
  
 
 Med de utarbeidede regresjonsmodellene var et sentralt formål med oppgaven å estimere hvor gode predikater de nye variablene var for utvikling av regional ulikhet, samt om de samme sammenhengene forekom på tvers av regioner.
+
+**Arbeidskrav 3**
 
 Arbeidskrav 3 sitt formål var å knytte sammen de metodiske tilnærmingene brukt i arbeidskrav 1 og 2.
 Her ble variablene utvalgt i arbeidskrav 3 delt i nye under-sett og testet for sammenheng med ulikhet.
@@ -85,7 +91,13 @@ Den matematiske funksjonen for modellen er som følger: GINIj= β0 + β1 \* Veks
 Valget av denne modellen kommer fra Lessmann og seidel sin teori på området.
 Et sentralt aspekt med valg av denne metoden var å ivareta OLS forutsetningene.
 
-I arbeidskrav 3
+I arbeidskrav 3 brukte vi en utvidet versjon av OLS modellen fra ak 2, som testet om effekten av vekst på ulikhet varierte når data ble segmentert i diverse undergrupper.
+For å teste om det var modeller som gav bedre forklaringskraft enn lineære modeller som primært hadde blitt brukt frem til dette tidspunktet ble alternative regresjoner utforsket.
+Logaritmisk og kvadratiske funksjoner ble her brukt for å fange opp ikke lineære effekter, hovedsakelig Kuznetsk effekten.
+For å teste modellene for heteroskedasitet er Breusch Pegan testen benyttet.
+Avslutningsvis i arbeidskravet ønsket vi å bruke «fixed effects» modeller for å kontrollere tidsinvariante regionale faktorer for vekstrate.
+Men grunnet feil som oppstod i koden som ikke ble luket ut brukte vi BNPPI istedenfor.
+Dette gav dessverre en sup optimal modell og resultatene hadde hatt større nytteverdi dersom den hadde fungert som ønsket.
 
 ## IV.Empirical Findings
 
