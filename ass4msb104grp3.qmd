@@ -10,19 +10,7 @@ csl: apa7.csl
 bibliography: Okonometri_arbeidskrav.bib
 ---
 
-## 
-
-Irjan tar oddetall.
-Magnum opus tar partall
-
-## Objective
-
-## Synthesize and consolidate the critical findings from Assignments 1, 2, and 3 into a coherent
-
-academic paper.
-Max size 20 pages.
-
-## 0. Short abstract
+## 0. Abstrakt
 
 Denne studien undersøker sammenhengen mellom økonomisk vekst og inntektsulikhet i europeiske regioner ved hjelp av datasett fra Finland, Italia, Romania og Litauen på NUTS 2-nivå.
 Analysene kombinerer paneldata, tverrsnittsmodeller, interaksjonsanalyser og ikke-lineære spesifikasjoner for å identifisere hvordan regionale strukturelle forhold påvirker fordelingen av vekstgevinster.
@@ -31,7 +19,7 @@ Arbeidsledighet fremstår som den viktigste modererende faktoren: i regioner med
 Utdanningsnivå og befolkningstetthet viser ingen robuste effekter, og de ikke-lineære modellene bekrefter at vekstens fordelingsmessige virkning styrkes i regioner med betydelige arbeidsmarkedsutfordringer.
 Studien bidrar til litteraturen om regional utvikling ved å demonstrere at vekst–ulikhet-sammenhengen i stor grad avhenger av regionale strukturer, og understreker behovet for differensiert regionalpolitikk og videre forskning basert på større og mer detaljerte datasett.
 
-## I. Introduction
+## I. Introduksjon
 
 Gjennom oppgavene i dette emnet har vi sett på regional utvikling satt opp mot ulikhet på 3 regionale nivåer.
 
@@ -109,7 +97,7 @@ Samlet sett peker litteraturen mot tre sentrale innsikter:
 
 Denne teorien gir et solid grunnlag for å tolke resultatene i den empiriske delen av oppgaven.
 
-### Reaserchgap
+**Forsknings svakheter**
 
 Til tross for omfattende forskning gjenstår flere viktige kunnskapshull.
 For det første undersøker mange studier sammenhengen mellom økonomisk vekst og ulikhet på nasjonalt nivå, mens det finnes færre analyser som fokuserer på regioner innenfor samme land, der forskjeller i demografi, kompetansenivå og arbeidsmarked kan ha stor betydning.
@@ -122,7 +110,7 @@ For det tredje er det stor variasjon i metodiske tilnærminger.
 Mange studier analyserer kun en enkelt modell, uten å kombinere enkel regresjon, undergruppeanalyser og interaksjonsmodeller i samme studie.
 Dermed mangler det forskning som undersøker både den generelle sammenhengen og hvordan den varierer mellom regioner med ulike strukturelle egenskaper.
 
-## III Data and Methodology
+## III Data og Metode
 
 Analysene i arbeidskravet bygger i hovedsak på data hentet fra Eurostat.
 Datasett for BNP, befolkningstall, utdanningsnivå, arbeidsledighet og befolkningstetthet er hentet fra Eurostat.
@@ -151,7 +139,7 @@ Avslutningsvis i arbeidskravet ønsket vi å bruke «fixed effects» modeller fo
 Men grunnet feil som oppstod i koden som ikke ble luket ut brukte vi BNPPI istedenfor.
 Dette gav dessverre en sup optimal modell og resultatene hadde hatt større nytteverdi dersom den hadde fungert som ønsket.
 
-## IV.Empirical Findings
+## IV.Emperiske funn
 
 Analysene startet med en tverrsnittlig regresjon for å undersøke sammenhengen mellom økonomisk vekst og inntektsulikhet.
 Den grunnleggende modellen viste en positiv og statistisk signifikant effekt av vekst, med en koeffisient på **0.538** (p \< 0.01).
@@ -218,7 +206,7 @@ Videre forskning bør derfor inkludere flere regioner, lengre tidsserier og et b
 
 ## VI. Begrensninger og videre forskning
 
-#### **Forskningsmessige begrensninger**
+**Forskningsmessige begrensninger**
 
 Det er flere begrensninger som bør tas i betraktning når funnene fra denne studien vurderes.
 For det første er datagrunnlaget relativt lite, med kun 29 europeiske regioner inkludert i analysen.
@@ -236,7 +224,7 @@ Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller 
 Til slutt kan modellvalgene i seg selv utgjøre en begrensning.
 Selv om både lineære, logaritmiske og kvadratiske spesifikasjoner ble testet, kan mer avanserte modeller – for eksempel ikke-parametriske tilnærminger, maskinlæringsmetoder eller instrumentvariabelanalyser – gi et rikere bilde av sammenhengen mellom vekst og ulikhet.
 
-#### **Forslag til videre forskning**
+**Forslag til videre forskning**
 
 Fremtidig forskning bør søke å inkludere **flere land og flere regioner**, for å bedre fange den institusjonelle og økonomiske variasjonen som finnes i Europa.
 Et bredere regionalt datasett ville gjøre det mulig å trekke sterkere slutninger om hvordan nasjonale rammebetingelser påvirker vekst–ulikhet-sammenhengen.
@@ -254,10 +242,7 @@ For eksempel kan økonomisk vekst i en region ha fordelingsmessige konsekvenser 
 Til slutt kan videre forskning utforske hvilke politiske tiltak som bidrar til at økonomisk vekst blir mer inkluderende.
 Siden resultatene i denne studien viser at arbeidsledighet er en nøkkelfaktor i hvordan vekst påvirker ulikhet, kan framtidige analyser vurdere sammenhengen mellom aktiv arbeidsmarkedspolitikk, kompetanseprogrammer og fordelingsutfall.
 
-## VII.Conclusion
-
-• Summary: Provide a summary of the main findings and their significance.
-• Final Reflection: Briefly reflect on the research process and the contributions of your study to the field of regional development and inequality.
+## VII.Konklusjon
 
 Studien har undersøkt hvordan økonomisk vekst henger sammen med inntektsulikhet i europeiske regioner, og hvordan denne relasjonen påvirkes av regionale kjennetegn.
 Analysene viser at vekst i gjennomsnitt er positivt assosiert med ulikhet, men at sammenhengen varierer betydelig på tvers av regioner.
@@ -276,3 +261,6 @@ Studien understreker behovet for regionalt tilpasset politikk og peker på at vi
 :::
 
 ## Document your use of AI tools
+
+I arbeidet med denne oppgaven har vi benyttet kunstig intelligens (ChatGPT fra OpenAI) som et støtteverktøy under skriveprosessen.
+Gjennom skriveprosessen ble KI hovedsakelig brukt for å forbedre struktur og omformuleringer, og alt innhold er gjennomgått og tilpasset før det ble inkludert i oppgaven.
