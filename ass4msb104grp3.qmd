@@ -224,7 +224,7 @@ Selv om Assignment 3 benyttet enkelte panel-lignende modeller, var tidsdimensjon
 
 En tredje begrensning er knyttet til måleproblemer og datakvalitet.
 Variabler som arbeidsledighet, utdanningsnivå og befolkningstetthet fanger ikke nødvendigvis opp alle regionale forskjeller som påvirker ulikhet.
-Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller skatt- og overføringssystemer – er ikke inkludert i analysen, men kan spille en viktig rolle.
+Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller skatt- og overføringssystemer – er ikke inkludert i analysen, men kan spille en viktig rolle. 
 
 Til slutt kan modellvalgene i seg selv utgjøre en begrensning.
 Selv om både lineære, logaritmiske og kvadratiske spesifikasjoner ble testet, kan mer avanserte modeller – for eksempel ikke-parametriske tilnærminger, maskinlæringsmetoder eller instrumentvariabelanalyser – gi et rikere bilde av sammenhengen mellom vekst og ulikhet.
