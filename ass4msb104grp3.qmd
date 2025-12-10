@@ -24,6 +24,13 @@ Max size 20 pages.
 
 ## 0. Short abstract
 
+Denne studien undersøker sammenhengen mellom økonomisk vekst og inntektsulikhet i europeiske regioner ved hjelp av datasett fra Finland, Italia, Romania og Litauen på NUTS 2-nivå.
+Analysene kombinerer paneldata, tverrsnittsmodeller, interaksjonsanalyser og ikke-lineære spesifikasjoner for å identifisere hvordan regionale strukturelle forhold påvirker fordelingen av vekstgevinster.
+Resultatene viser at økonomisk vekst i gjennomsnitt er positivt assosiert med ulikhet, men at denne relasjonen varierer tydelig mellom regioner.
+Arbeidsledighet fremstår som den viktigste modererende faktoren: i regioner med høy arbeidsledighet har vekst en negativ og statistisk signifikant effekt på ulikhet, mens effekten i regioner med lav eller middels arbeidsledighet er svak og ikke signifikant.
+Utdanningsnivå og befolkningstetthet viser ingen robuste effekter, og de ikke-lineære modellene bekrefter at vekstens fordelingsmessige virkning styrkes i regioner med betydelige arbeidsmarkedsutfordringer.
+Studien bidrar til litteraturen om regional utvikling ved å demonstrere at vekst–ulikhet-sammenhengen i stor grad avhenger av regionale strukturer, og understreker behovet for differensiert regionalpolitikk og videre forskning basert på større og mer detaljerte datasett.
+
 ## I. Introduction
 
 Gjennom oppgavene i dette emnet har vi sett på regional utvikling satt opp mot ulikhet på 3 regionale nivåer.
