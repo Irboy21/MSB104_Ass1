@@ -65,46 +65,6 @@
 \fi
 \makeatother
 
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{241,243,245}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
-\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
@@ -238,7 +198,7 @@
 \title{Økonomisk vekst og regional ulikhet: En empirisk analyse av
 sammenhengen mellom vekst og Gini-koeffisient på tvers av regioner}
 \author{Irjan \& Magnus}
-\date{2025-01-01}
+\date{10 December 2025}
 \begin{document}
 \maketitle
 
@@ -246,16 +206,6 @@ sammenhengen mellom vekst og Gini-koeffisient på tvers av regioner}
 \subsection{}\label{section}
 
 Irjan tar oddetall. Magnum opus tar partall
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{Sys.getlocale}\NormalTok{()}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-[1] "LC_COLLATE=Norwegian_Norway.1252;LC_CTYPE=Norwegian_Norway.1252;LC_MONETARY=Norwegian_Norway.1252;LC_NUMERIC=C;LC_TIME=Norwegian_Norway.1252"
-\end{verbatim}
 
 \subsection{Objective}\label{objective}
 
@@ -293,8 +243,8 @@ ulikhet er langt mer komplekse, og at sammenhengen varierer betydelig
 mellom regioner og tidsperioder (Piketty, 2017).
 
 En viktig utvidelse kommer fra moderne regionaløkonomisk teori, særlig
-forskning på konvergens og regional divergens. Barro og Sala-i-Martin
-(1995) argumenterer for at regioner kan nærme seg hverandre økonomisk
+forskning på konvergens og regional divergens. Barro \& Sala-i-Martin
+(2004) argumenterer for at regioner kan nærme seg hverandre økonomisk
 (konvergere) dersom kapital og arbeidskraft flyter fritt, men at
 ulikheter kan vedvare når særtrekk som utdanningsnivå, innovasjonsevne
 eller næringsstruktur skiller regionene.
@@ -310,11 +260,65 @@ har en tendens til å oppleve mer vedvarende eller økende ulikhet. Dette
 støtter tanken om at vekst alene ikke er tilstrekkelig for å redusere
 ulikhet uten at underliggende strukturelle faktorer tas i betraktning.
 
-Agglomerasjonseffekter fremhevet av Moretti (2012) peker i samme
-retning: regioner med høy kompetanse og teknologisk innovasjon
-tiltrekker seg kapital og arbeidskraft, noe som forsterker geografisk
-konsentrasjon av velstand. Dette kan øke ulikheten mellom regioner selv
-i perioder med høy samlet økonomisk vekst.
+I nyere litteratur samler Mdingi \& Ho (2021) et bredt spekter av
+studier om sammenhengen mellom inntektsulikhet og økonomisk vekst. Deres
+gjennomgang understreker at relasjonen mellom vekst og ulikhet ikke er
+entydig: enkelte studier finner at ulikhet hemmer vekst, andre at vekst
+øker ulikhet, og mange at sammenhengen varierer med landets
+utviklingsnivå, institusjoner og kredittmarkedets funksjon.
+
+Det finnes også gode teoretiske argumenter for at økonomisk vekst kan
+bidra til økt ulikhet. Dette gjelder særlig i regioner der avkastningen
+på kapital er høy, mens investeringer i kompetanse og humankapital
+henger etter. I slike områder vil gevinster fra vekst lettere tilfalle
+dem som allerede er økonomisk sterke. Nettopp derfor er det viktig å
+analysere sammenhengen mellom vekst og ulikhet med et empirisk opplegg
+som tar hensyn til både økonomiske forskjeller, utdanningsnivå og
+institusjonelle forhold.
+
+Samlet sett peker litteraturen mot tre sentrale innsikter:
+
+\begin{itemize}
+\item
+  \textbf{Vekst kan både øke og redusere ulikhet}, avhengig av regionens
+  utviklingsnivå og institusjonelle rammeverk.
+\item
+  \textbf{Utdanning, arbeidsledighet og styringskvalitet} er viktige
+  modererende faktorer som påvirker hvordan vekst omsettes i økonomiske
+  gevinster.
+\item
+  \textbf{Regionale forskjeller er avgjørende}, og moderne empirisk
+  forskning (som Lessmann, 2017) viser at ulikhet ofte vedvarer selv
+  under økonomisk vekst --- særlig i regioner med svakere institusjoner
+  eller lavere humankapital.
+\end{itemize}
+
+Denne teorien gir et solid grunnlag for å tolke resultatene i den
+empiriske delen av oppgaven.
+
+\subsubsection{Reaserchgap}\label{reaserchgap}
+
+Til tross for omfattende forskning gjenstår flere viktige kunnskapshull.
+For det første undersøker mange studier sammenhengen mellom økonomisk
+vekst og ulikhet på nasjonalt nivå, mens det finnes færre analyser som
+fokuserer på regioner innenfor samme land, der forskjeller i demografi,
+kompetansenivå og arbeidsmarked kan ha stor betydning. Dette er en
+viktig mangel, ettersom nasjonale gjennomsnittstall ofte skjuler interne
+forskjeller.
+
+For det andre er det begrenset med forskning som analyserer hvordan
+regionale kjennetegn modererer effekten av vekst på ulikhet. Teorier
+peker på at utdanningsnivå, arbeidsledighet og institusjonelle forhold
+kan påvirke hvordan vekst omsettes i inntektsfordeling, men empiriske
+tester av slike mekanismer er relativt få, spesielt på subnasjonalt
+nivå.
+
+For det tredje er det stor variasjon i metodiske tilnærminger. Mange
+studier analyserer kun en enkelt modell, uten å kombinere enkel
+regresjon, undergruppeanalyser og interaksjonsmodeller i samme studie.
+Dermed mangler det forskning som undersøker både den generelle
+sammenhengen og hvordan den varierer mellom regioner med ulike
+strukturelle egenskaper.
 
 \subsection{III Data and Methodology}\label{iii-data-and-methodology}
 
@@ -325,24 +329,194 @@ Approach:~Summarize the methodologies applied in Assignments 1, 2, and
 
 \subsection{IV.Empirical Findings}\label{iv.empirical-findings}
 
-• Cross-sectional Estimates:~Summarize essential results obtained from
-the cross-sectional analysis in Assignment 2. • Alternative Functional
-Forms and Panel Estimates:~Present the key insights derived from
-exploring alternative functional forms and panel estimates in Assignment
-3.
+Analysene startet med en tverrsnittlig regresjon for å undersøke
+sammenhengen mellom økonomisk vekst og inntektsulikhet. Den
+grunnleggende modellen viste en positiv og statistisk signifikant effekt
+av vekst, med en koeffisient på \textbf{0.538} (p \textless{} 0.01).
+Modellen forklarte om lag \textbf{30 prosent} av variasjonen i ulikhet
+(R² = 0.295). Da modellen ble utvidet med arbeidsledighet,
+befolkningstetthet og utdanningsnivå, ble veksteffekten redusert til
+\textbf{0.379} (p = 0.068). De strukturelle variablene hadde små og
+ikke-signifikante effekter: arbeidsledighet \textbf{--0.0024},
+befolkningstetthet \textbf{0.000022} og utdanningsnivå
+\textbf{--0.0017}.
 
-\subsection{V.Discussion}\label{v.discussion}
+Når regionene ble delt etter utdanningsnivå, var veksteffekten
+\textbf{--6.992} for regioner med lav utdanning, mens interaksjonsleddet
+for middels utdanningsnivå var \textbf{7.547}, noe som ga en samlet
+effekt på omtrent \textbf{0.56}. Ingen av estimatene var statistisk
+signifikante.
 
-• Key Insights:~Synthesize and discuss the central insights emerging
-from the empirical findings. • Policy Implications:~Deliberate on the
-potential implications of your results for policymaking and practice in
-the realm of regional development and inequality.
+Modellen som delte regionene etter arbeidsledighetsnivå viste tydeligere
+mønstre. Veksteffekten var \textbf{0.37} i regioner med lav
+arbeidsledighet og \textbf{0.38} i regioner med middels arbeidsledighet,
+begge uten signifikant utslag. I regioner med høy arbeidsledighet var
+derimot veksteffekten \textbf{--4.48}, og interaksjonsleddet
+\textbf{--4.85}; begge koeffisientene var statistisk signifikante.
 
-\subsection{VI.Limitations and Future
-Research}\label{vi.limitations-and-future-research}
+Befolkningstetthet ga svakere resultater. Veksteffekten var
+\textbf{0.376} i regioner med lav tetthet, økte til \textbf{0.88} i
+regioner med middels tetthet og falt til \textbf{0.26} i regioner med
+høy tetthet. Ingen av disse estimatene, verken hovedleddene eller
+interaksjonsleddene, var statistisk signifikante.
 
-• Research Limitations:~Acknowledge any constraints or limitations
-encountered during your analysis.
+Til slutt ble det testet ikke-lineære funksjonelle former. Den
+logaritmiske modellen viste et negativt og statistisk signifikant
+interaksjonsledd mellom log(vekst) og høy arbeidsledighet
+(\textbf{--0.115}). Den kvadratiske modellen hadde den høyeste
+forklaringskraften av alle spesifikasjonene (R² ≈ \textbf{0.51}). I
+denne modellen var interaksjonsleddet mellom vekst² og høy
+arbeidsledighet \textbf{--124.74}, også statistisk signifikant. Ingen av
+de ikke-lineære spesifikasjonene viste signifikante effekter for
+utdanningsnivå eller befolkningstetthet.
+
+\subsection{V.Diskusjon}\label{v.diskusjon}
+
+Resultatene fra analysene viser at forholdet mellom økonomisk vekst og
+inntektsulikhet varierer betydelig mellom regioner, og at en enkel
+lineær modell ikke gir et fullstendig bilde av denne sammenhengen. Den
+første tverrsnittsanalysen viste en tydelig positiv og signifikant
+sammenheng: regioner med høyere vekst hadde også høyere ulikhet. Dette
+stemmer med etablerte teorier som hevder at økonomisk vekst i
+utgangspunktet kan forsterke forskjeller fordi grupper med høyere
+kompetanse eller kapital ofte drar større nytte av nye økonomiske
+muligheter.
+
+Når modellen utvides til å kontrollere for regionale strukturelle
+forhold, og når interaksjonseffekter inkluderes, blir bildet langt mer
+nyansert. Arbeidsledighet fremstår som den mest betydningsfulle
+moderatorvariabelen. I regioner med høy arbeidsledighet er veksteffekten
+både negativ og statistisk signifikant, noe som betyr at vekst faktisk
+reduserer ulikhet i disse områdene. Dette funnet står i kontrast til
+hovedresultatet fra tverrsnittet, og tyder på at i regioner med
+betydelig arbeidsmarkedspress kan vekst bidra til å inkludere grupper
+som tidligere sto utenfor arbeidsmarkedet. Sysselsettingseffekter kan
+dermed være en sentral mekanisme som forklarer hvorfor ulikheten faller
+når veksten øker i slike regioner.
+
+For regioner med lav eller middels arbeidsledighet er effekten av vekst
+svak og ikke signifikant. Det indikerer at når arbeidsmarkedet allerede
+fungerer relativt godt, fordeles vekstgevinster på en måte som ikke
+endrer ulikhetsnivået i særlig grad. Dette understreker at
+arbeidsmarkedets tilstand er en nøkkelfaktor i hvordan vekst påvirker
+inntektsfordelingen.
+
+Utdanningsnivå og befolkningstetthet viser ingen statistisk sikre
+effekter, selv om estimatene antyder enkelte forskjeller mellom grupper.
+Dette kan bety at disse variablene har mer indirekte eller langsiktige
+effekter som ikke fanges opp i det relativt begrensede datamaterialet.
+Det kan også skyldes at variasjonen mellom regionene er for liten til å
+identifisere tydelige mønstre. Likevel er det verdt å merke seg at slike
+strukturelle variabler ofte virker i samspill med andre forhold -- som
+næringssammensetning, teknologisk utvikling og institusjonelle rammer --
+som ikke inngår i analysen.
+
+De ikke-lineære modellene gir ytterligere støtte til at vekst ikke
+virker likt i alle regioner. Både log-modellen og den kvadratiske
+modellen viser at i regioner med høy arbeidsledighet blir den negative
+effekten av vekst sterkere ved høyere vekstnivåer. Dette betyr at ikke
+bare \emph{hvor} veksten skjer, men også \emph{hvor rask} den er, kan
+påvirke hvordan inntektene fordeles. En slik dynamikk er vanskelig å
+fange med en enkel lineær modell, og resultatene illustrerer derfor
+viktigheten av å teste alternative spesifikasjoner når man studerer
+fordelingsmessige utfall.
+
+Disse funnene har klare implikasjoner for regional utviklingspolitikk.
+For det første viser analysene at vekst alene ikke nødvendigvis
+reduserer ulikhet. I regioner med lav arbeidsledighet kan vekst til og
+med bidra til høyere ulikhet dersom gevinsten først og fremst tilfaller
+grupper som allerede har sterke posisjoner i økonomien. Dette peker på
+behovet for politikk som sikrer at vekst fordeles bredere, for eksempel
+gjennom oppkvalifiseringstiltak, bedre tilgang til arbeid for
+lavinntektsgrupper og strategier som øker mobilitet i arbeidsmarkedet.
+
+For regioner med høy arbeidsledighet peker resultatene i motsatt
+retning: her kan vekst fungere som et effektivt virkemiddel for å
+redusere ulikhet. Dette betyr at vekstfremmende tiltak kan ha en
+dobbeltgevinst i slike regioner, både ved å styrke den økonomiske
+aktiviteten og ved å bidra til en mer rettferdig fordeling.
+Investeringer i næringsutvikling, infrastruktur og arbeidsmarkedstiltak
+kan derfor ha særlig stor betydning nettopp i regioner som sliter med
+vedvarende arbeidsledighet.
+
+Samlet sett viser analysene at økonomisk vekst ikke har én bestemt
+effekt på ulikhet. Effekten avhenger i stor grad av regionenes
+strukturelle forutsetninger, og spesielt av arbeidsmarkedets kapasitet
+og fleksibilitet. Dette understreker viktigheten av å utforme regional
+politikk som tar hensyn til lokale forhold, og som ser økonomisk
+utvikling og fordelingshensyn i sammenheng. Videre forskning bør derfor
+inkludere flere regioner, lengre tidsserier og et bredere sett av
+strukturelle og institusjonelle variabler for å få en mer omfattende
+forståelse av hvordan vekst og ulikhet påvirker hverandre over tid.
+
+\subsection{VI. Begrensninger og videre
+forskning}\label{vi.-begrensninger-og-videre-forskning}
+
+\paragraph{\texorpdfstring{\textbf{Forskningsmessige
+begrensninger}}{Forskningsmessige begrensninger}}\label{forskningsmessige-begrensninger}
+
+Det er flere begrensninger som bør tas i betraktning når funnene fra
+denne studien vurderes. For det første er datagrunnlaget relativt lite,
+med kun 29 europeiske regioner inkludert i analysen. Et så begrenset
+utvalg reduserer den statistiske styrken i modellene og øker risikoen
+for at reelle sammenhenger ikke fanges opp. Dette gjelder særlig for
+undergruppeanalysene, der datasettet deles opp, og antallet
+observasjoner i hver gruppe blir enda mindre.
+
+For det andre bygger hovedanalysene på tverrsnittsdata fra ett enkelt
+år. Slike data gir et øyeblikksbilde av sammenhengen mellom vekst og
+ulikhet, men gjør det vanskelig å identifisere kausale mekanismer eller
+undersøke hvordan forholdet utvikler seg over tid. Selv om Assignment 3
+benyttet enkelte panel-lignende modeller, var tidsdimensjonen for
+begrenset til å trekke sterke konklusjoner om dynamiske prosesser.
+
+En tredje begrensning er knyttet til måleproblemer og datakvalitet.
+Variabler som arbeidsledighet, utdanningsnivå og befolkningstetthet
+fanger ikke nødvendigvis opp alle regionale forskjeller som påvirker
+ulikhet. Andre faktorer -- som institusjonell kvalitet, sektorstruktur,
+migrasjon eller skatt- og overføringssystemer -- er ikke inkludert i
+analysen, men kan spille en viktig rolle.
+
+Til slutt kan modellvalgene i seg selv utgjøre en begrensning. Selv om
+både lineære, logaritmiske og kvadratiske spesifikasjoner ble testet,
+kan mer avanserte modeller -- for eksempel ikke-parametriske
+tilnærminger, maskinlæringsmetoder eller instrumentvariabelanalyser --
+gi et rikere bilde av sammenhengen mellom vekst og ulikhet.
+
+\paragraph{\texorpdfstring{\textbf{Forslag til videre
+forskning}}{Forslag til videre forskning}}\label{forslag-til-videre-forskning}
+
+Fremtidig forskning bør søke å inkludere \textbf{flere land og flere
+regioner}, for å bedre fange den institusjonelle og økonomiske
+variasjonen som finnes i Europa. Et bredere regionalt datasett ville
+gjøre det mulig å trekke sterkere slutninger om hvordan nasjonale
+rammebetingelser påvirker vekst--ulikhet-sammenhengen.
+
+Et annet viktig steg vil være å benytte \textbf{lengre tidsserier}, som
+muliggjør mer avanserte panelanalyser og bedre identifikasjon av kausale
+forhold. Med flere år tilgjengelig kan man undersøke om vekst påvirker
+ulikhet i regioner som følger ulike utviklingsbaner, og om effektene er
+midlertidige eller varige.
+
+Videre forskning bør også inkludere et bredere sett av regionale
+indikatorer. Variabler som næringsstruktur, teknologisk utvikling,
+migrasjonsstrømmer, inntekts-mobilitet og institusjonelle kvalitetsmål
+kan gi en dypere forståelse av mekanismene som knytter vekst til
+ulikhet. Særlig kan forskjeller mellom nord- og sør-europeiske regioner,
+eller mellom post-sosialistiske og vestlige økonomier, gi viktige
+innsikter.
+
+Et lovende spor er også bruk av \textbf{spatial econometrics},som tar
+hensyn til geografisk avhengighet mellom observasjoner, ettersom
+regioner ofte påvirker hverandre. For eksempel kan økonomisk vekst i en
+region ha fordelingsmessige konsekvenser i omkringliggende regioner.
+
+Til slutt kan videre forskning utforske hvilke politiske tiltak som
+bidrar til at økonomisk vekst blir mer inkluderende. Siden resultatene i
+denne studien viser at arbeidsledighet er en nøkkelfaktor i hvordan
+vekst påvirker ulikhet, kan framtidige analyser vurdere sammenhengen
+mellom aktiv arbeidsmarkedspolitikk, kompetanseprogrammer og
+fordelingsutfall.
 
 \subsection{VII.Conclusion}\label{vii.conclusion}
 
@@ -351,19 +525,14 @@ significance. • Final Reflection:~Briefly reflect on the research
 process and the contributions of your study to the field of regional
 development and inequality.
 
-\subsection{VIII.References •}\label{viii.references}
-
-Include a list of all references cited in the paper, formatted according
-to a standard academic style. Use APA7, you will find apa7.csl under
-Filer at the Canvas site of the course. Include it with csl: apa7.csl in
-your YAML header. Appendix (Kuznets, 1955)
-
-\subsection*{Document your use of AI
-tools}\label{document-your-use-of-ai-tools}
-\addcontentsline{toc}{subsection}{Document your use of AI tools}
+\subsection{VIII.References}\label{viii.references}
 
 \phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
+\bibitem[\citeproctext]{ref-barro2004}
+Barro, R. J., \& Sala-i-Martin, X. (2004). \emph{Economic growth} (2nd
+ed). MIT Press.
+
 \bibitem[\citeproctext]{ref-kuznets1955}
 Kuznets, S. (1955). Economic growth and income inequality.
 \emph{American Economic Review}, \emph{45}(1), 1--28.
@@ -373,11 +542,19 @@ Lessmann, C. (2017). Regional inequality, convergence, and its
 determinants -- {A} view from outer space\ding{73}. \emph{European
 Economic Review}, 23.
 
+\bibitem[\citeproctext]{ref-mdingi2021}
+Mdingi, K., \& Ho, S.-Y. (2021). Literature review on income inequality
+and economic growth. \emph{MethodsX}, \emph{8}, 101402.
+\url{https://doi.org/10.1016/j.mex.2021.101402}
+
 \bibitem[\citeproctext]{ref-piketty2017}
 Piketty, T. (2017). \emph{Capital in the twenty-first century} (A.
 Goldhammer, Trans.). The Belknap Press of Harvard University Press.
 
 \end{CSLReferences}
+
+\subsection{Document your use of AI
+tools}\label{document-your-use-of-ai-tools}
 
 
 

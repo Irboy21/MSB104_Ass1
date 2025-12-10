@@ -1,9 +1,11 @@
 ---
 title: "Økonomisk vekst og regional ulikhet: En empirisk analyse av sammenhengen mellom vekst og Gini-koeffisient på tvers av regioner"
 author: "Irjan & Magnus"
-date: "2025"
+date: last-modified
+date-format: "DD MMMM YYYY"
 format:
   html: default
+  pdf: default
 csl: apa7.csl
 bibliography: Okonometri_arbeidskrav.bib
 ---
@@ -85,70 +87,68 @@ Dermed mangler det forskning som undersøker både den generelle sammenhengen og
 
 ## IV.Empirical Findings
 
-### **4.1 Cross-sectional Estimates (Assignment 2)**
+Analysene startet med en tverrsnittlig regresjon for å undersøke sammenhengen mellom økonomisk vekst og inntektsulikhet.
+Den grunnleggende modellen viste en positiv og statistisk signifikant effekt av vekst, med en koeffisient på **0.538** (p \< 0.01).
+Modellen forklarte om lag **30 prosent** av variasjonen i ulikhet (R² = 0.295).
+Da modellen ble utvidet med arbeidsledighet, befolkningstetthet og utdanningsnivå, ble veksteffekten redusert til **0.379** (p = 0.068).
+De strukturelle variablene hadde små og ikke-signifikante effekter: arbeidsledighet **–0.0024**, befolkningstetthet **0.000022** og utdanningsnivå **–0.0017**.
 
-Assignment 2 analyserte først forholdet mellom økonomisk vekst og ulikhet ved hjelp av en enkel lineær modell.
-Resultatet viste en positiv effekt av vekst på Gini-koeffisienten, med en koeffisient på **0.538**, som var statistisk signifikant (p \< 0.01).
-Dette indikerer at regioner med høyere vekst generelt hadde høyere ulikhet.
-Forklaringskraften var moderat (**R² = 0.295**), noe som betyr at vekst forklarte rundt 30 prosent av variasjonen i ulikhet mellom regionene.
+Når regionene ble delt etter utdanningsnivå, var veksteffekten **–6.992** for regioner med lav utdanning, mens interaksjonsleddet for middels utdanningsnivå var **7.547**, noe som ga en samlet effekt på omtrent **0.56**.
+Ingen av estimatene var statistisk signifikante.
 
-I den neste delen av Assignment 2 ble modellen utvidet til å inkludere tre sentrale regionale kjennetegn: **arbeidsledighet**, **befolkningstetthet** og **utdanningsnivå**.
-Formålet var å undersøke om sammenhengen mellom vekst og ulikhet holdt når flere relevante faktorer ble kontrollert for.
+Modellen som delte regionene etter arbeidsledighetsnivå viste tydeligere mønstre.
+Veksteffekten var **0.37** i regioner med lav arbeidsledighet og **0.38** i regioner med middels arbeidsledighet, begge uten signifikant utslag.
+I regioner med høy arbeidsledighet var derimot veksteffekten **–4.48**, og interaksjonsleddet **–4.85**; begge koeffisientene var statistisk signifikante.
 
-I denne multivariate modellen var effekten av vekst fortsatt positiv, med en koeffisient på **0.379**, men den var ikke signifikant på tradisjonelt nivå **(p = 0.068)**.
-Arbeidsledigheten hadde en svak negativ effekt på ulikhet **(–0.0024)**, befolkningstetthet en svært svak positiv effekt **(0.000022)**, og andelen med høyere utdanning en moderat negativ effekt **(–0.0017)**.
-Ingen av disse variablene var statistisk signifikante, men retningene på koeffisientene er teorikonsistente: lavere utdanning og press i arbeidsmarkedet er ofte knyttet til høyere ulikhet.
+Befolkningstetthet ga svakere resultater.
+Veksteffekten var **0.376** i regioner med lav tetthet, økte til **0.88** i regioner med middels tetthet og falt til **0.26** i regioner med høy tetthet.
+Ingen av disse estimatene, verken hovedleddene eller interaksjonsleddene, var statistisk signifikante.
 
-Modellen som helhet hadde en moderat forklaringskraft, og resultatene antydet at vekst fortsatt spiller en rolle, men at ulikhet sannsynligvis påvirkes av flere strukturelle forhold som ikke fanges opp av de tilgjengelige variablene.
+Til slutt ble det testet ikke-lineære funksjonelle former.
+Den logaritmiske modellen viste et negativt og statistisk signifikant interaksjonsledd mellom log(vekst) og høy arbeidsledighet (**–0.115**).
+Den kvadratiske modellen hadde den høyeste forklaringskraften av alle spesifikasjonene (R² ≈ **0.51**).
+I denne modellen var interaksjonsleddet mellom vekst² og høy arbeidsledighet **–124.74**, også statistisk signifikant.
+Ingen av de ikke-lineære spesifikasjonene viste signifikante effekter for utdanningsnivå eller befolkningstetthet.
 
-### **4.2 Alternative Functional Forms and Panel Estimates (Assignment 3)**
+## V.Diskusjon
 
-Assignment 3 bygde videre på resultatene fra Assignment 2 ved å undersøke om forholdet mellom vekst og ulikhet varierer mellom regioner med ulike strukturelle egenskaper, og om alternative funksjonelle former gir bedre innsikt i modellens dynamikk.
+Resultatene fra analysene viser at forholdet mellom økonomisk vekst og inntektsulikhet varierer betydelig mellom regioner, og at en enkel lineær modell ikke gir et fullstendig bilde av denne sammenhengen.
+Den første tverrsnittsanalysen viste en tydelig positiv og signifikant sammenheng: regioner med høyere vekst hadde også høyere ulikhet.
+Dette stemmer med etablerte teorier som hevder at økonomisk vekst i utgangspunktet kan forsterke forskjeller fordi grupper med høyere kompetanse eller kapital ofte drar større nytte av nye økonomiske muligheter.
 
-#### **4.2.1 Utdanningsnivå som modererende faktor**
+Når modellen utvides til å kontrollere for regionale strukturelle forhold, og når interaksjonseffekter inkluderes, blir bildet langt mer nyansert.
+Arbeidsledighet fremstår som den mest betydningsfulle moderatorvariabelen.
+I regioner med høy arbeidsledighet er veksteffekten både negativ og statistisk signifikant, noe som betyr at vekst faktisk reduserer ulikhet i disse områdene.
+Dette funnet står i kontrast til hovedresultatet fra tverrsnittet, og tyder på at i regioner med betydelig arbeidsmarkedspress kan vekst bidra til å inkludere grupper som tidligere sto utenfor arbeidsmarkedet.
+Sysselsettingseffekter kan dermed være en sentral mekanisme som forklarer hvorfor ulikheten faller når veksten øker i slike regioner.
 
-Interaksjonsmodellen viste at vekst påvirker regioner ulikt avhengig av utdanningsnivå.
-Regionen med lavt utdanningsnivå hadde en negativ veksteffekt på **–6.992**, mens regioner med middels utdanningsnivå fikk en positiv tilleggseffekt gjennom interaksjonsleddet på **7.547**, noe som ga en samlet veksteffekt på om lag **0.56** for disse regionene.
-Effektene var imidlertid ikke statistisk signifikante, og resultatene gir derfor ikke grunnlag for å konkludere med at utdanningsnivå modererer forholdet mellom vekst og ulikhet i denne analysen.
+For regioner med lav eller middels arbeidsledighet er effekten av vekst svak og ikke signifikant.
+Det indikerer at når arbeidsmarkedet allerede fungerer relativt godt, fordeles vekstgevinster på en måte som ikke endrer ulikhetsnivået i særlig grad.
+Dette understreker at arbeidsmarkedets tilstand er en nøkkelfaktor i hvordan vekst påvirker inntektsfordelingen.
 
-#### **4.2.2 Arbeidsledighet som modererende faktor**
+Utdanningsnivå og befolkningstetthet viser ingen statistisk sikre effekter, selv om estimatene antyder enkelte forskjeller mellom grupper.
+Dette kan bety at disse variablene har mer indirekte eller langsiktige effekter som ikke fanges opp i det relativt begrensede datamaterialet.
+Det kan også skyldes at variasjonen mellom regionene er for liten til å identifisere tydelige mønstre.
+Likevel er det verdt å merke seg at slike strukturelle variabler ofte virker i samspill med andre forhold – som næringssammensetning, teknologisk utvikling og institusjonelle rammer – som ikke inngår i analysen.
 
-Arbeidsledighet viste de mest tydelige og robuste mønstrene.
-I regioner med lav arbeidsledighet var veksteffekten positiv, rundt **0.37**, men ikke signifikant.
-I regioner med middels arbeidsledighet var effekten omtrent den samme (ca. **0.38**), men heller ikke signifikant.
+De ikke-lineære modellene gir ytterligere støtte til at vekst ikke virker likt i alle regioner.
+Både log-modellen og den kvadratiske modellen viser at i regioner med høy arbeidsledighet blir den negative effekten av vekst sterkere ved høyere vekstnivåer.
+Dette betyr at ikke bare *hvor* veksten skjer, men også *hvor rask* den er, kan påvirke hvordan inntektene fordeles.
+En slik dynamikk er vanskelig å fange med en enkel lineær modell, og resultatene illustrerer derfor viktigheten av å teste alternative spesifikasjoner når man studerer fordelingsmessige utfall.
 
-Regioner med **høy arbeidsledighet** skilte seg derimot klart ut.
-Her var effekten av vekst **negativ og statistisk signifikant**, med en koeffisient på **–4.48**.
-Interaksjonsleddet i modellen bekreftet dette med en verdi på **–4.85**.
-Dette funnet var konsistent på tvers av spesifikasjoner og antyder at vekst i regioner med svak arbeidsmarkedssituasjon kan virke utjevnende, i motsetning til området trenden i tverrsnittet.
+Disse funnene har klare implikasjoner for regional utviklingspolitikk.
+For det første viser analysene at vekst alene ikke nødvendigvis reduserer ulikhet.
+I regioner med lav arbeidsledighet kan vekst til og med bidra til høyere ulikhet dersom gevinsten først og fremst tilfaller grupper som allerede har sterke posisjoner i økonomien.
+Dette peker på behovet for politikk som sikrer at vekst fordeles bredere, for eksempel gjennom oppkvalifiseringstiltak, bedre tilgang til arbeid for lavinntektsgrupper og strategier som øker mobilitet i arbeidsmarkedet.
 
-#### **4.2.3 Befolkningstetthet som modererende faktor**
+For regioner med høy arbeidsledighet peker resultatene i motsatt retning: her kan vekst fungere som et effektivt virkemiddel for å redusere ulikhet.
+Dette betyr at vekstfremmende tiltak kan ha en dobbeltgevinst i slike regioner, både ved å styrke den økonomiske aktiviteten og ved å bidra til en mer rettferdig fordeling.
+Investeringer i næringsutvikling, infrastruktur og arbeidsmarkedstiltak kan derfor ha særlig stor betydning nettopp i regioner som sliter med vedvarende arbeidsledighet.
 
-Modellen for befolkningstetthet viste ingen statistisk robuste effekter, men gir interessante mønstre.
-I regioner med **lav tetthet** var veksteffekten om lag **0.376**, i regioner med **middels tetthet** økte den til rundt **0.88**, mens regioner med **høy tetthet** hadde en svakere positiv sammenheng på rundt **0.26**.
-Ingen av disse effektene var signifikante, og både hovedleddet og interaksjonsleddene hadde høye p-verdier.
-Resultatene indikerer at befolkningstetthet ikke er en viktig moderator for vekst–ulikhet-sammenhengen i dette datasettet.
-
-#### **4.2.4 Ikke-lineære spesifikasjoner: log og kvadratisk modell**
-
-Assignment 3 inkluderte også analyser med logaritmiske og kvadratiske funksjonsformer for å undersøke om forholdet mellom vekst og ulikhet følger et ikke-lineært mønster.
-Disse modellene gir et viktig supplement til de lineære spesifikasjonene, særlig i regioner hvor økonomiske mekanismer kan endre karakter ved ulike vekstnivåer.
-
-Den logaritmiske modellen viste en tydelig negativ og statistisk signifikant interaksjon mellom log(vekst) og høy arbeidsledighet **(–0.115)**.
-Dette innebærer at når vekst øker i et miljø preget av høy arbeidsledighet, faller ulikheten raskere enn hva den lineære modellen fanger opp.
-Log-transformasjonen gjør modellen mindre følsom for ekstreme vekstverdier og gir derfor et mer stabilt anslag på marginaleffekten i disse regionene.
-
-Den kvadratiske modellen hadde den høyeste forklaringskraften av alle spesifikasjonene **(R² rundt 0.51)**, og indikerte at effekten av vekst på ulikhet ikke er konstant, men avhenger av vekstnivået selv.
-Interaksjonsleddet mellom vekst² og høy arbeidsledighet **(–124.74)** var både stort og signifikant, noe som viser at marginaleffekten av vekst blir stadig mer negativ når veksten øker i regioner med høy ledighet.
-Dette gir et tydelig signal om at slike regioner kan oppleve en fordelingsmessig «innhentingseffekt», hvor vekst gir sterkere reduksjon i ulikhet jo høyere veksttakten er.
-
-For utdanning og befolkningstetthet ga de ikke-lineære modellene ingen tilsvarende mønstre, og ingen av interaksjonsleddene var signifikante.
-Dermed ser det ikke ut til at ikke-linearitet spiller en stor rolle for disse variablene i dette datasettet.
-
-## V.Discussion
-
-• Key Insights: Synthesize and discuss the central insights emerging from the empirical findings.
-• Policy Implications: Deliberate on the potential implications of your results for policymaking and practice in the realm of regional development and inequality.
+Samlet sett viser analysene at økonomisk vekst ikke har én bestemt effekt på ulikhet.
+Effekten avhenger i stor grad av regionenes strukturelle forutsetninger, og spesielt av arbeidsmarkedets kapasitet og fleksibilitet.
+Dette understreker viktigheten av å utforme regional politikk som tar hensyn til lokale forhold, og som ser økonomisk utvikling og fordelingshensyn i sammenheng.
+Videre forskning bør derfor inkludere flere regioner, lengre tidsserier og et bredere sett av strukturelle og institusjonelle variabler for å få en mer omfattende forståelse av hvordan vekst og ulikhet påvirker hverandre over tid.
 
 ## VI. Begrensninger og videre forskning
 
