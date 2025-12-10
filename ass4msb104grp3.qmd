@@ -66,8 +66,26 @@ Previous Work: Summarize key literature related to regional development and ine
 
 ## III Data and Methodology
 
-• Data Sources: Briefly describe the primary data sources used in the previous assignments, noting any limitations.
-• Methodological Approach: Summarize the methodologies applied in Assignments 1, 2, and 3, highlighting the rationale behind choosing each method.
+Analysene i arbeidskravet bygger i hovedsak på data hentet fra Eurostat.
+Datasett for BNP, befolkningstall, utdanningsnivå, arbeidsledighet og befolkningstetthet er hentet fra Eurostat.
+
+For befolkningstall og BNP er dataene hentet på NUTS 3 nivå, og bearbeidet og sammenslått til NUTS 2 nivå.
+I dataene hentet har ikke alle de studerte regionene hatt fullstendige tidsserier, noe som har ført til manglende observasjoner man gjerne skulle ønske å ha.
+Dette har ført til at noen regioner ikke har kunne analyseres på en god måte, da det har vært for få observasjoner til å beregne GINI koeffisienten i den ønskede perioden 2000-2022.
+
+I arbeidskrav 1 ble datasett over total brutto nasjonalt produkt og populasjonen hentet fra Eurostat på NUTS3 nivå.
+For å sikre ryddige data ble datasettene omgjort fra vidt format til langt format, slik at hver observasjon bare inneholdt et år.
+Ved å slå disse to datasettene sammen var det mulig å beregne BNP per innbygger for regionene. 
+Ettersom oppgaven var å se på NUTS2 nivå og datasettene var hentet på NUTS3 nivå, ble det brukt en kode som slo sammen alle NUTS3 regionene som delte 4 første tegn i GEO koden, da dette er det samme som kodene for NUTS2 regioner.
+Etter at datasettene var utarbeidet på NUTS 2 nivå, ble GINI funksjonen brukt for å beregne koeffisienten for de ulike regionene.
+
+I arbeidskrav 2 ble det i første omgang utarbeidet en lineær regresjonsmodell for året 2017.
+Målet var å utarbeide en tversnittanalyse for året hvor regional utvikling var satt som den uavhengige variabelen, mens GINI koeffisienten var satt som den avhengige variabelen.
+Den matematiske funksjonen for modellen er som følger: GINIj= β0 + β1 \* Vekstj + ej.
+Valget av denne modellen kommer fra Lessmann og seidel sin teori på området.
+Et sentralt aspekt med valg av denne metoden var å ivareta OLS forutsetningene.
+
+I arbeidskrav 3
 
 ## IV.Empirical Findings
 
