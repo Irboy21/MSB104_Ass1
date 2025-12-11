@@ -1,4 +1,5 @@
 % Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
@@ -7,21 +8,22 @@
   letterpaper,
   DIV=11,
   numbers=noendperiod]{scrartcl}
-
+\usepackage{xcolor}
 \usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
 \else % if luatex or xetex
-  \usepackage{unicode-math}
+  \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
   \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
 \fi
 \usepackage{lmodern}
-\ifPDFTeX\else  
-    % xetex/luatex font selection
+\ifPDFTeX\else
+  % xetex/luatex font selection
 \fi
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -39,9 +41,6 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
-\usepackage{xcolor}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 % Make \paragraph and \subparagraph free-standing
 \makeatletter
 \ifx\paragraph\undefined\else
@@ -67,8 +66,7 @@
 \makeatother
 
 
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs,array}
 \usepackage{calc} % for calculating minipage widths
 % Correct order of tables after \paragraph or \subparagraph
 \usepackage{etoolbox}
@@ -93,6 +91,8 @@
 % Set default figure placement to htbp
 \def\fps@figure{htbp}
 \makeatother
+
+
 % definitions for citeproc citations
 \NewDocumentCommand\citeproctext{}{}
 \NewDocumentCommand\citeproc{mm}{%
@@ -127,6 +127,18 @@
 \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -141,15 +153,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-\usepackage{tabularray}
-\usepackage[normalem]{ulem}
-\usepackage{graphicx}
-\usepackage{rotating}
-\UseTblrLibrary{booktabs}
-\UseTblrLibrary{siunitx}
-\NewTableCommand{\tinytableDefineColor}[3]{\definecolor{#1}{#2}{#3}}
-\newcommand{\tinytableTabularrayUnderline}[1]{\underline{#1}}
-\newcommand{\tinytableTabularrayStrikeout}[1]{\sout{#1}}
 \KOMAoption{captions}{tableheading}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
@@ -192,11 +195,9 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
-
 \usepackage{bookmark}
-
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\urlstyle{same} % disable monospaced font for URLs
+\urlstyle{same}
 \hypersetup{
   pdftitle={Ass2MSB104GRP3},
   colorlinks=true,
@@ -210,7 +211,6 @@
 \title{Ass2MSB104GRP3}
 \author{}
 \date{}
-
 \begin{document}
 \maketitle
 
@@ -232,19 +232,26 @@ velstand relativt sett.
 
 \subsection{Model Diagnostikk}\label{model-diagnostikk}
 
-\begin{table}
-\centering
-\begin{talltblr}[         %% tabularray outer open
-caption={Enkel regresjonsmodel. {#tbl-reg1}},
-]                     %% tabularray outer close
-{                     %% tabularray inner open
-colspec={Q[]Q[]},
-column{2}={}{halign=c,},
-column{1}={}{halign=l,},
-hline{6}={1-2}{solid, black, 0.05em},
-}                     %% tabularray inner close
-\toprule
-& Model 1: GINI ~ Vekst \\ \midrule %% TinyTableHeader
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.1944}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3333}}@{}}
+\caption{Enkel regresjonsmodel.}\label{tbl-reg1}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Model 1: GINI \textasciitilde{} Vekst
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Model 1: GINI \textasciitilde{} Vekst
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
 (Intercept) & 0.044 \\
 & (0.012) \\
 vekst & 0.538 \\
@@ -253,9 +260,7 @@ Num.Obs. & 29 \\
 R2 & 0.295 \\
 R2 Adj. & 0.269 \\
 RMSE & 0.04 \\
-\bottomrule
-\end{talltblr}
-\end{table}
+\end{longtable}
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1622}}
@@ -310,7 +315,7 @@ Lessmann (2017) sin teori om at det er en sammenheng mellom økonomisk
 vekst of ulikhet.
 
 Resultatene fra den enkle lineære regresjonsmodellen (se
-\textbf{?@tbl-reg1}) viser at økonomisk vekst (Vekst) har en positiv og
+Table~\ref{tbl-reg1}) viser at økonomisk vekst (Vekst) har en positiv og
 statistisk signifikant sammenheng med regional ulikhet (GINI) på
 NUTS2-nivå i 2017. Koeffisienten til vekst (β₁ = 0.538, SE = 0.160)
 indikerer at regioner med høyere vekst i BNP per innbygger også har
@@ -566,7 +571,7 @@ dataeien og til å formulere teori delen på en bedre måte.
 \begin{CSLReferences}{1}{0}
 \bibitem[\citeproctext]{ref-lessmann2017}
 Lessmann, Christian. 2017. {``Regional Inequality, Convergence, and Its
-Determinants {\textendash} a View from Outer Space☆.''} \emph{European
+Determinants -- {A} View from Outer Space\ding{73}.''} \emph{European
 Economic Review}, 23.
 
 \end{CSLReferences}

@@ -1,8 +1,11 @@
 ---
 title: "Ass2MSB104GRP3"
-format: pdf
+format: 
+  pdf: default
+  html: default
+  typst: 
+    papersize: a4
 editor: visual
-
 execute:
   echo: false
   warning: false
@@ -10,7 +13,9 @@ execute:
 bibliography: references.bib
 ---
 
-```{r, include=FALSE}
+```{r}
+#| label: setup
+#| message: false
 library(modelr)
 library(dplyr)
 library(ggplot2)
@@ -28,18 +33,20 @@ library(knitr)
 library(ggrepel)
 library(modelsummary)
 library(broom)
-
+# personlig favoritt
+options(paged.print = FALSE)
 ```
 
-```{r setup, include=FALSE}
+```{r}
+#| eval: false
+# Denne bør ikke settes i dokumentet,
+# men på maskinen hvis dokumentet skal være reproduserbart
 Sys.setlocale("LC_ALL", "Norwegian")
-
 ```
 
 ```{r}
 KombinertRen <- readRDS("data/KombinertRen.rds")
 Gini_alle <- readRDS("data/Gini_alle.rds")
-
 ```
 
 ```{r}
@@ -68,7 +75,7 @@ NUTS2_data <- NUTS2_BNP %>%
 
 I @lessmann2017 sin tekst vil effekten man vil forvente å se på GINI koefisienten avhenge om regionen man ser på er rik eller fattig fra før.
 I rikere land forventer man en negativ sammenheng mellom vekst og ulikhet, dvs at vekst fører til reduserte ulikheter mellom regioner.
-Dette kommer av at i rikere land er vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
+Dette kommer av at i rikere land vil i stor grad de rike regionene være såpass velstående at verdiøkningen ønskes sentrert i de områdene som er underuviklet sett i sammenheng med resten av landet.
 I fattigere regioner forventer man på den andre siden å se en positiv sammenheng mellom vekst og ulikhet.
 Dette kalles "kuznets" effekten.
 Ettersom regresjonsanalysen ga en positiv ß1 verdi, burde det etter kuznets effekten indikere at datasettets inneholder mest regioner med lavere velstand relativt sett.
@@ -89,8 +96,7 @@ model1 <- lm(gini ~ vekst, data = Vekst_data)
 ```
 
 ```{r}
-
-
+#| eval: false
 modelsummary(
   list("Model 1: GINI ~ Vekst" = model1),
   statistic = "({std.error})",
@@ -99,8 +105,36 @@ modelsummary(
   output = "markdown",
   title = "Enkel regresjonsmodel. {#tbl-reg1}"
 )
-
 ```
+
+```{r}
+#| label: tbl-reg1
+#| tbl-cap: Enkel regresjonsmodel.
+#| tbl-cap-location: bottom
+# ag: mitt forslag
+modelsummary(
+  list("Model 1: GINI ~ Vekst" = model1),
+  statistic = "({std.error})",
+  stars = FALSE,
+  gof_omit = "IC|Log|F",
+  output = "flextable"
+) |> 
+  line_spacing(space = 0.5) |> 
+  add_footer_lines("T-verdier i parentes under estimat.") |> 
+  autofit()
+```
+
+```{r}
+#| label: tbl-tab-modell1
+#| tbl-cap: Regresjonsresultater enkel modell.
+#| tbl-cap-location: bottom
+# Mitt førsteval så lenge det bare er en modell
+model1 |> 
+  as_flextable() |>
+  line_spacing(space = 0.3, part = "all")
+```
+
+Som en ser av @tbl-tab-modell1 …
 
 ```{r}
 tidy_model1 <- broom::tidy(model1) %>%
@@ -130,9 +164,10 @@ kable(
 )
 ```
 
+
 I funksjonen over fremkommer analysegrunnlaget som skal brukes i regresjons modellen.
-Vekst er sattt som uavhengi variabel, og GINI koefisienten som avhengi variabel.
-Med dette datasettet kan vi teste @lessmann2017 sin teori om at det er en sammenheng mellom økonomisk vekst of ulikhet.
+Vekst er sattt som uavhengig variabel, og GINI koefisienten som avhengig variabel.
+Med dette datasettet kan vi teste @lessmann2017 sin teori om at det er en sammenheng mellom økonomisk vekst og ulikhet.
 
 Resultatene fra den enkle lineære regresjonsmodellen (se @tbl-reg1) viser at økonomisk vekst (Vekst) har en positiv og statistisk signifikant sammenheng med regional ulikhet (GINI) på NUTS2-nivå i 2017.
 Koeffisienten til vekst (β₁ = 0.538, SE = 0.160) indikerer at regioner med høyere vekst i BNP per innbygger også har høyere grad av ulikhet.
@@ -364,7 +399,18 @@ cat("Model p-value (F-test): ", format(signif(f_p_value, 4)), "\n")
 
 ```
 
-Tabell 2 og 3 viser resultatene fra vår multippel regresjonsmodell hvorregional ulikhet (målt ved Gini-koeffisienten) forklares av økonomisk vekst (BNPPI_vekst), arbeidsledighet, befolkning (bpk) og høyere utdanning.
+```{r}
+#| label: tbl-multi
+#| tbl-cap: Lineær regresjon med oppdaterte variabelnavn.
+#| tbl-cap-location: bottom
+model_multi |> 
+  as_flextable() |>
+  line_spacing(space = 0.3, part = "all")
+```
+
+I @tbl-multi ser vi …
+
+Tabell 2 og 3 viser resultatene fra vår multippel regresjonsmodell hvor regional ulikhet (målt ved Gini-koeffisienten) forklares av økonomisk vekst (BNPPI_vekst), arbeidsledighet, befolkning (bpk) og høyere utdanning.
 
 Konstantleddet (intercept) på 0.107 indikerer at den forventede Gini-verdien i en region er omtrent 0.107 når alle forklaringsvariabler er lik null.
 
@@ -389,4 +435,4 @@ Samlet sett antyder resultatene at økonomisk vekst og utdanningsnivå spiller d
 Vi har benyttes oss av Chat-gpt5 og Chat-gpt3.
 I denne oppgaven vi brukt KI til å først og fremst forstå og tolke hva oppgaven spør etter.
 Når vi har hatt knote feil med kode har vi benytt chat-gpt for å få hjelpende hånd i riktig retning.
-Vi har også brukt det til hjelp for å analysere dataeien og til å formulere teori delen på en bedre måte.
+Vi har også brukt det til hjelp for å analysere dataene og til å formulere teori delen på en bedre måte.

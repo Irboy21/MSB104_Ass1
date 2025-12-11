@@ -47,7 +47,7 @@ if(.Platform$OS.type %nin% c("unix")) {
 # Henter inn populasjons datasett fra excell
 pop_wide <- read_excel("DEMO_Ass1.xlsx", sheet = 2, col_types = "text", na = c(NA, ":")) %>%
   clean_names()
-
+Populasjon <- pop_wide
 
 # Henter inn regional BNP datasett fra excell
 BNP <- read_excel("GDP_Ass1.xlsx", sheet = 2, col_types = "text") %>%
@@ -95,6 +95,9 @@ bnp <- bnp_wide %>%
     bnp = as.numeric(str_replace_all(bnp, " ", ""))
   )
 
+PopulasjonLang <- pop
+BNPLang <- bnp
+
 saveRDS(PopulasjonLang, "data/PopulasjonLang.rds")
 saveRDS(BNPLang, "data/BNPLang.rds")
 ```
@@ -128,9 +131,11 @@ mutate(
 
 Kombinert <- PopulasjonLang %>% 
 left_join(BNPLang, by = join_by(region, aar)) %>%
-mutate( befolkning = as.numeric(befolkning), 
-BNP = as.numeric(BNP), 
-BNPPI = (BNP * 1e6) / befolkning, )
+mutate( 
+  befolkning = pop, 
+  BNP = bnp, 
+  BNPPI = (bnp * 1e6) / pop
+  )
 
 saveRDS(Kombinert, "data/Kombinert.rds")
 ```
@@ -538,6 +543,7 @@ Gini_IT <- bnp_pop %>%
       x = bnp_pi,
       weights = pop
     ), 4),
+    n3_in_n2 = n(),
     .groups = "drop"
   )
 
@@ -577,6 +583,7 @@ Gini_FI <- bnp_pop %>%
       x = bnp_pi,
       weights = pop
     ), 4),
+    n3_in_n2 = n(),
     .groups = "drop"
   )
 
@@ -611,6 +618,7 @@ Gini_RO <- bnp_pop %>%
       x = bnp_pi,
       weights = pop
     ), 4),
+    n3_in_n2 = n(),
     .groups = "drop"
   )
 
@@ -642,6 +650,7 @@ Gini_LT <-bnp_pop %>%
       x = bnp_pi,
       weights = pop
     ), 4),
+    n3_in_n2 = n(),
     .groups = "drop"
   )
 
