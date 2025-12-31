@@ -3,14 +3,20 @@ title: "Økonomisk vekst og regional ulikhet: En empirisk analyse av sammenhenge
 author: "Irjan & Magnus"
 date: last-modified
 date-format: "DD MMMM YYYY"
+number-sections: true
+number-depth: 3
+toc: true
+papersize: a4
+citeproc: true
 format:
   html: default
   pdf: default
+  typst: default
 csl: apa7.csl
 bibliography: Okonometri_arbeidskrav.bib
 ---
 
-## 0. Abstrakt
+## Abstrakt
 
 Denne studien undersøker sammenhengen mellom økonomisk vekst og inntektsulikhet i europeiske regioner ved hjelp av datasett fra Finland, Italia, Romania og Litauen på NUTS 2-nivå.
 Analysene kombinerer paneldata, tverrsnittsmodeller, interaksjonsanalyser og ikke-lineære spesifikasjoner for å identifisere hvordan regionale strukturelle forhold påvirker fordelingen av vekstgevinster.
@@ -19,7 +25,7 @@ Arbeidsledighet fremstår som den viktigste modererende faktoren: i regioner med
 Utdanningsnivå og befolkningstetthet viser ingen robuste effekter, og de ikke-lineære modellene bekrefter at vekstens fordelingsmessige virkning styrkes i regioner med betydelige arbeidsmarkedsutfordringer.
 Studien bidrar til litteraturen om regional utvikling ved å demonstrere at vekst–ulikhet-sammenhengen i stor grad avhenger av regionale strukturer, og understreker behovet for differensiert regionalpolitikk og videre forskning basert på større og mer detaljerte datasett.
 
-## I. Introduksjon
+## Introduksjon
 
 Gjennom oppgavene i dette emnet har vi sett på regional utvikling satt opp mot ulikhet på 3 regionale nivåer.
 
@@ -32,7 +38,7 @@ Ved å lage analyser på flere nivåer har vi undersøkt hvordan utvikling i de 
 Gjennom arbeidskrav 1, 2 og 3 er det benyttet ulike fremgangsmetoder, modeller og datasett for å analysere hovedtemaet.
 I datasettet var det hentet regionale tall fra 4 ulike EU land, Finland, Italia, Romania og Litauen.
 
-**Arbeidskrav 1**
+### Arbeidskrav 1
 
 I arbeidskrav 1 var hovedformålet å utarbeide et paneldatasett egnet til å analysere GINI koeffisienten i de fire EU-landene på NUTS 2 nivå.
 Datasettene ble hentet fra Eurostat på NUTS 3 nivå, og omarbeidet til datasett egnet til å beregne GINI koeffisienter på NUTS 2 nivå.
@@ -41,7 +47,7 @@ Formålet var å analysere hvordan økonomisk utvikling hadde utviklet seg i per
 
 Gjennom denne analysen ble det undersøkt hvilken region som har hatt en stabil, negativ eller positiv utvikling i ulikhet.
 
-**Arbeidskrav 2**
+### Arbeidskrav 2
 
 I arbeidskrav 2 var det overordnede målet å bruke regresjonsmodeller til å analysere sammenhengen mellom regional utvikling og ulikhet.
 Formålet var å lage kausale modeller hvor GINI ble testet opp mot diverse indikatorer for regional ulikhet.
@@ -50,7 +56,7 @@ Dette innebar at datasettet ble supplementært med ytterligere indikatorer på r
 
 Med de utarbeidede regresjonsmodellene var et sentralt formål med oppgaven å estimere hvor gode predikater de nye variablene var for utvikling av regional ulikhet, samt om de samme sammenhengene forekom på tvers av regioner.
 
-**Arbeidskrav 3**
+### Arbeidskrav 3
 
 Arbeidskrav 3 sitt formål var å knytte sammen de metodiske tilnærmingene brukt i arbeidskrav 1 og 2.
 Her ble variablene utvalgt i arbeidskrav 3 delt i nye under-sett og testet for sammenheng med ulikhet.
@@ -61,7 +67,7 @@ Ved å kombinere data på tvers av regionale nivåer (Nuts1,2 og 3), oppnår man
  Dette kan være et viktig verktøy for politikere og andre påvirkningskyndige aktører i utformingen av fremtidige tiltak.
 Hvilken faktor som fører til ulikhet mellom regioner kan brukes som en pekepinn mot hvilken tiltak som kan innføres for å skape en jevnere fordeling, og gi en oversikt over hvilket regioner man bør rette tiltakene mot.
 
-## II.Literaturgjennomgang
+## Literaturgjennomgang
 
 [@piketty2017] Previous Work: Summarize key literature related to regional development and inequality.
 ‣ Utilize the RStudio citation tools in your summary of the literature.
@@ -97,7 +103,7 @@ Samlet sett peker litteraturen mot tre sentrale innsikter:
 
 Denne teorien gir et solid grunnlag for å tolke resultatene i den empiriske delen av oppgaven.
 
-**Forsknings svakheter**
+### Forsknings svakheter
 
 Til tross for omfattende forskning gjenstår flere viktige kunnskapshull.
 For det første undersøker mange studier sammenhengen mellom økonomisk vekst og ulikhet på nasjonalt nivå, mens det finnes færre analyser som fokuserer på regioner innenfor samme land, der forskjeller i demografi, kompetansenivå og arbeidsmarked kan ha stor betydning.
@@ -110,7 +116,7 @@ For det tredje er det stor variasjon i metodiske tilnærminger.
 Mange studier analyserer kun en enkelt modell, uten å kombinere enkel regresjon, undergruppeanalyser og interaksjonsmodeller i samme studie.
 Dermed mangler det forskning som undersøker både den generelle sammenhengen og hvordan den varierer mellom regioner med ulike strukturelle egenskaper.
 
-## III Data og Metode
+## Data og Metode
 
 Analysene i arbeidskravet bygger i hovedsak på data hentet fra Eurostat.
 Datasett for BNP, befolkningstall, utdanningsnivå, arbeidsledighet og befolkningstetthet er hentet fra Eurostat.
@@ -139,7 +145,7 @@ Avslutningsvis i arbeidskravet ønsket vi å bruke «fixed effects» modeller fo
 Men grunnet feil som oppstod i koden som ikke ble luket ut brukte vi BNPPI istedenfor.
 Dette gav dessverre en sup optimal modell og resultatene hadde hatt større nytteverdi dersom den hadde fungert som ønsket.
 
-## IV.Emperiske funn
+## Emperiske funn
 
 Analysene startet med en tverrsnittlig regresjon for å undersøke sammenhengen mellom økonomisk vekst og inntektsulikhet.
 Den grunnleggende modellen viste en positiv og statistisk signifikant effekt av vekst, med en koeffisient på **0.538** (p \< 0.01).
@@ -164,7 +170,7 @@ Den kvadratiske modellen hadde den høyeste forklaringskraften av alle spesifika
 I denne modellen var interaksjonsleddet mellom vekst² og høy arbeidsledighet **–124.74**, også statistisk signifikant.
 Ingen av de ikke-lineære spesifikasjonene viste signifikante effekter for utdanningsnivå eller befolkningstetthet.
 
-## V.Diskusjon
+## Diskusjon
 
 Resultatene fra analysene viser at forholdet mellom økonomisk vekst og inntektsulikhet varierer betydelig mellom regioner, og at en enkel lineær modell ikke gir et fullstendig bilde av denne sammenhengen.
 Den første tverrsnittsanalysen viste en tydelig positiv og signifikant sammenheng: regioner med høyere vekst hadde også høyere ulikhet.
@@ -204,9 +210,9 @@ Effekten avhenger i stor grad av regionenes strukturelle forutsetninger, og spes
 Dette understreker viktigheten av å utforme regional politikk som tar hensyn til lokale forhold, og som ser økonomisk utvikling og fordelingshensyn i sammenheng.
 Videre forskning bør derfor inkludere flere regioner, lengre tidsserier og et bredere sett av strukturelle og institusjonelle variabler for å få en mer omfattende forståelse av hvordan vekst og ulikhet påvirker hverandre over tid.
 
-## VI. Begrensninger og videre forskning
+## Begrensninger og videre forskning
 
-**Forskningsmessige begrensninger**
+### Forskningsmessige begrensninger
 
 Det er flere begrensninger som bør tas i betraktning når funnene fra denne studien vurderes.
 For det første er datagrunnlaget relativt lite, med kun 29 europeiske regioner inkludert i analysen.
@@ -224,7 +230,7 @@ Andre faktorer – som institusjonell kvalitet, sektorstruktur, migrasjon eller 
 Til slutt kan modellvalgene i seg selv utgjøre en begrensning.
 Selv om både lineære, logaritmiske og kvadratiske spesifikasjoner ble testet, kan mer avanserte modeller – for eksempel ikke-parametriske tilnærminger, maskinlæringsmetoder eller instrumentvariabelanalyser – gi et rikere bilde av sammenhengen mellom vekst og ulikhet.
 
-**Forslag til videre forskning**
+### Forslag til videre forskning
 
 Fremtidig forskning bør søke å inkludere **flere land og flere regioner**, for å bedre fange den institusjonelle og økonomiske variasjonen som finnes i Europa.
 Et bredere regionalt datasett ville gjøre det mulig å trekke sterkere slutninger om hvordan nasjonale rammebetingelser påvirker vekst–ulikhet-sammenhengen.
@@ -242,7 +248,7 @@ For eksempel kan økonomisk vekst i en region ha fordelingsmessige konsekvenser 
 Til slutt kan videre forskning utforske hvilke politiske tiltak som bidrar til at økonomisk vekst blir mer inkluderende.
 Siden resultatene i denne studien viser at arbeidsledighet er en nøkkelfaktor i hvordan vekst påvirker ulikhet, kan framtidige analyser vurdere sammenhengen mellom aktiv arbeidsmarkedspolitikk, kompetanseprogrammer og fordelingsutfall.
 
-## VII.Konklusjon
+## Konklusjon
 
 Studien har undersøkt hvordan økonomisk vekst henger sammen med inntektsulikhet i europeiske regioner, og hvordan denne relasjonen påvirkes av regionale kjennetegn.
 Analysene viser at vekst i gjennomsnitt er positivt assosiert med ulikhet, men at sammenhengen varierer betydelig på tvers av regioner.
@@ -255,7 +261,7 @@ Prosessen har også synliggjort begrensningene ved små og ufullstendige dataset
 Likevel gir analysene et nyttig bidrag til forskningsfeltet ved å fremheve at arbeidsmarkedets situasjon er en sentral mekanisme i hvordan vekst påvirker ulikhet, og ved å demonstrere at regionale kontekster må tas i betraktning når man vurderer økonomiske utviklingsmønstre.
 Studien understreker behovet for regionalt tilpasset politikk og peker på at videre forskning bør benytte større datasett, lengre tidsserier og mer avanserte modeller for å bedre forstå dynamikken mellom vekst og ulikhet.
 
-## VIII.References
+## References
 
 ::: {#refs}
 :::
