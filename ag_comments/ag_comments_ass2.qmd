@@ -1,0 +1,24 @@
+---
+title: "ag comments ass2"
+format: html
+editor: source
+---
+
+## Generelle kommentarer
+
+-   Reproduserbart. Bra!
+-   Måtte trikse litt i ass1 med nye variabelnavn for å få det til å kjøre.
+-   La inn `n3_in_n2 = n()` i chunk-ene hvor gini blir beregent (i ass1). Greit å se hvor mange nuts3 vi har vi de nuts2 regionene vi beregner gini for
+-   Orginalt å beregne gini for hvert land for så å slå dem sammen. Jeg ville beregnet alle i en operasjon og så filtrert ut det landet jeg trengte.
+-   Variabelen `n3_in_n2` gjør det lett å sjekke at dere gini er lik 0 har vi bare en nuts3 (som er korrekt)
+-   Modelsummary model 1. Jeg vil foreslå å heller bruke flextable og Quarto caption og kryssreferanse. Se mitt forslag. tbl-cap-location: bottom kan eventuelt flyttes helt opp i YAML-header så gjelder den for alle tabeller laget på denne måten.
+-   Fin dskusjon av regresjonsresultatene vinklet opp mot litteraturen.
+-   Mhr. *#Goodness-of-fit tabell*. Som dere ser gir `as_flextable()`samme info, men med langt mindre arbeid.
+-   Fin diskusjon av F-verdien
+-   «Den klassiske OLS-modellen bygger på fem sentrale forutsetninger for at estimatene skal være upartiske og effektive.»  upartiske???
+-   Fem? Vi lister 6. Se [her](https://msb104.netlify.app/regression/mlr/msb104_05_chp03#/classical-assumptions-ols-for-mlr)
+-   Fornuftig valg av variabler.
+-   Grei diskusjon av variablene
+-   Har lagt inn flextable for model_multi, mye mindre arbeid og bedre resultat synes jeg.
+-   Fin diskusjon av funnene i model-multi. Hvis dere greier å relatere det til tilsvarende funn i litteraturen så er det enda bedre ;-)
+-   Grei forklaring bruk av KI

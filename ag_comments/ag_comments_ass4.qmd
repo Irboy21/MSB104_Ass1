@@ -1,0 +1,27 @@
+---
+title: "ag comments ass4"
+format: html
+---
+
+## Kommentarer
+
+-   Anbefaler at dere bruker Quartos system for overskrifter etc. istedenfor manuell formatering.
+-   Har lagt til støtte for dette i innledene YAML header
+-   Lagt inn typst som format (gir pdf kjapt)
+-   Har fjerntet mauell nummerering
+-   Fikset en lite feil i .bib filene som stoppet latex (pdf)
+-   Fjernet første avsnitt (på engelsk) under Litteraturgjennomgang. Tror ikke det var menin gen at dette skulle med.
+-   La til `lang: nb` i YAML for å få norsk orddeling og norske benevnelser (f.eks Innholdsfortegnelse)
+-   Jeg likte veldig godt litteraturgjennomgangen.
+-   Endret brutto nasjonal produkt til bruttonasjonalprodukt. Vi drar isammen ord på norsk.
+-   linje 132: endret fra «for året hvor regional utvikling var satt som den uavhengige variabelen» til «for året hvor regional vekst (endring i BNP per capita) var satt som den uavhengige variabelen» som jeg tror er mer riktig.
+-   linje 133: Endret formelen til latex kode.
+-   linje 142: «Men grunnet feil som oppstod i koden som ikke ble luket ut brukte vi BNPPI istedenfor.» Dette hadde dere jo anledning til å fikse nå.
+-   Under Empiriske funn: Det hadde vært til stor hjelp hvis dere presenterte reultatene i en regresjonstabell vha. `modelsummary()`. Da er det langt letter å se de ulike modellene opp mot hverandre.
+-   Ellers liker jeg diskusjonen av resultatene.
+-   Generelt mye fin diskusjon av problemstillingen og funnene relatert til denne.
+-   Det jeg savner:
+    - Hadde håpet at dere laget et reproduserbart dokument der dere hentet inn dataene og gjennomførte de analysene/estimeringene som dere hadde funnet mest meningsfylte fra de innledene arbeidene. 
+    - Da kunne modellene vært presentert i detalj og leseren ville ha hatt mulighet til å sjekke resultatene.
+
+

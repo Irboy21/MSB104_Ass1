@@ -1,0 +1,18 @@
+---
+title: "ag comments ass3"
+format: html
+editor: visual
+---
+
+## Generelle kommentarer
+
+-   Assignment 3 får jeg ikke til å kjøre. BNPPINUTS2 finnes ikke i NUTS2_data
+-   Begreningen av vekst ser ok ut, men dere må fikse variabelnavn. Antar at dette er på plass i assignment 4.
+-   Ser at dere henter inn data på nytt. Har dere ikke ferdige bearbeidete data fra assignment 2. Tanken var at assignment 1 og 2 skulle gi dere dataene dere trenger videre.
+-   Har lagt inn kode for å beregne vekst og gini for NUTS2 regioner
+-   Interaksjonsmodellen er en god ide, men jeg kan altså ikke se resultatet
+-   *Funksjonelle alternativer*. Drøftingen ser ok ut, selv om jeg ikke kan kjøre koden. Fint at dere knytter opp til Kuznets hypotesen.
+-   Panelmodellene fikk jeg til å kjøre. Ser fornuftig ut og analysen er bra.
+-   Vær oppmerksom på funksjonen `fixef()`i pakken plm som henter ut fixed effects.
+-   Man kan alltid oppnå det samme som plm() ved å benytte kategorivariabler for region og tid.
+-   Fiks problemene med vekst og gini, så blir dette bra.

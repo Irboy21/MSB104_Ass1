@@ -10,7 +10,9 @@ execute:
   message: false
 ---
 
-```{r, include=FALSE}
+```{r}
+#| label: setup
+#| message: false
 library(modelr)
 library(dplyr)
 library(ggplot2)
@@ -32,23 +34,79 @@ library(eurostat)
 library(fixest)
 library(lmtest)
 library(plm)
-
+options(paged.print = FALSE)
 ```
 
 ```{r}
+# NUTS2_data ser egentlig ut til å være nuts3 data siden de varierer med geo (som er nuts3 regionen)
 NUTS2_data <- readRDS("data/NUTS2_data.rds")
 Sammenstilt <- readRDS("data/Sammenstilt.rds")
 ```
 
 ```{r}
+# eval: false
 # Beregn BNP per innbygger-vekst for NUTS2
 Vekst_data <- NUTS2_data %>%
   arrange(nuts2, aar) %>%
+  mutate(
+    BNPPINUTS2 = bnp/pop,
+  ) |> 
   group_by(nuts2) %>%
-  mutate(vekst = (BNPPINUTS2 - lag(BNPPINUTS2)) / lag(BNPPINUTS2)) %>%
+  mutate(
+    vekst = (NUTS2_data %>% - lag(BNPPINUTS2)) / lag(BNPPINUTS2),
+    gini = dineq::gini.wtd(vekst, weight = pop)
+    ) %>%
   filter(aar == 2017) %>%
   select(nuts2, vekst, gini)
 ```
+
+```{r}
+# ag: min versjon
+# Gini på nuts2 nivå. Bruker NUTS2_data som
+# er data på nuts3 nivå
+gini_n2 <- NUTS2_data %>% 
+  # hvis bnp eller pop er 0 (egentlig NA) så
+  # kan vi ikke beregne bnp_pc_n3
+  filter(bnp > 0 & pop > 0) |> 
+  mutate(
+     bnp_pc_n3 = (bnp * 1e6) / pop
+  ) |> 
+  group_by(nuts2, aar) |> 
+  summarise(
+    gini_n2 = dineq::gini.wtd(bnp_pc_n3, weight = pop),
+    n3_in_n2 = n(),
+    .groups = "drop"
+  )
+```
+
+```{r}
+# ag: beregner vekst i nuts2 og legger gini_n2 til vha left_join
+# først summarise for å finne bnp og pop i nuts2
+# beregner bnp per capita for hvar nuts2 region
+# Så kan vi finne vekst_n2 
+# Legger til slutt til gini_n2 fra forrige datasett
+vekst_gini_n2 <- NUTS2_data |> 
+  group_by(nuts2, aar) |> 
+  summarise(
+    # pop og bnp i hver nuts2 region
+    pop_n2 = sum(pop),
+    bnp_n2 = sum(bnp),
+    # bnp per capita i nuts2 regionene
+    bnp_pc_n2 = (bnp_n2 * 1e6) / pop_n2,
+    .groups = "drop"
+  ) |> 
+  mutate(
+    vekst_n2 = 100 * ((bnp_pc_n2 / dplyr::lag(bnp_pc_n2)) - 1)
+  ) |> 
+  left_join(
+    y = gini_n2,
+    by = join_by(nuts2, aar)
+    )
+#
+# Nå har vi gini og vekst på NUTS2 nivå
+```
+
+
 
 # Del A
 
@@ -866,7 +924,7 @@ Modellen estimerer effekten av BNPPI på GINI med individuelle faste effekter p�
 Resultatene viser en signifikant, men svak positiv effekt av BNPPI på ulikhet, med en koeffisient på 1,0343e-06 (p \< 2,2e-16).
 Dette tyder på at økt økonomisk utvikling innen regionene er assosiert med en marginal økning i ulikhet.
 
-Våre panel estimater er desvvere dårlig utarbeidet.
+Våre panel estimater er dessvere dårlig utarbeidet.
 Vi hadde begynt å lage en modell hvor vi brukte vekst raten, men av en eller annen grunn virker ikke den koden lenger.
 Resultatene hadde nok være mer spennede dersom vi hadde fått dette til.
 
